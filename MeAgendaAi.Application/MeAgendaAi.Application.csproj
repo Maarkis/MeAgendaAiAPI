@@ -12,5 +12,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MeAgendaAi.CrossCutting\MeAgendaAi.CrossCutting.csproj" />
+    <ProjectReference Include="..\MeAgendaAi.Domain\MeAgendaAi.Domain.csproj" />
+    <ProjectReference Include="..\MeAgendaAi.Service\MeAgendaAi.Service.csproj" />
+  </ItemGroup>
+
 
 </Project>

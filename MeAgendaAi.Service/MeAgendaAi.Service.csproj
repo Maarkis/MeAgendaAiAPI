@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -10,7 +10,11 @@
 
   <ItemGroup>
     <Folder Include="Validators\" />
-    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MeAgendaAi.Data\MeAgendaAi.Data.csproj" />
+    <ProjectReference Include="..\MeAgendaAi.Domain\MeAgendaAi.Domain.csproj" />
   </ItemGroup>
 
 </Project>
