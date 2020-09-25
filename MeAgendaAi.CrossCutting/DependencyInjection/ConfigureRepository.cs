@@ -12,11 +12,11 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
 {
     public class ConfigureRepository
     {
-        public static void ConfigureDependenciesService(IServiceCollection serviceCollection)
+        public static void ConfigureDependenciesService(IServiceCollection serviceCollection, string connectionString)
         {
             serviceCollection.AddDbContext<MeAgendaAiContext>(options =>
             {
-                options.UseSqlServer("Password=4dm1n!;Persist Security Info=True;User ID=admin;Initial Catalog=meagendaai;Data Source=LAPTOP-CEI7D250\\SQLEXPRESS");
+                options.UseSqlServer(connectionString);
             });
 
             serviceCollection.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));

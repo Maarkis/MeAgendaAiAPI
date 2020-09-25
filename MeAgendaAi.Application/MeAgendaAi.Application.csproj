@@ -18,5 +18,7 @@
     <ProjectReference Include="..\MeAgendaAi.Service\MeAgendaAi.Service.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1development_1json__JsonSchema="http://json.schemastore.org/apibuilder.json" /></VisualStudio></ProjectExtensions>
+
 
 </Project>
