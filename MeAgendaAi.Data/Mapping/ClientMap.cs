@@ -7,30 +7,15 @@ using System.Text;
 
 namespace MeAgendaAi.Data.Mapping
 {
-    public class UserMap : IEntityTypeConfiguration<User>
+    public class ClientMap : IEntityTypeConfiguration<Client>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<Client> builder)
         {
-            builder.ToTable("User");
+            builder.ToTable("Client");
 
-            builder.HasKey(u => u.UserId);
+            builder.HasKey(x => x.ClientId);
 
-            builder.HasIndex(u => u.Email)
-                .IsUnique();
-
-            builder.Property(x => x.Name)
-                .IsRequired()
-                .HasMaxLength(60);
-
-            builder.Property(x => x.Password);
-
-            builder.Property(x => x.Image);
-
-            builder.Property(x => x.CPF)
-                .IsRequired();
-
-            builder.Property(x => x.RG)
-                .IsRequired();
+            builder.Property(x => x.UserId).IsRequired();
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()

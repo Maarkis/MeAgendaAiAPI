@@ -2,10 +2,7 @@
 using MeAgendaAi.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -21,7 +18,7 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult> GetAll()
+        public ActionResult GetAll()
         {
             if (!ModelState.IsValid)
             {
@@ -30,7 +27,7 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                return Ok(await _userService.SelectAsync());
+                return Ok(_userService.GetAll());
             }
             catch (ArgumentException e)
             {
@@ -40,7 +37,7 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpGet]
         [Route("GetById/{id}")]
-        public async Task<ActionResult> GetById(Guid id)
+        public ActionResult GetById(Guid id)
         {
             if (!ModelState.IsValid)
             {
@@ -49,7 +46,7 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                return Ok(await _userService.SelectAsync(id));
+                return Ok(_userService.GetById(id));
             }
             catch (ArgumentException e)
             {
@@ -59,7 +56,7 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpPost]
         [Route("AddUser")]
-        public async Task<ActionResult> AddUser([FromBody] User user)
+        public ActionResult AddUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
             {
@@ -68,13 +65,8 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                var result = await _userService.InsertAsync(user);
-                if(result != null) {
-                    //return Created(new Uri(Url.Link("GetById", new { id = result.Id })), result);
-                    return Ok("Adicionado com sucesso!");
-                }
-
-                return BadRequest();
+                _userService.Add(user);
+                return Ok("Adicionado com sucesso!");
             }
             catch (ArgumentException e)
             {

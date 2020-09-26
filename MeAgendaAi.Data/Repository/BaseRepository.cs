@@ -1,112 +1,68 @@
 ﻿using MeAgendaAi.Data.Context;
 using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MeAgendaAi.Data.Repository
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
+    public class BaseRepository<T> : IBaseRepository<T>, IDisposable where T : class
     {
         protected readonly MeAgendaAiContext _context;
-        private DbSet<T> _dataset;
-        public BaseRepository(MeAgendaAiContext context)
+        private readonly SqlConnection Connection;
+        public BaseRepository(MeAgendaAiContext context, IConfiguration _configuration)
         {
             _context = context;
-            _dataset = _context.Set<T>();
-        }
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            try
-            {
-                var result = await _dataset.SingleOrDefaultAsync(p => p.Id.Equals(id));
-                if (result == null)
-                    return false;
-
-                _dataset.Remove(result);
-
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return true;
+            Connection = new SqlConnection(_configuration.GetConnectionString("ConnectionString"));
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public IEnumerable<T> GetAll()
         {
-            return await _dataset.AnyAsync(p => p.Id.Equals(id));
-        }
-        public async Task<T> InsertAsync(T item)
-        {
-            try
-            {
-                if(item.Id == Guid.Empty)
-                {
-                    item.Id = Guid.NewGuid();
-                }
-
-                item.CreatedAt = DateTime.UtcNow;
-                _dataset.Add(item);
-
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return item;
+            return _context.Set<T>().ToList();
         }
 
-        public async Task<T> SelectAsync(Guid id)
+        public virtual T GetById(Guid id)
         {
-            try
-            {
-                return await _dataset.SingleOrDefaultAsync(p => p.Id.Equals(id));
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+
+            return _context.Set<T>().Find(id);
+
         }
 
-        public async Task<IEnumerable<T>> SelectAsync()
+        public virtual void Add(T obj)
         {
-            try{
-                return await _dataset.ToListAsync();
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+
+            _context.Set<T>().Add(obj);
+            _context.SaveChanges();
+
         }
 
-        public async Task<T> UpdateAsync(T item)
+        public virtual void Remove(T obj)
         {
-            try
-            {
-                var result = await _dataset.SingleOrDefaultAsync(p => p.Id.Equals(item.Id));
-                if (result == null)
-                    return null;
+            _context.Set<T>().Remove(obj);
+            _context.SaveChanges();
+        }
 
-                item.UpdatedAt = DateTime.UtcNow;
-                item.CreatedAt = result.CreatedAt;
-                
-                _context.Entry(result).CurrentValues.SetValues(item);
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+        public virtual void Edit(T obj)
+        {
+            _context.Entry(obj).State = EntityState.Modified;
+            _context.SaveChanges();
 
-            return item;
+        }
+
+        public void Dispose()
+        {
+            if (Connection.State == System.Data.ConnectionState.Open)
+            {
+                Connection.Close();
+                Connection.Dispose();
+            }
+            GC.SuppressFinalize(this);
         }
     }
 }

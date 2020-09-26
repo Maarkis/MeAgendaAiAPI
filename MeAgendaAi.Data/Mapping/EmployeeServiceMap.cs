@@ -7,30 +7,23 @@ using System.Text;
 
 namespace MeAgendaAi.Data.Mapping
 {
-    public class UserMap : IEntityTypeConfiguration<User>
+    public class EmployeeServiceMap : IEntityTypeConfiguration<EmployeeService>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<EmployeeService> builder)
         {
-            builder.ToTable("User");
+            builder.ToTable("EmployeeService");
 
-            builder.HasKey(u => u.UserId);
+            builder.HasKey(x => x.EmployeeServiceId);
 
-            builder.HasIndex(u => u.Email)
-                .IsUnique();
+            builder.HasOne(x => x.Employee)
+                .WithMany(e => e.EmployeeServices)
+                .HasForeignKey(x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Property(x => x.Name)
-                .IsRequired()
-                .HasMaxLength(60);
-
-            builder.Property(x => x.Password);
-
-            builder.Property(x => x.Image);
-
-            builder.Property(x => x.CPF)
-                .IsRequired();
-
-            builder.Property(x => x.RG)
-                .IsRequired();
+            builder.HasOne(x => x.Service)
+                .WithMany(s => s.ServiceEmployees)
+                .HasForeignKey(x => x.ServiceId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()

@@ -18,6 +18,13 @@ namespace MeAgendaAi.Data.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Client>(new ClientMap().Configure);
+            modelBuilder.Entity<Company>(new CompanyMap().Configure);
+            modelBuilder.Entity<Employee>(new EmployeeMap().Configure);
+            modelBuilder.Entity<EmployeeService>(new EmployeeServiceMap().Configure);
+            modelBuilder.Entity<Policy>(new PolicyMap().Configure);
+            modelBuilder.Entity<Scheduling>(new SchedulingMap().Configure);
+            modelBuilder.Entity<Service>(new ServiceMap().Configure);
             modelBuilder.Entity<User>(new UserMap().Configure);
         }
 

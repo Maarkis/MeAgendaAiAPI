@@ -17,34 +17,27 @@ namespace MeAgendaAi.Service.Services
             _repository = repository;
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            return await _repository.DeleteAsync(id);
+        public IEnumerable<T> GetAll() {
+            return _repository.GetAll();
         }
-
-        public async Task<bool> ExistsAsync(Guid id)
+        public T GetById(Guid id)
         {
-            return await _repository.ExistsAsync(id);
+            return _repository.GetById(id);
         }
-
-        public async Task<T> InsertAsync(T item)
-        {
-            return await _repository.InsertAsync(item);
+        public void Add(T obj) {
+            _repository.Add(obj);
         }
-
-        public async Task<T> SelectAsync(Guid id)
+        public void Remove(T obj)
         {
-            return await _repository.SelectAsync(id);
+            _repository.Remove(obj);
         }
-
-        public async Task<IEnumerable<T>> SelectAsync()
+        public void Edit(T obj)
         {
-            return await _repository.SelectAsync();
+            _repository.Edit(obj);
         }
-
-        public async Task<T> UpdateAsync(T item)
+        public void Dispose()
         {
-            return await _repository.UpdateAsync(item);
+            _repository.Dispose();
         }
     }
 }
