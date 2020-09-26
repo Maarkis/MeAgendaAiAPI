@@ -1,5 +1,6 @@
 ﻿using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -36,11 +37,11 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValue(new DateTime(2010, 1, 1));
+                .HasDefaultValue(DateTimeUtil.UtcToBrasilia());
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValue(new DateTime(2010, 1, 1));
+                .HasDefaultValue(DateTimeUtil.UtcToBrasilia());
 
             builder.Property(x => x.UpdatedBy)
                 .IsRequired()

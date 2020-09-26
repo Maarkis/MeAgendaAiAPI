@@ -28,6 +28,13 @@ namespace MeAgendaAi.Data.Context
             modelBuilder.Entity<User>(new UserMap().Configure);
         }
 
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeeService> EmployeeServices { get; set; }
+        public DbSet<Policy> Policies { get; set; }
+        public DbSet<Scheduling> Schedulings { get; set; }
+        public DbSet<Service> Services { get; set; }
         public DbSet<User> Users { get; set; }
     }
 }

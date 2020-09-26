@@ -9,10 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validators\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MeAgendaAi.Data\MeAgendaAi.Data.csproj" />
     <ProjectReference Include="..\MeAgendaAi.Domain\MeAgendaAi.Domain.csproj" />
   </ItemGroup>

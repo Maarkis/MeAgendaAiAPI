@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Domain.Interfaces.Services
+namespace MeAgendaAi.Domain.Interfaces.Repositories
 {
-    public interface IUserService : IBaseService<User>
+    public interface IClientRepository : IBaseRepository<Client>
     {
     }
 }

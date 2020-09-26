@@ -2,6 +2,7 @@
 using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Service.Interfaces;
 using MeAgendaAi.Service.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -17,6 +18,7 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
             // Services
             serviceCollection.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
             serviceCollection.AddScoped<IUserService, UserService>();
+            serviceCollection.AddScoped<IClientService, ClientService>();
         }
     }
 }
