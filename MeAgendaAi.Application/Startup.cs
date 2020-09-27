@@ -61,6 +61,7 @@ namespace MeAgendaAi.Application
 
             app.UseHttpsRedirection();
 
+            app.UseCors("MyAllowSpecificOrigins");
 
 
             app.UseSwagger();

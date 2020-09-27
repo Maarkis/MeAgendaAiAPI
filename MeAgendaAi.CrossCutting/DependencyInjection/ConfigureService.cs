@@ -22,6 +22,27 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
             serviceCollection.AddScoped<IEmployeeService, EmployeeService>();
             serviceCollection.AddScoped<ICompanyService, CompanyService>();
             serviceCollection.AddScoped<ISchedulingService, SchedulingService>();
+
+
+            serviceCollection.AddCors(options =>
+            {
+                //options.AddPolicy("MyAllowSpecificOrigins",
+                //        builder =>           {
+                //            builder.WithOrigins("http://localhost:44316",
+                //                                "http://localhost:4200"
+                //                                )
+                //                                .AllowAnyHeader()
+                //                                .AllowAnyMethod()
+                //                                .AllowAnyOrigin();
+                //        });
+
+                options.AddPolicy("MyAllowSpecificOrigins", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+
+            });
+
         }
     }
 }
