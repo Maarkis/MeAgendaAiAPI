@@ -43,5 +43,14 @@ namespace MeAgendaAi.Data.Repository
                 .Include(x => x.Service)
                 .ToList();
         }
+
+        public Policy GetCompanyPolicyBySchedulingId(Guid schedulingId)
+        {
+            return _schedulings.Where(x => x.SchedulingId == schedulingId)
+                .Select(x => x.Employee)
+                .Select(y => y.Company)
+                .Select(z => z.Policy)
+                .FirstOrDefault();
+        }
     }
 }

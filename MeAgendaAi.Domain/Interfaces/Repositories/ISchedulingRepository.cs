@@ -9,5 +9,6 @@ namespace MeAgendaAi.Domain.Interfaces.Repositories
     {
         List<Scheduling> GetClientSchedulings(Guid clientId);
         List<Scheduling> GetEmployeeSchedulings(Guid employeeId);
+        Policy GetCompanyPolicyBySchedulingId(Guid schedulingId);
     }
 }

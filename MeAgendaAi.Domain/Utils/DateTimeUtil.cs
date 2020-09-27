@@ -11,5 +11,11 @@ namespace MeAgendaAi.Domain.Utils
             var brasilia = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
             return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, brasilia);
         }
+
+        public static DateTime UtcToBrasilia(DateTime date)
+        {
+            var brasilia = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
+            return TimeZoneInfo.ConvertTimeFromUtc(date, brasilia);
+        }
     }
 }

@@ -16,13 +16,15 @@ namespace MeAgendaAi.Service.Services
         private ISchedulingRepository _schedulingRepository;
         private IClientRepository _clientRepository;
         private IEmployeeRepository _employeeRepository;
+        private ICompanyRepository _companyRepository;
 
         public SchedulingService(ISchedulingRepository schedulingRepository, IClientRepository clientRepository,
-            IEmployeeRepository employeeRepository) : base(schedulingRepository)
+            IEmployeeRepository employeeRepository, ICompanyRepository companyRepository) : base(schedulingRepository)
         {
             _schedulingRepository = schedulingRepository;
             _clientRepository = clientRepository;
             _employeeRepository = employeeRepository;
+            _companyRepository = companyRepository;
         }
 
         public ResponseModel CreateScheduling(CreateSchedulingModel model)
@@ -163,6 +165,20 @@ namespace MeAgendaAi.Service.Services
                 {
                     resp.Result = "Não foi possível encontrar o agendamento";
                     return resp;
+                }
+
+                if(model.NewStatus == SchedulingStatus.Canceled)
+                {
+                    Policy policy = _schedulingRepository.GetCompanyPolicyBySchedulingId(Guid.Parse(model.SchedulingId));
+                    DateTime now = DateTimeUtil.UtcToBrasilia();
+                    DateTime limitCancel = scheduling.StartTime.AddHours(-(policy.LimitCancelHours));
+                    int compare = DateTime.Compare(now, limitCancel);
+                    if (compare >= 0)
+                    {
+                        resp.Result = "Não é possível realizar o cancelamento." +
+                            "O Horário limite para cancelamento era: " + limitCancel;
+                        return resp;
+                    }
                 }
 
                 scheduling.Status = model.NewStatus;
