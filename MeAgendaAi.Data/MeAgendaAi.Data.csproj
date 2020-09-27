@@ -2,12 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Configurations>Debug;Release;LocalHost-Jean</Configurations>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Migrations\20200926191856_ModelarClassesPrincipais.cs" />
-    <Compile Remove="Migrations\20200926191856_ModelarClassesPrincipais.Designer.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">

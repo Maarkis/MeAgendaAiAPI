@@ -11,44 +11,55 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Domain", "3 - Domain", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infra", "4 - Infra", "{109CB010-8178-4675-943C-7115350E4AA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeAgendaAi.Application", "MeAgendaAi.Application\MeAgendaAi.Application.csproj", "{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeAgendaAi.Application", "MeAgendaAi.Application\MeAgendaAi.Application.csproj", "{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeAgendaAi.Domain", "MeAgendaAi.Domain\MeAgendaAi.Domain.csproj", "{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeAgendaAi.Domain", "MeAgendaAi.Domain\MeAgendaAi.Domain.csproj", "{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeAgendaAi.Service", "MeAgendaAi.Service\MeAgendaAi.Service.csproj", "{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeAgendaAi.Service", "MeAgendaAi.Service\MeAgendaAi.Service.csproj", "{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.1 - Data", "4.1 - Data", "{E438773B-E189-41E6-8785-2DC54B5B1A2B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.2 - CrossCutting", "4.2 - CrossCutting", "{A1B2A9CE-A3CC-4166-AA2A-5EF96EEDAB6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeAgendaAi.Data", "MeAgendaAi.Data\MeAgendaAi.Data.csproj", "{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeAgendaAi.Data", "MeAgendaAi.Data\MeAgendaAi.Data.csproj", "{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeAgendaAi.CrossCutting", "MeAgendaAi.CrossCutting\MeAgendaAi.CrossCutting.csproj", "{C8C39EB8-8188-42AB-B846-6963A8696427}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeAgendaAi.CrossCutting", "MeAgendaAi.CrossCutting\MeAgendaAi.CrossCutting.csproj", "{C8C39EB8-8188-42AB-B846-6963A8696427}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		LocalHost-Jean|Any CPU = LocalHost-Jean|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
+		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
+		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
+		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
+		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C8C39EB8-8188-42AB-B846-6963A8696427}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8C39EB8-8188-42AB-B846-6963A8696427}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C39EB8-8188-42AB-B846-6963A8696427}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
+		{C8C39EB8-8188-42AB-B846-6963A8696427}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{C8C39EB8-8188-42AB-B846-6963A8696427}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8C39EB8-8188-42AB-B846-6963A8696427}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

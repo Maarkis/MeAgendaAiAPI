@@ -3,111 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MeAgendaAi.Data.Migrations
 {
-    public partial class ModelarClassesPrincipais : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_User",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "Id",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "UpdatedAt",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "_createdAt",
-                table: "User");
-
-            migrationBuilder.AlterColumn<Guid>(
-                name: "UpdatedBy",
-                table: "User",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
-                oldClrType: typeof(Guid),
-                oldType: "uniqueidentifier");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Email",
-                table: "User",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(100)",
-                oldMaxLength: 100,
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "CreatedAt",
-                table: "User",
-                nullable: false,
-                defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2");
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "UserId",
-                table: "User",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
-            migrationBuilder.AddColumn<string>(
-                name: "CPF",
-                table: "User",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Image",
-                table: "User",
-                nullable: true);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "LastUpdatedAt",
-                table: "User",
-                nullable: false,
-                defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<string>(
-                name: "Password",
-                table: "User",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "RG",
-                table: "User",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_User",
-                table: "User",
-                column: "UserId");
-
-            migrationBuilder.CreateTable(
-                name: "Client",
-                columns: table => new
-                {
-                    ClientId = table.Column<Guid>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
-                    LastUpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
-                    UpdatedBy = table.Column<Guid>(nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    UserId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Client", x => x.ClientId);
-                    table.ForeignKey(
-                        name: "FK_Client_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Company",
                 columns: table => new
@@ -126,32 +25,23 @@ namespace MeAgendaAi.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employee",
+                name: "User",
                 columns: table => new
                 {
-                    EmployeeId = table.Column<Guid>(nullable: false),
+                    UserId = table.Column<Guid>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
                     LastUpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
                     UpdatedBy = table.Column<Guid>(nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    UserId = table.Column<Guid>(nullable: false),
-                    CompanyId = table.Column<Guid>(nullable: false),
-                    IsManager = table.Column<bool>(nullable: false, defaultValue: false)
+                    Email = table.Column<string>(nullable: true),
+                    Password = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 60, nullable: false),
+                    Image = table.Column<string>(nullable: true),
+                    CPF = table.Column<string>(nullable: false),
+                    RG = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employee", x => x.EmployeeId);
-                    table.ForeignKey(
-                        name: "FK_Employee_Company_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Company",
-                        principalColumn: "CompanyId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Employee_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_User", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -200,31 +90,53 @@ namespace MeAgendaAi.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeService",
+                name: "Client",
                 columns: table => new
                 {
-                    EmployeeServiceId = table.Column<Guid>(nullable: false),
+                    ClientId = table.Column<Guid>(nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
                     LastUpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
                     UpdatedBy = table.Column<Guid>(nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    ServiceId = table.Column<Guid>(nullable: false),
-                    EmployeeId = table.Column<Guid>(nullable: false)
+                    UserId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeService", x => x.EmployeeServiceId);
+                    table.PrimaryKey("PK_Client", x => x.ClientId);
                     table.ForeignKey(
-                        name: "FK_EmployeeService_Employee_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employee",
-                        principalColumn: "EmployeeId",
+                        name: "FK_Client_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employee",
+                columns: table => new
+                {
+                    EmployeeId = table.Column<Guid>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
+                    LastUpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
+                    UpdatedBy = table.Column<Guid>(nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    UserId = table.Column<Guid>(nullable: false),
+                    CompanyId = table.Column<Guid>(nullable: false),
+                    IsManager = table.Column<bool>(nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employee", x => x.EmployeeId);
+                    table.ForeignKey(
+                        name: "FK_Employee_Company_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Company",
+                        principalColumn: "CompanyId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_EmployeeService_Service_ServiceId",
-                        column: x => x.ServiceId,
-                        principalTable: "Service",
-                        principalColumn: "ServiceId",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_Employee_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,7 +152,7 @@ namespace MeAgendaAi.Data.Migrations
                     ServiceId = table.Column<Guid>(nullable: false),
                     StartTime = table.Column<DateTime>(nullable: false),
                     EndTime = table.Column<DateTime>(nullable: false),
-                    Status = table.Column<int>(nullable: false, defaultValue: 0)
+                    Status = table.Column<string>(nullable: false, defaultValue: "Scheduled")
                 },
                 constraints: table =>
                 {
@@ -265,6 +177,34 @@ namespace MeAgendaAi.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ServiceEmployee",
+                columns: table => new
+                {
+                    EmployeeServiceId = table.Column<Guid>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
+                    LastUpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)),
+                    UpdatedBy = table.Column<Guid>(nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    ServiceId = table.Column<Guid>(nullable: false),
+                    EmployeeId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ServiceEmployee", x => x.EmployeeServiceId);
+                    table.ForeignKey(
+                        name: "FK_ServiceEmployee_Employee_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "EmployeeId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ServiceEmployee_Service_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Service",
+                        principalColumn: "ServiceId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Client_UserId",
                 table: "Client",
@@ -279,16 +219,6 @@ namespace MeAgendaAi.Data.Migrations
                 name: "IX_Employee_UserId",
                 table: "Employee",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EmployeeService_EmployeeId",
-                table: "EmployeeService",
-                column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EmployeeService_ServiceId",
-                table: "EmployeeService",
-                column: "ServiceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Policy_CompanyId",
@@ -315,18 +245,35 @@ namespace MeAgendaAi.Data.Migrations
                 name: "IX_Service_CompanyId",
                 table: "Service",
                 column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceEmployee_EmployeeId",
+                table: "ServiceEmployee",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ServiceEmployee_ServiceId",
+                table: "ServiceEmployee",
+                column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_Email",
+                table: "User",
+                column: "Email",
+                unique: true,
+                filter: "[Email] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "EmployeeService");
-
-            migrationBuilder.DropTable(
                 name: "Policy");
 
             migrationBuilder.DropTable(
                 name: "Scheduling");
+
+            migrationBuilder.DropTable(
+                name: "ServiceEmployee");
 
             migrationBuilder.DropTable(
                 name: "Client");
@@ -338,86 +285,10 @@ namespace MeAgendaAi.Data.Migrations
                 name: "Service");
 
             migrationBuilder.DropTable(
+                name: "User");
+
+            migrationBuilder.DropTable(
                 name: "Company");
-
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_User",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "CPF",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "Image",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "LastUpdatedAt",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "Password",
-                table: "User");
-
-            migrationBuilder.DropColumn(
-                name: "RG",
-                table: "User");
-
-            migrationBuilder.AlterColumn<Guid>(
-                name: "UpdatedBy",
-                table: "User",
-                type: "uniqueidentifier",
-                nullable: false,
-                oldClrType: typeof(Guid),
-                oldDefaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
-            migrationBuilder.AlterColumn<string>(
-                name: "Email",
-                table: "User",
-                type: "nvarchar(100)",
-                maxLength: 100,
-                nullable: true,
-                oldClrType: typeof(string),
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "CreatedAt",
-                table: "User",
-                type: "datetime2",
-                nullable: false,
-                oldClrType: typeof(DateTime),
-                oldDefaultValue: new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "Id",
-                table: "User",
-                type: "uniqueidentifier",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "UpdatedAt",
-                table: "User",
-                type: "datetime2",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "_createdAt",
-                table: "User",
-                type: "datetime2",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_User",
-                table: "User",
-                column: "Id");
         }
     }
 }

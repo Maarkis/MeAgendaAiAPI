@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MeAgendaAi.Data.Migrations
 {
     [DbContext(typeof(MeAgendaAiContext))]
-    [Migration("20200926232359_ChangeTableEmployeeServiceName")]
-    partial class ChangeTableEmployeeServiceName
+    [Migration("20200927183329_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,12 +30,12 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 235, DateTimeKind.Unspecified).AddTicks(1946));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 239, DateTimeKind.Unspecified).AddTicks(9199));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<Guid>("UpdatedBy")
                         .ValueGeneratedOnAdd()
@@ -67,12 +67,12 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 241, DateTimeKind.Unspecified).AddTicks(3572));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 241, DateTimeKind.Unspecified).AddTicks(3853));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -99,7 +99,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 245, DateTimeKind.Unspecified).AddTicks(6807));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<bool>("IsManager")
                         .ValueGeneratedOnAdd()
@@ -109,7 +109,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 245, DateTimeKind.Unspecified).AddTicks(7083));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<Guid>("UpdatedBy")
                         .ValueGeneratedOnAdd()
@@ -140,12 +140,12 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 251, DateTimeKind.Unspecified).AddTicks(7623));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 251, DateTimeKind.Unspecified).AddTicks(7897));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<int>("LimitCancelHours")
                         .ValueGeneratedOnAdd()
@@ -177,7 +177,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 254, DateTimeKind.Unspecified).AddTicks(1420));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
@@ -188,7 +188,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 254, DateTimeKind.Unspecified).AddTicks(1673));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
@@ -196,10 +196,11 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Status")
+                    b.Property<string>("Status")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Scheduled");
 
                     b.Property<Guid>("UpdatedBy")
                         .ValueGeneratedOnAdd()
@@ -229,7 +230,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 257, DateTimeKind.Unspecified).AddTicks(2394));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<int>("DurationMinutes")
                         .ValueGeneratedOnAdd()
@@ -239,7 +240,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 257, DateTimeKind.Unspecified).AddTicks(2691));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -266,7 +267,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 247, DateTimeKind.Unspecified).AddTicks(8214));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uniqueidentifier");
@@ -274,7 +275,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 247, DateTimeKind.Unspecified).AddTicks(8506));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
@@ -290,7 +291,7 @@ namespace MeAgendaAi.Data.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("EmployeeService");
+                    b.ToTable("ServiceEmployee");
                 });
 
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.User", b =>
@@ -306,7 +307,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 263, DateTimeKind.Unspecified).AddTicks(643));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
@@ -317,7 +318,7 @@ namespace MeAgendaAi.Data.Migrations
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2020, 9, 26, 20, 23, 59, 263, DateTimeKind.Unspecified).AddTicks(962));
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
                     b.Property<string>("Name")
                         .IsRequired()
