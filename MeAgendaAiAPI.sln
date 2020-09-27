@@ -28,38 +28,27 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		LocalHost-Jean|Any CPU = LocalHost-Jean|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
-		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41E6F3EF-8941-46A8-B309-361E8BAF7AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
-		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28F4BA2C-DC1E-49BB-B1AF-88B54F22DED2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
-		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E987CAC-1BBB-4138-86EF-D4D1DAE1422E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
-		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E80FC3D2-393F-4E4C-BAB9-08945EA997BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C8C39EB8-8188-42AB-B846-6963A8696427}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8C39EB8-8188-42AB-B846-6963A8696427}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8C39EB8-8188-42AB-B846-6963A8696427}.LocalHost-Jean|Any CPU.ActiveCfg = LocalHost-Jean|Any CPU
-		{C8C39EB8-8188-42AB-B846-6963A8696427}.LocalHost-Jean|Any CPU.Build.0 = LocalHost-Jean|Any CPU
 		{C8C39EB8-8188-42AB-B846-6963A8696427}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8C39EB8-8188-42AB-B846-6963A8696427}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
