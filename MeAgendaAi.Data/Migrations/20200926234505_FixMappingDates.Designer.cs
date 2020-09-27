@@ -4,14 +4,16 @@ using MeAgendaAi.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MeAgendaAi.Data.Migrations
 {
     [DbContext(typeof(MeAgendaAiContext))]
-    partial class MeAgendaAiContextModelSnapshot : ModelSnapshot
+    [Migration("20200926234505_FixMappingDates")]
+    partial class FixMappingDates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,6 +126,42 @@ namespace MeAgendaAi.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("MeAgendaAi.Domain.Entities.EmployeeService", b =>
+                {
+                    b.Property<Guid>("EmployeeServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+
+                    b.HasKey("EmployeeServiceId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("EmployeeService");
                 });
 
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.Policy", b =>
@@ -255,42 +293,6 @@ namespace MeAgendaAi.Data.Migrations
                     b.ToTable("Service");
                 });
 
-            modelBuilder.Entity("MeAgendaAi.Domain.Entities.ServiceEmployee", b =>
-                {
-                    b.Property<Guid>("EmployeeServiceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UpdatedBy")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.HasKey("EmployeeServiceId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("ServiceEmployee");
-                });
-
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -367,6 +369,21 @@ namespace MeAgendaAi.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MeAgendaAi.Domain.Entities.EmployeeService", b =>
+                {
+                    b.HasOne("MeAgendaAi.Domain.Entities.Employee", "Employee")
+                        .WithMany("EmployeeServices")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MeAgendaAi.Domain.Entities.Service", "Service")
+                        .WithMany("ServiceEmployees")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.Policy", b =>
                 {
                     b.HasOne("MeAgendaAi.Domain.Entities.Company", "Company")
@@ -402,21 +419,6 @@ namespace MeAgendaAi.Data.Migrations
                     b.HasOne("MeAgendaAi.Domain.Entities.Company", "Company")
                         .WithMany("Services")
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MeAgendaAi.Domain.Entities.ServiceEmployee", b =>
-                {
-                    b.HasOne("MeAgendaAi.Domain.Entities.Employee", "Employee")
-                        .WithMany("EmployeeServices")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MeAgendaAi.Domain.Entities.Service", "Service")
-                        .WithMany("ServiceEmployees")
-                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

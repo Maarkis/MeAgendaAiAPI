@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MeAgendaAi.Domain.Entities
 {
-    public class EmployeeService : BaseEntity
+    public class ServiceEmployee : BaseEntity
     {
         public Guid EmployeeServiceId { get; set; }
         public Guid ServiceId { get; set; }

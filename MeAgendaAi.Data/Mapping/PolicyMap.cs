@@ -25,11 +25,11 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.Property(x => x.CreatedAt)
                .IsRequired()
-               .HasDefaultValue(DateTimeUtil.UtcToBrasilia());
+               .HasDefaultValue(new DateTime(2010, 1, 1));
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValue(DateTimeUtil.UtcToBrasilia());
+                .HasDefaultValue(new DateTime(2010, 1, 1));
 
             builder.Property(x => x.UpdatedBy)
                 .IsRequired()

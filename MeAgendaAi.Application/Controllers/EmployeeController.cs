@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MeAgendaAi.Domain.Interfaces.Services;
-using MeAgendaAi.Service.Interfaces;
-using MeAgendaAi.Service.EpModels.AddClient;
 using System.Net;
+using System.Threading.Tasks;
+using MeAgendaAi.Service.EpModels.AddEmployee;
+using MeAgendaAi.Service.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MeAgendaAi.Application.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsController : ControllerBase
+    public class EmployeeController : Controller
     {
-        private readonly IClientService _clientService;
-        public ClientsController(IClientService clientService)
+        private readonly IEmployeeService _employeeService;
+        public EmployeeController(IEmployeeService employeeService)
         {
-            _clientService = clientService;
+            _employeeService = employeeService;
         }
 
         [HttpPost]
-        [Route("AddClient")]
-        public ActionResult AddClient([FromBody] AddClientEpModel model)
+        [Route("AddEmployee")]
+        public ActionResult AddEmployee([FromBody] AddEmployeeModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -32,7 +30,7 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                var result = _clientService.AddClient(model);
+                var result = _employeeService.AddEmployee(model);
                 return Ok(result);
             }
             catch (ArgumentException e)

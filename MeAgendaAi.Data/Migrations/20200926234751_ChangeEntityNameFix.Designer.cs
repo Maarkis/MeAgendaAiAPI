@@ -4,14 +4,16 @@ using MeAgendaAi.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MeAgendaAi.Data.Migrations
 {
     [DbContext(typeof(MeAgendaAiContext))]
-    partial class MeAgendaAiContextModelSnapshot : ModelSnapshot
+    [Migration("20200926234751_ChangeEntityNameFix")]
+    partial class ChangeEntityNameFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

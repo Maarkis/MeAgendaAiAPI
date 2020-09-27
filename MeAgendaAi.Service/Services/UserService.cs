@@ -1,8 +1,10 @@
 ﻿using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Service.EpModels;
 using MeAgendaAi.Service.EpModels.AddClient;
+using MeAgendaAi.Service.EpModels.AddUser;
 using MeAgendaAi.Service.Validators.AddUser;
 using System;
 using System.Collections.Generic;
@@ -27,6 +29,36 @@ namespace MeAgendaAi.Service.Services
             if (userVal.IsValid)
             {
                 resp = true;
+            }
+
+            return resp;
+        }
+
+        public ResponseModel AddUser(AddUserModel model)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                User newUser = new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Email = model.Email,
+                    Password = model.Password,
+                    Name = model.Name,
+                    CPF = model.CPF,
+                    RG = model.RG,
+                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
+                };
+                _userRepository.Add(newUser);
+
+                resp.Success = true;
+                resp.Result = "Usuário adicionado com sucesso";
+            }
+            catch (Exception)
+            {
+                resp.Result = "Não foi possível adicionar o usuário";
             }
 
             return resp;

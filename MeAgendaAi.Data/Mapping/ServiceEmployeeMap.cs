@@ -8,11 +8,11 @@ using System.Text;
 
 namespace MeAgendaAi.Data.Mapping
 {
-    public class EmployeeServiceMap : IEntityTypeConfiguration<EmployeeService>
+    public class ServiceEmployeeMap : IEntityTypeConfiguration<ServiceEmployee>
     {
-        public void Configure(EntityTypeBuilder<EmployeeService> builder)
+        public void Configure(EntityTypeBuilder<ServiceEmployee> builder)
         {
-            builder.ToTable("EmployeeService");
+            builder.ToTable("ServiceEmployee");
 
             builder.HasKey(x => x.EmployeeServiceId);
 
@@ -28,11 +28,11 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValue(DateTimeUtil.UtcToBrasilia());
+                .HasDefaultValue(new DateTime(2010, 1, 1));
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValue(DateTimeUtil.UtcToBrasilia());
+                .HasDefaultValue(new DateTime(2010, 1, 1));
 
             builder.Property(x => x.UpdatedBy)
                 .IsRequired()

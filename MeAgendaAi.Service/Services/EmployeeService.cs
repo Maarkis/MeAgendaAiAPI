@@ -1,25 +1,25 @@
 ﻿using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Interfaces.Repositories;
+using MeAgendaAi.Domain.Utils;
+using MeAgendaAi.Service.EpModels;
+using MeAgendaAi.Service.EpModels.AddEmployee;
 using MeAgendaAi.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MeAgendaAi.Domain.Interfaces.Repositories;
-using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.AddClient;
-using MeAgendaAi.Domain.Utils;
 
 namespace MeAgendaAi.Service.Services
 {
-    public class ClientService : BaseService<Client>, IClientService
+    public class EmployeeService : BaseService<Employee>, IEmployeeService
     {
-        private IClientRepository _clientRepository;
+        private IEmployeeRepository _employeeRepository;
 
-        public ClientService(IClientRepository userRepository, IClientRepository clientRepository) : base(userRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository) : base(employeeRepository)
         {
-            _clientRepository = clientRepository;
+            _employeeRepository = employeeRepository;
         }
 
-        public ResponseModel AddClient(AddClientEpModel model)
+        public ResponseModel AddEmployee(AddEmployeeModel model)
         {
             var resp = new ResponseModel();
 
@@ -36,21 +36,23 @@ namespace MeAgendaAi.Service.Services
                     CreatedAt = DateTimeUtil.UtcToBrasilia(),
                     LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
                 };
-                Client newClient = new Client
+                Employee newEmployee = new Employee
                 {
-                    ClientId = Guid.NewGuid(),
+                    EmployeeId = Guid.NewGuid(),
+                    CompanyId = Guid.Parse(model.CompanyId),
+                    IsManager = model.IsManager,
                     CreatedAt = DateTimeUtil.UtcToBrasilia(),
                     LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
                     User = newUser
                 };
-                _clientRepository.Add(newClient);
+                _employeeRepository.Add(newEmployee);
 
                 resp.Success = true;
-                resp.Result = "Cliente adicionado com sucesso";
+                resp.Result = "Funcionário adicionado com sucesso";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar o cliente";
+                resp.Result = "Não foi possível adicionar o funcionário";
             }
 
             return resp;

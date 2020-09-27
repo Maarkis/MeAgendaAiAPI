@@ -1,6 +1,7 @@
 ﻿using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Service.EpModels.AddClient;
+using MeAgendaAi.Service.EpModels.AddUser;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -9,10 +10,10 @@ namespace MeAgendaAi.Application.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UsersController(IUserService userService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }
@@ -57,7 +58,7 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpPost]
         [Route("AddUser")]
-        public ActionResult AddUser([FromBody] User user)
+        public ActionResult AddUser([FromBody] AddUserModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -66,8 +67,8 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                _userService.Add(user);
-                return Ok("Adicionado com sucesso!");
+                var resp = _userService.AddUser(model);
+                return Ok(resp);
             }
             catch (ArgumentException e)
             {
