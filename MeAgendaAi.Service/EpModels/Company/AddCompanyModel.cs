@@ -10,5 +10,6 @@ namespace MeAgendaAi.Service.EpModels.Company
         public string CPF { get; set; }
         public string CNPJ { get; set; }
         public string ManagerUserId { get; set; }
+        public int LimitCancelHours { get; set; }
     }
 }

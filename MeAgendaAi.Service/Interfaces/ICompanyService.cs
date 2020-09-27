@@ -11,5 +11,8 @@ namespace MeAgendaAi.Service.Interfaces
     public interface ICompanyService : IBaseService<Company>
     {
         ResponseModel AddCompany(AddCompanyModel model);
+        ResponseModel CreateServiceForCompany(AddServiceModel model);
+        ResponseModel GetCompanyServices(string companyId);
+        ResponseModel UpdatePolicy(UpdatePolicyModel model);
     }
 }

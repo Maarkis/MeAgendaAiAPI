@@ -15,11 +15,17 @@ namespace MeAgendaAi.Service.Services
         private ICompanyRepository _companyRepository;
         private IUserRepository _userRepository;
         private IEmployeeRepository _employeeRepository;
-        public CompanyService(ICompanyRepository companyRepository, IUserRepository userRepository, IEmployeeRepository employeeRepository) : base(companyRepository)
+        private IServiceRepository _serviceRepository;
+        private IPolicyRepository _policyRepository;
+        public CompanyService(ICompanyRepository companyRepository, IUserRepository userRepository,
+            IEmployeeRepository employeeRepository, IServiceRepository serviceRepository,
+            IPolicyRepository policyRepository) : base(companyRepository)
         {
             _companyRepository = companyRepository;
             _userRepository = userRepository;
             _employeeRepository = employeeRepository;
+            _serviceRepository = serviceRepository;
+            _policyRepository = policyRepository;
         }
 
         public ResponseModel AddCompany(AddCompanyModel model)
@@ -35,12 +41,20 @@ namespace MeAgendaAi.Service.Services
                     return resp;
                 }
 
+                Guid companyId = Guid.NewGuid();
+                Policy policy = new Policy
+                {
+                    PolicyId = Guid.NewGuid(),
+                    CompanyId = companyId,
+                    LimitCancelHours = model.LimitCancelHours
+                };
                 Company newCompany = new Company
                 {
-                    CompanyId = Guid.NewGuid(),
+                    CompanyId = companyId,
                     Name = model.Name,
                     CPF = model.CPF,
                     CNPJ = model.CNPJ,
+                    Policy = policy,
                     CreatedAt = DateTimeUtil.UtcToBrasilia(),
                     LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
                 };
@@ -61,6 +75,97 @@ namespace MeAgendaAi.Service.Services
             catch (Exception)
             {
                 resp.Result = "Não foi possível adicionar a empresa";
+            }
+
+            return resp;
+        }
+
+        public ResponseModel CreateServiceForCompany(AddServiceModel model)
+        {
+            var resp = new ResponseModel();
+            try
+            {
+                var company = _companyRepository.GetById(Guid.Parse(model.CompanyId));
+                if (company == null)
+                {
+                    resp.Result = "Não foi possível encontrar a empresa";
+                    return resp;
+                }
+
+                Domain.Entities.Service service = new Domain.Entities.Service
+                {
+                    ServiceId = Guid.NewGuid(),
+                    CompanyId = company.CompanyId,
+                    Name = model.Name,
+                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
+                };
+                _serviceRepository.Add(service);
+
+                resp.Success = true;
+                resp.Result = "Serviço adicionado à empresa com sucesso";
+            }
+            catch (Exception)
+            {
+                resp.Result = "Não foi possível adicionar o serviço";
+            }
+
+            return resp;
+        }
+
+        public ResponseModel GetCompanyServices(string companyId)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                var services = _serviceRepository.GetServicesByCompanyId(Guid.Parse(companyId));
+                List<GetCompanyServicesModel> companyServices = new List<GetCompanyServicesModel>();
+                services.ForEach(service => {
+                    GetCompanyServicesModel companyService = new GetCompanyServicesModel
+                    {
+                        ServiceId = service.ServiceId.ToString(),
+                        Name = service.Name
+                    };
+                    companyServices.Add(companyService);
+                });
+                resp.Success = true;
+                resp.Result = companyServices;
+            }
+            catch (Exception)
+            {
+                resp.Result = "Não foi possível selecionar os serviços da empresa";
+            }
+
+            return resp;
+        }
+
+        public ResponseModel UpdatePolicy(UpdatePolicyModel model)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                var company = _companyRepository.GetCompanyWithPolicyById(Guid.Parse(model.CompanyId));
+                if(company == null)
+                {
+                    resp.Result = "Não foi posível encontrar a empresa ou a política requisitadas";
+                    return resp;
+                }
+
+                Policy policy = company.Policy;
+                policy.LimitCancelHours = model.LimitCancelHours;
+                policy.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
+
+                _policyRepository.Edit(policy);
+
+                resp.Success = true;
+                resp.Result = "Atualizado com sucesso";
+                return resp;
+            }
+            catch (Exception)
+            {
+                resp.Result = "Não foi possível selecionar os serviços da empresa";
             }
 
             return resp;

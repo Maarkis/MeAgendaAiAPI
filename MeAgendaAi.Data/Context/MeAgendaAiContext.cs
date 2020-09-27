@@ -31,7 +31,7 @@ namespace MeAgendaAi.Data.Context
         public DbSet<Client> Clients { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Employee> Employees { get; set; }
-        public DbSet<ServiceEmployee> EmployeeServices { get; set; }
+        public DbSet<ServiceEmployee> ServiceEmployees { get; set; }
         public DbSet<Policy> Policies { get; set; }
         public DbSet<Scheduling> Schedulings { get; set; }
         public DbSet<Service> Services { get; set; }

@@ -5,8 +5,7 @@ using System.Text;
 
 namespace MeAgendaAi.Domain.Interfaces.Repositories
 {
-    public interface ICompanyRepository : IBaseRepository<Company>
+    public interface IPolicyRepository : IBaseRepository<Policy>
     {
-        Company GetCompanyWithPolicyById(Guid companyId);
     }
 }
