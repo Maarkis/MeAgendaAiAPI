@@ -59,7 +59,7 @@ namespace MeAgendaAi.Application.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("GetServicesFromCompany/{companyId}")]
         public ActionResult GetServicesFromCompany(string companyId)
         {

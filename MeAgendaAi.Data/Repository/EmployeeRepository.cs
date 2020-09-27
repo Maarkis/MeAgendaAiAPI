@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace MeAgendaAi.Data.Repository
@@ -15,6 +16,13 @@ namespace MeAgendaAi.Data.Repository
         public EmployeeRepository(MeAgendaAiContext context, IConfiguration configuration) : base(context, configuration)
         {
             _employees = context.Employees;
+        }
+
+        public List<Service> GetEmployeeServicesByEmployeeId(Guid employeeId)
+        {
+            return _employees.Where(x => x.EmployeeId == employeeId)
+                .SelectMany(y => y.EmployeeServices)
+                .Select(y => y.Service).ToList();
         }
     }
 }

@@ -2,6 +2,7 @@
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Service.EpModels;
+using MeAgendaAi.Service.EpModels.Company;
 using MeAgendaAi.Service.EpModels.Employee;
 using MeAgendaAi.Service.Interfaces;
 using System;
@@ -13,10 +14,12 @@ namespace MeAgendaAi.Service.Services
     public class EmployeeService : BaseService<Employee>, IEmployeeService
     {
         private IEmployeeRepository _employeeRepository;
+        private IServiceEmployeeRepository _serviceEmployeeRepository;
 
-        public EmployeeService(IEmployeeRepository employeeRepository) : base(employeeRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository, IServiceEmployeeRepository serviceEmployeeRepository) : base(employeeRepository)
         {
             _employeeRepository = employeeRepository;
+            _serviceEmployeeRepository = serviceEmployeeRepository;
         }
 
         public ResponseModel AddEmployee(AddEmployeeModel model)
@@ -53,6 +56,59 @@ namespace MeAgendaAi.Service.Services
             catch (Exception)
             {
                 resp.Result = "Não foi possível adicionar o funcionário";
+            }
+
+            return resp;
+        }
+
+        public ResponseModel AddServiceToEmployee(AddServiceToEmployeeModel model)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                ServiceEmployee serviceEmployee = new ServiceEmployee
+                {
+                    EmployeeServiceId = Guid.NewGuid(),
+                    ServiceId = Guid.Parse(model.ServiceId),
+                    EmployeeId = Guid.Parse(model.EmployeeId),
+                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
+                };
+                _serviceEmployeeRepository.Add(serviceEmployee);
+                resp.Success = true;
+                resp.Result = "Serviço adicionado ao funcionário com sucesso";
+            }
+            catch (Exception)
+            {
+                resp.Result = "Não foi possível adicionar o serviço ao funcionário";
+            }
+
+            return resp;
+        }
+
+        public ResponseModel GetEmployeeServices(string employeeId)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                List<Domain.Entities.Service> services = _employeeRepository.GetEmployeeServicesByEmployeeId(Guid.Parse(employeeId));
+                List<GetCompanyServicesModel> servicesEmployee = new List<GetCompanyServicesModel>();
+                services.ForEach(service => {
+                    GetCompanyServicesModel serviceEmployee = new GetCompanyServicesModel
+                    {
+                        ServiceId = service.ServiceId.ToString(),
+                        Name = service.Name
+                    };
+                    servicesEmployee.Add(serviceEmployee);
+                });
+                resp.Success = true;
+                resp.Result = servicesEmployee;
+            }
+            catch (Exception)
+            {
+                resp.Result = "Não foi possível adicionar o serviço ao funcionário";
             }
 
             return resp;

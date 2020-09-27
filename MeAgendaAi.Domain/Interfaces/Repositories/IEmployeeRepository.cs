@@ -7,5 +7,6 @@ namespace MeAgendaAi.Domain.Interfaces.Repositories
 {
     public interface IEmployeeRepository : IBaseRepository<Employee>
     {
+        List<Service> GetEmployeeServicesByEmployeeId(Guid employeeId);
     }
 }
