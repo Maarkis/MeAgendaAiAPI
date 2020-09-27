@@ -79,6 +79,26 @@ namespace MeAgendaAi.Application.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetCompanyComplete/{companyId}")]
+        public ActionResult GetCompanyComplete(string companyId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _companyService.GetCompanyComplete(companyId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
         [HttpPost]
         [Route("UpdateCompanyPolicy")]
         public ActionResult UpdateCompanyPolicy(UpdatePolicyModel model)

@@ -14,5 +14,6 @@ namespace MeAgendaAi.Service.Interfaces
         ResponseModel CreateServiceForCompany(AddServiceModel model);
         ResponseModel GetCompanyServices(string companyId);
         ResponseModel UpdatePolicy(UpdatePolicyModel model);
+        ResponseModel GetCompanyComplete(string companyId);
     }
 }
