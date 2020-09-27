@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.AddClient;
+using MeAgendaAi.Service.EpModels.Client;
 using MeAgendaAi.Domain.Utils;
 
 namespace MeAgendaAi.Service.Services

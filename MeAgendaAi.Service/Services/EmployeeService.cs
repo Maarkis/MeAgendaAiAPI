@@ -2,7 +2,7 @@
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.AddEmployee;
+using MeAgendaAi.Service.EpModels.Employee;
 using MeAgendaAi.Service.Interfaces;
 using System;
 using System.Collections.Generic;

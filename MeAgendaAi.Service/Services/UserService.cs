@@ -3,9 +3,8 @@ using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.AddClient;
-using MeAgendaAi.Service.EpModels.AddUser;
-using MeAgendaAi.Service.Validators.AddUser;
+using MeAgendaAi.Service.EpModels.User;
+using MeAgendaAi.Service.Validators.User;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,7 +21,7 @@ namespace MeAgendaAi.Service.Services
             _clientRepository = clientRepository;
         }
 
-        public bool ValidateUser(User user)
+        public bool ValidateUser(AddUserModel user)
         {
             bool resp = false;
             var userVal = new AddUserModelValidator().Validate(user);

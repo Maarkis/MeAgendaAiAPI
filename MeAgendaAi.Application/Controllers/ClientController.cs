@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Service.Interfaces;
-using MeAgendaAi.Service.EpModels.AddClient;
 using System.Net;
+using MeAgendaAi.Service.EpModels.Client;
 
 namespace MeAgendaAi.Application.Controllers
 {

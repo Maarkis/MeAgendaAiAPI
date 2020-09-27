@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Service.EpModels.AddUser
+namespace MeAgendaAi.Service.EpModels.Client
 {
-    public class AddUserModel
+    public class AddClientEpModel
     {
         public string Email { get; set; }
         public string Password { get; set; }

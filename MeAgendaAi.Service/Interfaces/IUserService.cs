@@ -1,6 +1,6 @@
 ﻿using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.AddUser;
+using MeAgendaAi.Service.EpModels.User;
 using System;
 using System.Collections.Generic;
 using System.Text;

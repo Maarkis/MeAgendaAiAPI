@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using MeAgendaAi.Service.EpModels.AddEmployee;
+using MeAgendaAi.Service.EpModels.Employee;
 using MeAgendaAi.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
