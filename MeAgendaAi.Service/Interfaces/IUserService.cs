@@ -10,5 +10,6 @@ namespace MeAgendaAi.Domain.Interfaces.Services
     public interface IUserService : IBaseService<User>
     {
         ResponseModel AddUser(AddUserModel model);
+        ResponseModel LoginMock();
     }
 }

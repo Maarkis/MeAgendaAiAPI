@@ -62,5 +62,24 @@ namespace MeAgendaAi.Service.Services
 
             return resp;
         }
+
+        public ResponseModel LoginMock()
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                Guid id = Guid.Parse("D0605249-9E36-4551-A01F-C7D5D52B9A58");
+                var user = _userRepository.GetById(id);
+                resp.Success = true;
+                resp.Result = user;
+            }
+            catch (Exception)
+            {
+                resp.Result = "Não foi possível encontrar o usuário";
+            }
+
+            return resp;
+        }
     }
 }

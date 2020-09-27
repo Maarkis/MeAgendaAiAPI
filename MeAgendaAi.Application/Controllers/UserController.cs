@@ -18,6 +18,25 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [Route("LoginMock")]
+        public ActionResult LoginMock()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                return Ok(_userService.LoginMock());
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
         [Route("GetAll")]
         public ActionResult GetAll()
         {
