@@ -21,6 +21,7 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
             serviceCollection.AddScoped<IClientService, ClientService>();
             serviceCollection.AddScoped<IEmployeeService, EmployeeService>();
             serviceCollection.AddScoped<ICompanyService, CompanyService>();
+            serviceCollection.AddScoped<ISchedulingService, SchedulingService>();
         }
     }
 }

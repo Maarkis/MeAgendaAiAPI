@@ -33,7 +33,11 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.Property(x => x.EndTime);
 
-            builder.Property(x => x.Status).HasDefaultValue(SchedulingStatus.Scheduled);
+            builder.Property(x => x.Status)
+                .HasDefaultValue(SchedulingStatus.Scheduled)
+                .HasConversion(
+                    x => x.ToString(),
+                    x => (SchedulingStatus)Enum.Parse(typeof(SchedulingStatus), x));
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()

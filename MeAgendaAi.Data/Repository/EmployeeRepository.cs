@@ -18,6 +18,10 @@ namespace MeAgendaAi.Data.Repository
             _employees = context.Employees;
         }
 
+        public Employee GetEmployeeByUserId(Guid userId)
+        {
+            return _employees.Where(x => x.UserId == userId).FirstOrDefault();
+        }
         public List<Service> GetEmployeeServicesByEmployeeId(Guid employeeId)
         {
             return _employees.Where(x => x.EmployeeId == employeeId)
