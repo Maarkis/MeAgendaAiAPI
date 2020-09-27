@@ -66,8 +66,14 @@ namespace MeAgendaAi.Service.Services
                 };
                 _schedulingRepository.Add(newScheduling);
 
+                Scheduling scheduling = _schedulingRepository.GetSchedulingByIdComplete(newScheduling.SchedulingId);
+                if(scheduling == null)
+                {
+                    resp.Result = "Falha ao realizar o agendamento";
+                    return resp;
+                }
                 resp.Success = true;
-                resp.Result = "Agendamento adicionado com sucesso";
+                resp.Result = SchedulingToGetSchedulingModel(scheduling);
             }
             catch (Exception)
             {
@@ -131,21 +137,27 @@ namespace MeAgendaAi.Service.Services
             List<GetSchedulingsModel> listGetSchedulingModel = new List<GetSchedulingsModel>();
 
             schedulings.ForEach(scheduling => {
-                GetSchedulingsModel model = new GetSchedulingsModel
-                {
-                    SchedulingId = scheduling.SchedulingId.ToString(),
-                    ClientName = scheduling.Client.User.Name,
-                    EmployeeName = scheduling.Employee.User.Name,
-                    CompanyName = scheduling.Employee.Company.Name,
-                    Service = scheduling.Service.Name,
-                    StartTime = scheduling.StartTime.ToString(),
-                    EndTime = scheduling.EndTime.ToString(),
-                    Status = (int)scheduling.Status
-                };
+                GetSchedulingsModel model = SchedulingToGetSchedulingModel(scheduling);
                 listGetSchedulingModel.Add(model);
             });
 
             return listGetSchedulingModel;
+        }
+
+        private GetSchedulingsModel SchedulingToGetSchedulingModel(Scheduling scheduling)
+        {
+            GetSchedulingsModel model = new GetSchedulingsModel
+            {
+                SchedulingId = scheduling.SchedulingId.ToString(),
+                ClientName = scheduling.Client.User.Name,
+                EmployeeName = scheduling.Employee.User.Name,
+                CompanyName = scheduling.Employee.Company.Name,
+                Service = scheduling.Service.Name,
+                StartTime = scheduling.StartTime.ToString(),
+                EndTime = scheduling.EndTime.ToString(),
+                Status = (int)scheduling.Status
+            };
+            return model;
         }
 
         public ResponseModel UpdateSchedulingStatus(UpdateSchedulingStatusModel model)

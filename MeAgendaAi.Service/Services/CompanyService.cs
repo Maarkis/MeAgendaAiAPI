@@ -170,5 +170,66 @@ namespace MeAgendaAi.Service.Services
 
             return resp;
         }
+
+        public ResponseModel GetCompanyComplete(string companyId)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                Company companyComplete = _companyRepository.GetCompanyByIdComplete(Guid.Parse(companyId));
+
+                List<GetCompanyByIdCompleteServiceModel> companyServices = new List<GetCompanyByIdCompleteServiceModel>();
+                companyComplete.Services.ForEach(service => {
+                    GetCompanyByIdCompleteServiceModel companyService = new GetCompanyByIdCompleteServiceModel
+                    {
+                        ServiceId = service.ServiceId,
+                        ServiceName = service.Name,
+                        ServiceDuration = service.DurationMinutes
+                    };
+                    companyServices.Add(companyService);
+                });
+
+                List<GetCompanyByIdCompleteEmployeeModel> companyEmployees = new List<GetCompanyByIdCompleteEmployeeModel>();
+                companyComplete.Employees.ForEach(employee => {
+
+                    List<GetCompanyByIdCompleteServiceModel> employeeServices = new List<GetCompanyByIdCompleteServiceModel>();
+                    employee.EmployeeServices.ForEach(eService => {
+                        GetCompanyByIdCompleteServiceModel employeeService = new GetCompanyByIdCompleteServiceModel {
+                            ServiceId = eService.Service.ServiceId,
+                            ServiceDuration = eService.Service.DurationMinutes,
+                            ServiceName = eService.Service.Name
+                        };
+                        employeeServices.Add(employeeService);
+                    });
+
+                    GetCompanyByIdCompleteEmployeeModel companyEmployee = new GetCompanyByIdCompleteEmployeeModel { 
+                        EmployeeId = employee.EmployeeId,
+                        EmplyeeName = employee.User.Name,
+                        IsManager = employee.IsManager,
+                        EmployeeServices = employeeServices
+                    };
+                    companyEmployees.Add(companyEmployee);
+                });
+
+                GetCompanyByIdCompleteModel model = new GetCompanyByIdCompleteModel { 
+                    CompanyId = companyComplete.CompanyId,
+                    CompanyName = companyComplete.Name,
+                    LimitCancelHours = companyComplete.Policy.LimitCancelHours,
+                    CPF = companyComplete.CPF,
+                    CNPJ = companyComplete.CNPJ,
+                    CompanyServices = companyServices,
+                    Employees = companyEmployees
+                };
+                resp.Success = true;
+                resp.Result = model;
+            }
+            catch (Exception)
+            {
+                resp.Result = "Não foi possível selecionar os serviços da empresa";
+            }
+
+            return resp;
+        }
     }
 }

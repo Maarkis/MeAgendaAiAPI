@@ -21,5 +21,18 @@ namespace MeAgendaAi.Data.Repository
         public Company GetCompanyWithPolicyById(Guid companyId) {
             return _companies.Where(x => x.CompanyId == companyId).Include(x => x.Policy).FirstOrDefault();
         }
+
+        public Company GetCompanyByIdComplete(Guid companyId)
+        {
+            return _companies.Where(x => x.CompanyId == companyId)
+                .Include(x => x.Policy)
+                .Include(x => x.Employees)
+                    .ThenInclude(y => y.User)
+                .Include(x => x.Employees)
+                    .ThenInclude(y => y.EmployeeServices)
+                    .ThenInclude(z => z.Service)
+                .Include(x => x.Services)
+                .FirstOrDefault();
+        }
     }
 }
