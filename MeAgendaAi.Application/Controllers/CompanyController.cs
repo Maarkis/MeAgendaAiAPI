@@ -80,7 +80,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Route("GetCompanyComplete/{companyId}")]
+        [Route("GetCompanyComplete")]
         public ActionResult GetCompanyComplete(string companyId)
         {
             if (!ModelState.IsValid)

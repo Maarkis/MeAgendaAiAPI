@@ -41,7 +41,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Route("GetClientSchedulingsByUserId/{userId}")]
+        [Route("GetClientSchedulingsByUserId")]
         public ActionResult GetClientSchedulingsByUserId(string userId)
         {
             if (!ModelState.IsValid)
