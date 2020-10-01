@@ -28,6 +28,7 @@ namespace MeAgendaAi.Data.Repository
                 .Include(x => x.Employee)
                 .ThenInclude(x => x.Company)
                 .Include(x => x.Service)
+                .OrderBy(x => x.StartTime)
                 .ToList();
         }
 
@@ -41,6 +42,7 @@ namespace MeAgendaAi.Data.Repository
                 .Include(x => x.Employee)
                 .ThenInclude(x => x.Company)
                 .Include(x => x.Service)
+                .OrderBy(x => x.StartTime)
                 .ToList();
         }
 
