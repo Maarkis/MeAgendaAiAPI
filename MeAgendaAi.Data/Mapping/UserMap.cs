@@ -33,6 +33,10 @@ namespace MeAgendaAi.Data.Mapping
             builder.Property(x => x.RG)
                 .IsRequired();
 
+            //Roles
+            //builder.Property(x => x.Roles)
+            //    .IsRequired();                
+
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
                 .HasDefaultValue(new DateTime(2010, 1, 1));
@@ -44,6 +48,8 @@ namespace MeAgendaAi.Data.Mapping
             builder.Property(x => x.UpdatedBy)
                 .IsRequired()
                 .HasDefaultValue(new Guid());
+
+            
         }
     }
 }

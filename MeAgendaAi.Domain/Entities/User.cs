@@ -13,5 +13,7 @@ namespace MeAgendaAi.Domain.Entities
         public string Image { get; set; }
         public string CPF { get; set; }
         public string RG { get; set; }
+
+        //public string Roles { get; set; }
     }
 }

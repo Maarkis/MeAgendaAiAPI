@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Collections.Generic;
 
 namespace MeAgendaAi.Application
 {
@@ -25,6 +26,11 @@ namespace MeAgendaAi.Application
 
             ConfigureRepository.ConfigureDependenciesService(services, connectionString);
             ConfigureService.ConfigureDependenciesService(services);
+
+
+            // Configuration JTW
+            ConfigureJwt.ConfigureDependenciesJwt(services, Configuration);
+            // End Configuration JTW
 
             services.AddControllers();
 
@@ -48,6 +54,27 @@ namespace MeAgendaAi.Application
                         Url = new Uri("https://example.com/license"),
                     }
                 });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Token JWT",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        }, new List<string>()
+                    }
+                });
             });
         }
 
@@ -69,8 +96,9 @@ namespace MeAgendaAi.Application
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Me Agenda Ai API - v1");
             });
-            app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseRouting();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
