@@ -13,5 +13,6 @@ namespace MeAgendaAi.Domain.Entities
         public virtual List<Employee> Employees { get; set; }
         public virtual List<Services> Services { get; set; }
         public virtual Policy Policy { get; set; }
+        public virtual List<Location> Locations { get; set; }
     }
 }

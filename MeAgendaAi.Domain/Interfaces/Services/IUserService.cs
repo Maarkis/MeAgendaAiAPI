@@ -7,7 +7,7 @@ namespace MeAgendaAi.Domain.Interfaces
 {
     public interface IUserService : IBaseService<User>
     {
-        ResponseModel AddUser(AddUserModel model);
+        ResponseModel CreateUserFromModel(AddUserModel model);
         ResponseModel Login(LoginModel model);
     }
 }

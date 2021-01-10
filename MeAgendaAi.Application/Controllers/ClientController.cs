@@ -1,5 +1,5 @@
 ﻿using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.EpModels.Client;
+using MeAgendaAi.Domain.EpModels.User;
 using MeAgendaAi.Domain.EpModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,7 +19,7 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpPost]
         [Route("AddClient")]
-        public ActionResult AddClient([FromBody] AddClientEpModel model)
+        public ActionResult AddClient([FromBody] AddUserModel model)
         {
             if (!ModelState.IsValid)
             {

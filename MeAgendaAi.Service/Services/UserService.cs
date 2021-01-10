@@ -8,11 +8,16 @@ using MeAgendaAi.Domain.Validators.User;
 using MeAgendaAi.JWT;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.User;
+using MeAgendaAi.Domain.EpModels.Location;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
+using System.Collections.Generic;
+using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.Validators.Location;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -20,56 +25,70 @@ namespace MeAgendaAi.Service.Services
     {
         private IUserRepository _userRepository;
         private IClientRepository _clientRepository;
+        private ILocationService _locationService;
 
         private readonly SigningConfiguration _signingConfiguration;
         private readonly TokenConfiguration _tokenConfiguration;
 
         public UserService(
             IUserRepository userRepository,
-            IClientRepository clientRepository, 
+            IClientRepository clientRepository,
             SigningConfiguration signingConfiguration,
-            TokenConfiguration tokenConfiguration) : base(userRepository)
+            TokenConfiguration tokenConfiguration,
+            ILocationService locationService) : base(userRepository)
         {
             _userRepository = userRepository;
             _clientRepository = clientRepository;
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
+            _locationService = locationService;
         }
 
-        public bool ValidateUser(AddUserModel user)
-        {
-            bool resp = false;
-            ValidationResult userVal = new AddUserModelValidator().Validate(user);
-            if (userVal.IsValid)
-            {
-                resp = true;
-            }
-
-            return resp;
-        }
-
-        public ResponseModel AddUser(AddUserModel model)
+        public ResponseModel CreateUserFromModel(AddUserModel model)
         {
             var resp = new ResponseModel();
 
             try
             {
-                Guid userId = Guid.NewGuid();
-                User newUser = new User
+                // validate user
+                var validateUser = new AddUserModelValidator().Validate(model);
+                if (validateUser.IsValid)
                 {
-                    UserId = userId,
-                    Email = model.Email,
-                    Password = Encrypt.EncryptString(model.Password, userId.ToString()),
-                    Name = model.Name,
-                    CPF = model.CPF,
-                    RG = model.RG,
-                    CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia()
-                };
-                _userRepository.Add(newUser);
 
-                resp.Success = true;
-                resp.Result = "Usuário adicionado com sucesso";
+                    if(model.Locations.Count > 0)
+                    {
+                        var validLocations = _locationService.ValidateAddLocations(model.Locations);
+                        if (!validLocations.Success)
+                        {
+                            return validLocations;
+                        }
+                    }
+
+                    Guid userId = Guid.NewGuid();
+
+                    User newUser = new User
+                    {
+                        UserId = userId,
+                        Email = model.Email,
+                        Password = Encrypt.EncryptString(model.Password, userId.ToString()),
+                        Name = model.Name,
+                        CPF = model.CPF,
+                        RG = model.RG,
+                        Locations = _locationService.CreateLocationsFromModel(model.Locations, userId, null),
+                        CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                        LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia()
+                    };
+                    //_userRepository.Add(newUser);
+
+                    resp.Success = true;
+                    resp.Result = newUser;
+                }
+                else
+                {
+                    resp.Result = validateUser.Errors.FirstOrDefault().ToString();
+                }
+
+                return resp;
             }
             catch (Exception e)
             {
@@ -79,6 +98,7 @@ namespace MeAgendaAi.Service.Services
             return resp;
         }
 
+        
         public ResponseModel Login(LoginModel model)
         {
             var resp = new ResponseModel();
