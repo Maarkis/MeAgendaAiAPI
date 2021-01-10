@@ -1,5 +1,6 @@
 ﻿using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Service.EpModels.Client;
+using MeAgendaAi.Domain.EpModels.Client;
+using MeAgendaAi.Domain.EpModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;

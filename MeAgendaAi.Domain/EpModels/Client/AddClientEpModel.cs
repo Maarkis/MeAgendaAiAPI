@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Service.EpModels.Client
+namespace MeAgendaAi.Domain.EpModels.Client
 {
     public class AddClientEpModel
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Service.EpModels.Scheduling
+namespace MeAgendaAi.Domain.EpModels.Scheduling
 {
     public class CreateSchedulingModel
     {

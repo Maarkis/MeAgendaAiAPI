@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using MeAgendaAi.Service.EpModels.User;
+using MeAgendaAi.Domain.EpModels.User;
 
 namespace MeAgendaAi.Domain.Validators.User
 {

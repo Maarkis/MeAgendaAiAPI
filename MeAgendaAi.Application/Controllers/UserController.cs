@@ -1,5 +1,5 @@
 ﻿using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Service.EpModels.User;
+using MeAgendaAi.Domain.EpModels.User;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -16,24 +16,24 @@ namespace MeAgendaAi.Application.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
-        [Route("LoginMock")]
-        public ActionResult LoginMock()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpGet]
+        //[Route("LoginMock")]
+        //public ActionResult LoginMock()
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            try
-            {
-                return Ok(_userService.LoginMock());
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
-        }
+        //    try
+        //    {
+        //        return Ok(_userService.Login());
+        //    }
+        //    catch (ArgumentException e)
+        //    {
+        //        return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+        //    }
+        //}
 
         [HttpGet]
         [Route("GetAll")]

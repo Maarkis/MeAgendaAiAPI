@@ -1,7 +1,7 @@
 ﻿using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces.Services;
-using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.Employee;
+using MeAgendaAi.Domain.EpModels;
+using MeAgendaAi.Domain.EpModels.Employee;
 using System;
 using System.Collections.Generic;
 using System.Text;

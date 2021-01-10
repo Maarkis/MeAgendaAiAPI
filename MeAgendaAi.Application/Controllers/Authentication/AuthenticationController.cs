@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using MeAgendaAi.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using MeAgendaAi.Domain.EpModels.User;
+using MeAgendaAi.Domain.EpModels;
 using System.Threading.Tasks;
 
 namespace MeAgendaAi.Application.Controllers.Authentication
@@ -13,23 +16,25 @@ namespace MeAgendaAi.Application.Controllers.Authentication
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        public AuthenticationController()
+        private readonly IUserService _userService;
+        public AuthenticationController(IUserService userService)
         {
-
+            _userService = userService;
         }
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<object> Login()
+        //public async Task<object> Login()
+        public ActionResult Login(LoginModel model)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
             try
             {
-                return Ok();
+                return Ok(_userService.Login(model));
             }
             catch (ArgumentException e)
             {

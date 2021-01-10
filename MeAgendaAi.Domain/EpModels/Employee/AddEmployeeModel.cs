@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Service.EpModels.Employee
+namespace MeAgendaAi.Domain.EpModels.Employee
 {
     public class AddEmployeeModel
     {

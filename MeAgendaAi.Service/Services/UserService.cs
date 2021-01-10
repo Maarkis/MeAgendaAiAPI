@@ -6,8 +6,8 @@ using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Security;
 using MeAgendaAi.Domain.Validators.User;
 using MeAgendaAi.JWT;
-using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.User;
+using MeAgendaAi.Domain.EpModels;
+using MeAgendaAi.Domain.EpModels.User;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -79,17 +79,15 @@ namespace MeAgendaAi.Service.Services
             return resp;
         }
 
-        public ResponseModel LoginMock()
+        public ResponseModel Login(LoginModel model)
         {
             var resp = new ResponseModel();
 
             try
             {
-                Guid id = Guid.Parse("B088CC36-569D-409F-AEC5-A352B758F90E");
-                User user = _userRepository.GetById(id);
+                User user = _userRepository.GetByEmail(model.Email);
 
-
-                if(!ValidatePassword("Jean74172022*4996.", user))
+                if(!ValidatePassword(model.Senha, user))
                 {
                     resp.Success = false;
                     resp.Result = "Senha inválida";

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Service.EpModels.User
+namespace MeAgendaAi.Domain.EpModels.User
 {
     public class AddUserModel
     {

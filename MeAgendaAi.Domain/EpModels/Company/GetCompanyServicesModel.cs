@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Service.EpModels.Company
+namespace MeAgendaAi.Domain.EpModels.Company
 {
     public class GetCompanyServicesModel
     {

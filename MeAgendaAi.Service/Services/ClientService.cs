@@ -2,8 +2,8 @@
 using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Utils;
-using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.Client;
+using MeAgendaAi.Domain.EpModels;
+using MeAgendaAi.Domain.EpModels.Client;
 using System;
 
 namespace MeAgendaAi.Service.Services
