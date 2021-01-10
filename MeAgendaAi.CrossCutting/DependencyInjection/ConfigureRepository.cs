@@ -24,6 +24,7 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
             serviceCollection.AddScoped<IServiceEmployeeRepository, ServiceEmployeeRepository>();
             serviceCollection.AddScoped<IPolicyRepository, PolicyRepository>();
             serviceCollection.AddScoped<ISchedulingRepository, SchedulingRepository>();
+            serviceCollection.AddScoped<ILocationRepository, LocationRepository>();
         }
     }
 }

@@ -3,6 +3,7 @@ using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +16,11 @@ namespace MeAgendaAi.Data.Repository
         public UserRepository(MeAgendaAiContext context, IConfiguration configuration) : base(context, configuration)
         {
             _users = context.Users;
+        }
+
+        public User GetByEmail(string email)
+        {
+            return _users.Where(x => x.Email == email).Include(x => x.Roles).FirstOrDefault();
         }
     }
 }

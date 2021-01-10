@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Service.EpModels
+namespace MeAgendaAi.Domain.EpModels
 {
     public class ResponseModel
     {

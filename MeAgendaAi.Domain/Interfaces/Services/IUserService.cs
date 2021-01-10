@@ -1,13 +1,15 @@
 ﻿using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces.Services;
-using MeAgendaAi.Service.EpModels;
-using MeAgendaAi.Service.EpModels.User;
+using MeAgendaAi.Domain.EpModels.User;
+using MeAgendaAi.Domain.EpModels;
+using System.Collections.Generic;
+using MeAgendaAi.Domain.Enums;
 
 namespace MeAgendaAi.Domain.Interfaces
 {
     public interface IUserService : IBaseService<User>
     {
-        ResponseModel AddUser(AddUserModel model);
-        ResponseModel LoginMock();
+        ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles);
+        ResponseModel Login(LoginModel model);
     }
 }
