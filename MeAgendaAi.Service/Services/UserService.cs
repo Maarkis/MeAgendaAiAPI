@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Domain.Validators.Location;
 using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.Validators.Authentication;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -122,28 +123,45 @@ namespace MeAgendaAi.Service.Services
         
         public ResponseModel Login(LoginModel model)
         {
-            var resp = new ResponseModel();
 
-            try
+
+            ResponseModel resp = new ResponseModel();
+
+            ValidationResult validateLogin = new AuthenticationModelValidator().Validate(model);
+            if (validateLogin.IsValid)
             {
-                User user = _userRepository.GetByEmail(model.Email);
-
-                if(!ValidatePassword(model.Senha, user))
+                try
                 {
-                    resp.Success = false;
-                    resp.Result = "Senha inválida";
+                    User user = _userRepository.GetByEmail(model.Email);
+                    if(user != null)
+                    {
 
-                    return resp;
+                        if (!ValidatePassword(model.Senha, user))
+                        {
+                            resp.Success = false;
+                            resp.Result = "Senha inválida";
+
+                            return resp;
+                        }
+
+                        resp.Success = true;
+                        resp.Result = JWTService.GenerateToken(user, _signingConfiguration, _tokenConfiguration);
+                    }
+                    else
+                    {
+                        resp.Result = "Usuário não cadastrado";
+                    }
+
                 }
-
-                resp.Success = true;
-                resp.Result = JWTService.GenerateToken(user, _signingConfiguration, _tokenConfiguration); 
+                catch (Exception)
+                {
+                    resp.Result = "Não foi possível encontrar o usuário";
+                }
             }
-            catch (Exception)
+            else
             {
-                resp.Result = "Não foi possível encontrar o usuário";
+                resp.Result = validateLogin.Errors.FirstOrDefault().ErrorMessage;
             }
-
             return resp;
         }
 

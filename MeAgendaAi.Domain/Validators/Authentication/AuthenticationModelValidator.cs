@@ -4,7 +4,7 @@ using MeAgendaAi.Domain.Interfaces.Repositories;
 
 namespace MeAgendaAi.Domain.Validators.Authentication
 {
-    class AuthenticationModelValidator : AbstractValidator<LoginModel>
+    public class AuthenticationModelValidator : AbstractValidator<LoginModel>
     {
         public AuthenticationModelValidator()
         {
