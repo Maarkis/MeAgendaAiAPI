@@ -20,7 +20,7 @@ namespace MeAgendaAi.Data.Repository
 
         public User GetByEmail(string email)
         {
-            return _users.Where(x => x.Email == email).FirstOrDefault();
+            return _users.Where(x => x.Email == email).Include(x => x.Roles).FirstOrDefault();
         }
     }
 }

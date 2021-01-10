@@ -27,6 +27,7 @@ namespace MeAgendaAi.Data.Context
             modelBuilder.Entity<Services>(new ServiceMap().Configure);
             modelBuilder.Entity<User>(new UserMap().Configure);
             modelBuilder.Entity<Location>(new LocationMap().Configure);
+            modelBuilder.Entity<UserRole>(new UserRoleMap().Configure);
         }
 
         public DbSet<Client> Clients { get; set; }

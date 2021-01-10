@@ -22,14 +22,21 @@ namespace MeAgendaAi.JWT
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
 
-            ClaimsIdentity identity = new ClaimsIdentity(
-              new GenericIdentity(user.Email),
-              new[]{
+
+            var claims = new List<Claim> {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
                     new Claim(ClaimTypes.Name, user.Name),
-                    new Claim(ClaimTypes.Role, "Admin")
-              });
+            };
+
+            user.Roles.ForEach(role =>
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.Role.ToString()));
+            });
+
+            ClaimsIdentity identity = new ClaimsIdentity(
+              new GenericIdentity(user.Email),
+              claims);
 
             DateTime createDate = DateTime.Now;
             DateTime expirationDate = createDate + TimeSpan.FromSeconds(Convert.ToDouble(_tokenConfiguration.Seconds));

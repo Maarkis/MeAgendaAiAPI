@@ -5,6 +5,8 @@ using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.User;
 using System;
+using System.Collections.Generic;
+using MeAgendaAi.Domain.Enums;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -26,7 +28,9 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                var userResponse = _userService.CreateUserFromModel(model);
+                List<Roles> roles = new List<Roles>();
+                roles.Add(Roles.Cliente);
+                var userResponse = _userService.CreateUserFromModel(model, roles);
                 if (userResponse.Success)
                 {
                     User newUser = userResponse.Result as User;

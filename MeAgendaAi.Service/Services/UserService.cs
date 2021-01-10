@@ -18,6 +18,7 @@ using System.Security.Principal;
 using System.Collections.Generic;
 using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Domain.Validators.Location;
+using MeAgendaAi.Domain.Enums;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -44,7 +45,7 @@ namespace MeAgendaAi.Service.Services
             _locationService = locationService;
         }
 
-        public ResponseModel CreateUserFromModel(AddUserModel model)
+        public ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles)
         {
             var resp = new ResponseModel();
 
@@ -55,7 +56,7 @@ namespace MeAgendaAi.Service.Services
                 if (validateUser.IsValid)
                 {
 
-                    if(model.Locations.Count > 0)
+                    if(model.Locations != null && model.Locations.Count > 0)
                     {
                         var validLocations = _locationService.ValidateAddLocations(model.Locations);
                         if (!validLocations.Success)
@@ -76,7 +77,8 @@ namespace MeAgendaAi.Service.Services
                         RG = model.RG,
                         Locations = _locationService.CreateLocationsFromModel(model.Locations, userId, null),
                         CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                        LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia()
+                        LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                        Roles = GenerateUserRoles(roles, userId)
                     };
                     //_userRepository.Add(newUser);
 
@@ -98,6 +100,25 @@ namespace MeAgendaAi.Service.Services
             return resp;
         }
 
+        private List<UserRole> GenerateUserRoles(List<Roles> roles, Guid userId)
+        {
+            List<UserRole> userRoles = new List<UserRole>();
+            roles.ForEach(role => {
+                var userRole = new UserRole
+                {
+                    UserRoleId = Guid.NewGuid(),
+                    UserId = userId,
+                    Role = role,
+                    CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                    LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                    UpdatedBy = userId
+                };
+
+                userRoles.Add(userRole);
+            });
+
+            return userRoles;
+        }
         
         public ResponseModel Login(LoginModel model)
         {
@@ -125,8 +146,6 @@ namespace MeAgendaAi.Service.Services
 
             return resp;
         }
-
-
 
         private bool ValidatePassword(string password, User user)
         {
