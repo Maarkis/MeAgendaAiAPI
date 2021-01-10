@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MeAgendaAi.Domain.Interfaces.Services;
-using MeAgendaAi.Service.Interfaces;
-using System.Net;
+﻿using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Service.EpModels.Client;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Net;
 
 namespace MeAgendaAi.Application.Controllers
 {

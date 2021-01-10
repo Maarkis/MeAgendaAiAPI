@@ -11,7 +11,7 @@ namespace MeAgendaAi.Domain.Entities
         public string CPF { get; set; }
         public string CNPJ { get; set; }
         public virtual List<Employee> Employees { get; set; }
-        public virtual List<Service> Services { get; set; }
+        public virtual List<Services> Services { get; set; }
         public virtual Policy Policy { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MeAgendaAi.Domain.Interfaces
+namespace MeAgendaAi.Domain.Interfaces.Repositories
 {
     public interface IBaseRepository<T> where T: class
     {

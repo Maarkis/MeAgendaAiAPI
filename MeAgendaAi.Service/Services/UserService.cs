@@ -1,11 +1,13 @@
-﻿
+﻿using FluentValidation.Results;
+using MeAgendaAi.Cryptography.Cryptography;
 using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Repositories;
-using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Domain.Security;
+using MeAgendaAi.Domain.Validators.User;
+using MeAgendaAi.JWT;
 using MeAgendaAi.Service.EpModels;
 using MeAgendaAi.Service.EpModels.User;
-using MeAgendaAi.Service.Validators.User;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -37,7 +39,7 @@ namespace MeAgendaAi.Service.Services
         public bool ValidateUser(AddUserModel user)
         {
             bool resp = false;
-            var userVal = new AddUserModelValidator().Validate(user);
+            ValidationResult userVal = new AddUserModelValidator().Validate(user);
             if (userVal.IsValid)
             {
                 resp = true;
@@ -52,11 +54,12 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
+                Guid userId = Guid.NewGuid();
                 User newUser = new User
                 {
-                    UserId = Guid.NewGuid(),
+                    UserId = userId,
                     Email = model.Email,
-                    Password = model.Password,
+                    Password = Encrypt.EncryptString(model.Password, userId.ToString()),
                     Name = model.Name,
                     CPF = model.CPF,
                     RG = model.RG,
@@ -68,7 +71,7 @@ namespace MeAgendaAi.Service.Services
                 resp.Success = true;
                 resp.Result = "Usuário adicionado com sucesso";
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 resp.Result = "Não foi possível adicionar o usuário";
             }
@@ -82,30 +85,20 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                Guid id = Guid.Parse("D0605249-9E36-4551-A01F-C7D5D52B9A58");
+                Guid id = Guid.Parse("B088CC36-569D-409F-AEC5-A352B758F90E");
                 User user = _userRepository.GetById(id);
 
 
-                ClaimsIdentity identity = new ClaimsIdentity(
-                  new GenericIdentity(user.Email),
-                  new[]{
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
-                        new Claim(ClaimTypes.Name, user.Name),                        
-                        new Claim(ClaimTypes.Role, "Admin")
-                  });
+                if(!ValidatePassword("Jean74172022*4996.", user))
+                {
+                    resp.Success = false;
+                    resp.Result = "Senha inválida";
 
-                DateTime createDate = DateTime.Now;
-                DateTime expirationDate = createDate + TimeSpan.FromSeconds(Convert.ToDouble(_tokenConfiguration.Seconds));
-
-                JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-                string token = CreateToken(identity, createDate, expirationDate, handler);
-
+                    return resp;
+                }
 
                 resp.Success = true;
-                resp.Result = SuccessObject(createDate, expirationDate, token, user);
-                //return SuccessObject(createDate, expirationDate, token, user);
-
+                resp.Result = JWTService.GenerateToken(user, _signingConfiguration, _tokenConfiguration); 
             }
             catch (Exception)
             {
@@ -115,35 +108,11 @@ namespace MeAgendaAi.Service.Services
             return resp;
         }
 
-         private string CreateToken(ClaimsIdentity identity, DateTime createDate, DateTime expirationDate, JwtSecurityTokenHandler handler)
+
+
+        private bool ValidatePassword(string password, User user)
         {
-            var securityToken = handler.CreateToken(new SecurityTokenDescriptor
-            {
-                Issuer = _tokenConfiguration.Issuer,
-                Audience = _tokenConfiguration.Audience,
-                SigningCredentials = _signingConfiguration.SigningCredentials,
-                Subject = identity,
-                NotBefore = createDate,
-                Expires = expirationDate
-            });
-
-            string token = handler.WriteToken(securityToken);
-            return token;
-        }
-
-        private object SuccessObject(DateTime createDate, DateTime expirationDate, string token, User user)
-        {
-            return new
-            {
-                authenticated = true,
-                create = createDate.ToString("yyyy-MM-dd HH:mm:ss"),
-                expiration = expirationDate.ToString("yyyy-MM-dd HH:mm:ss"),
-                token = token,
-                userName = user.Name,
-                userEmail = user.Email,
-                message = "Usuário autenticado com sucesso"
-            };
-
+            return Encrypt.CompareComputeHash(password, user.UserId.ToString(), user.Password);
         }
     }
 }

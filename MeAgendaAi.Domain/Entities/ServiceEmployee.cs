@@ -10,6 +10,6 @@ namespace MeAgendaAi.Domain.Entities
         public Guid ServiceId { get; set; }
         public Guid EmployeeId { get; set; }
         public virtual Employee Employee { get; set; }
-        public virtual Service Service { get; set; }
+        public virtual Services Service { get; set; }
     }
 }

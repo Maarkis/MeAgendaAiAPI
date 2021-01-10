@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
-using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.Interfaces.Repositories;
+﻿using MeAgendaAi.Data.Context;
 using MeAgendaAi.Data.Repository;
-using MeAgendaAi.Data.Context;
+using MeAgendaAi.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MeAgendaAi.CrossCutting.DependencyInjection
 {

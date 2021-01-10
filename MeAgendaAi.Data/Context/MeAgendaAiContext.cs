@@ -24,7 +24,7 @@ namespace MeAgendaAi.Data.Context
             modelBuilder.Entity<ServiceEmployee>(new ServiceEmployeeMap().Configure);
             modelBuilder.Entity<Policy>(new PolicyMap().Configure);
             modelBuilder.Entity<Scheduling>(new SchedulingMap().Configure);
-            modelBuilder.Entity<Service>(new ServiceMap().Configure);
+            modelBuilder.Entity<MeAgendaAi.Domain.Entities.Services>(new ServiceMap().Configure);
             modelBuilder.Entity<User>(new UserMap().Configure);
         }
 
@@ -34,7 +34,7 @@ namespace MeAgendaAi.Data.Context
         public DbSet<ServiceEmployee> ServiceEmployees { get; set; }
         public DbSet<Policy> Policies { get; set; }
         public DbSet<Scheduling> Schedulings { get; set; }
-        public DbSet<Service> Services { get; set; }
+        public DbSet<MeAgendaAi.Domain.Entities.Services> Services { get; set; }
         public DbSet<User> Users { get; set; }
     }
 }

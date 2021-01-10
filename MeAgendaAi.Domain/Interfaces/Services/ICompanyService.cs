@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Service.Interfaces
+namespace MeAgendaAi.Domain.Interfaces
 {
     public interface ICompanyService : IBaseService<Company>
     {

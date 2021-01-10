@@ -1,5 +1,6 @@
 ﻿using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces;
+using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Interfaces.Services;
 using System;
 using System.Collections.Generic;

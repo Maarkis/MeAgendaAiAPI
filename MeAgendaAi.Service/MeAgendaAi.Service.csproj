@@ -10,8 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MeAgendaAi.Cryptography\MeAgendaAi.Cryptography.csproj" />
     <ProjectReference Include="..\MeAgendaAi.Data\MeAgendaAi.Data.csproj" />
     <ProjectReference Include="..\MeAgendaAi.Domain\MeAgendaAi.Domain.csproj" />
+    <ProjectReference Include="..\MeAgendaAi.JWT\MeAgendaAi.JWT.csproj" />
   </ItemGroup>
 
 </Project>

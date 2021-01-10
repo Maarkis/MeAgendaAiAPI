@@ -1,10 +1,10 @@
 ﻿using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Service.EpModels;
 using MeAgendaAi.Service.EpModels.Company;
 using MeAgendaAi.Service.EpModels.Employee;
-using MeAgendaAi.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -93,7 +93,7 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                List<Domain.Entities.Service> services = _employeeRepository.GetEmployeeServicesByEmployeeId(Guid.Parse(employeeId));
+                List<Domain.Entities.Services> services = _employeeRepository.GetEmployeeServicesByEmployeeId(Guid.Parse(employeeId));
                 List<GetCompanyServicesModel> servicesEmployee = new List<GetCompanyServicesModel>();
                 services.ForEach(service => {
                     GetCompanyServicesModel serviceEmployee = new GetCompanyServicesModel

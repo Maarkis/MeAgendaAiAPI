@@ -1,12 +1,11 @@
 ﻿using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Service.EpModels;
 using MeAgendaAi.Service.EpModels.Company;
-using MeAgendaAi.Service.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -92,7 +91,7 @@ namespace MeAgendaAi.Service.Services
                     return resp;
                 }
 
-                Domain.Entities.Service service = new Domain.Entities.Service
+                MeAgendaAi.Domain.Entities.Services service = new MeAgendaAi.Domain.Entities.Services
                 {
                     ServiceId = Guid.NewGuid(),
                     CompanyId = company.CompanyId,

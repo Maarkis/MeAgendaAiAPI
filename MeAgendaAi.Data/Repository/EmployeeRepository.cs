@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MeAgendaAi.Data.Repository
 {
@@ -22,11 +21,12 @@ namespace MeAgendaAi.Data.Repository
         {
             return _employees.Where(x => x.UserId == userId).FirstOrDefault();
         }
-        public List<Service> GetEmployeeServicesByEmployeeId(Guid employeeId)
+        public List<MeAgendaAi.Domain.Entities.Services> GetEmployeeServicesByEmployeeId(Guid employeeId)
         {
             return _employees.Where(x => x.EmployeeId == employeeId)
                 .SelectMany(y => y.EmployeeServices)
                 .Select(y => y.Service).ToList();
         }
+
     }
 }

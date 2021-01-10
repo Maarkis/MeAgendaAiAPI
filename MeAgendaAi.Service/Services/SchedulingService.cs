@@ -1,10 +1,10 @@
 ﻿using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Service.EpModels;
 using MeAgendaAi.Service.EpModels.Scheduling;
-using MeAgendaAi.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;

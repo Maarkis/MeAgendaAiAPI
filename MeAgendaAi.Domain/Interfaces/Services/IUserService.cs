@@ -1,11 +1,9 @@
 ﻿using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Service.EpModels;
 using MeAgendaAi.Service.EpModels.User;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MeAgendaAi.Domain.Interfaces.Services
+namespace MeAgendaAi.Domain.Interfaces
 {
     public interface IUserService : IBaseService<User>
     {
