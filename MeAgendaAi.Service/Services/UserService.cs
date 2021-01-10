@@ -8,11 +8,7 @@ using MeAgendaAi.Domain.Validators.User;
 using MeAgendaAi.JWT;
 using MeAgendaAi.Service.EpModels;
 using MeAgendaAi.Service.EpModels.User;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Principal;
 
 namespace MeAgendaAi.Service.Services
 {
