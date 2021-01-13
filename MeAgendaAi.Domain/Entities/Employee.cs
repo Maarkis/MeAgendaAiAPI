@@ -14,5 +14,6 @@ namespace MeAgendaAi.Domain.Entities
         public virtual Company Company { get; set; }
         public virtual List<ServiceEmployee> EmployeeServices { get; set; }
         public virtual List<Scheduling> Schedulings { get; set; }
+        public virtual List<EmployeeWorkHours> EmployeeWorkHours { get; set; }
     }
 }

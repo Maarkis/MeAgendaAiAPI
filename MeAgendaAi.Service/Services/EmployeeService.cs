@@ -8,6 +8,8 @@ using MeAgendaAi.Domain.EpModels.Employee;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -15,11 +17,15 @@ namespace MeAgendaAi.Service.Services
     {
         private IEmployeeRepository _employeeRepository;
         private IServiceEmployeeRepository _serviceEmployeeRepository;
+        private IEmployeeWorkHoursService _employeeWorkHoursService;
 
-        public EmployeeService(IEmployeeRepository employeeRepository, IServiceEmployeeRepository serviceEmployeeRepository) : base(employeeRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository, 
+            IServiceEmployeeRepository serviceEmployeeRepository,
+            IEmployeeWorkHoursService employeeWorkHoursService) : base(employeeRepository)
         {
             _employeeRepository = employeeRepository;
             _serviceEmployeeRepository = serviceEmployeeRepository;
+            _employeeWorkHoursService = employeeWorkHoursService;
         }
 
         public ResponseModel AddEmployee(AddEmployeeModel model)
@@ -112,6 +118,23 @@ namespace MeAgendaAi.Service.Services
             }
 
             return resp;
+        }
+
+        public ResponseModel AddWorkHoursToEmployee(AddEmployeeWorkHoursModel model, string userEmail)
+        {
+            var response = new ResponseModel();
+
+            var employee = _employeeRepository.GetEmployeeByUserEmail(userEmail);
+            if(employee != null)
+            {
+                response = _employeeWorkHoursService.AddEmployeeWorkhours(model, employee);
+            }
+            else
+            {
+                response.Result = "Funcionário não encontrado";
+            }
+
+            return response;
         }
     }
 }

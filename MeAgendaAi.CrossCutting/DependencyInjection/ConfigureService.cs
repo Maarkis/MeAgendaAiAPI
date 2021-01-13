@@ -17,6 +17,7 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
             serviceCollection.AddScoped<ICompanyService, CompanyService>();
             serviceCollection.AddScoped<ISchedulingService, SchedulingService>();
             serviceCollection.AddScoped<ILocationService, LocationService>();
+            serviceCollection.AddScoped<IEmployeeWorkHoursService, EmployeeWorkHoursService>();
 
 
             serviceCollection.AddCors(options =>

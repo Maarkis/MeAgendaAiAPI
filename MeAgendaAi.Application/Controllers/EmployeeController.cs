@@ -3,6 +3,7 @@ using MeAgendaAi.Domain.EpModels.Employee;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -68,6 +69,26 @@ namespace MeAgendaAi.Application.Controllers
             try
             {
                 var result = _employeeService.AddServiceToEmployee(model);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("AddWorkHoursToEmployee")]
+        public ActionResult AddWorkHoursToEmployee([FromBody] AddEmployeeWorkHoursModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.AddWorkHoursToEmployee(model, "manoela@gmail.com");
                 return Ok(result);
             }
             catch (ArgumentException e)
