@@ -96,5 +96,25 @@ namespace MeAgendaAi.Application.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
             }
         }
+
+        [HttpGet]
+        [Route("GetEmployeeAvailableHours")]
+        public ActionResult GetEmployeeAvailableHours(string employeeId, string serviceId, string date)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeeAvailableHours(employeeId, serviceId, date);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
     }
 }

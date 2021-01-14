@@ -7,5 +7,6 @@ namespace MeAgendaAi.Domain.Interfaces.Repositories
 {
     public interface IEmployeeWorkHoursRepository : IBaseRepository<EmployeeWorkHours>
     {
+        EmployeeWorkHours GetWorkHoursByDateAndEmployeeId(DateTime date, Guid employeeId);
     }
 }

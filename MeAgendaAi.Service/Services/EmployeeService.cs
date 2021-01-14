@@ -18,14 +18,17 @@ namespace MeAgendaAi.Service.Services
         private IEmployeeRepository _employeeRepository;
         private IServiceEmployeeRepository _serviceEmployeeRepository;
         private IEmployeeWorkHoursService _employeeWorkHoursService;
+        private IServiceRepository _serviceRepository;
 
         public EmployeeService(IEmployeeRepository employeeRepository, 
             IServiceEmployeeRepository serviceEmployeeRepository,
-            IEmployeeWorkHoursService employeeWorkHoursService) : base(employeeRepository)
+            IEmployeeWorkHoursService employeeWorkHoursService,
+            IServiceRepository serviceRepository) : base(employeeRepository)
         {
             _employeeRepository = employeeRepository;
             _serviceEmployeeRepository = serviceEmployeeRepository;
             _employeeWorkHoursService = employeeWorkHoursService;
+            _serviceRepository = serviceRepository;
         }
 
         public ResponseModel AddEmployee(AddEmployeeModel model)
@@ -135,6 +138,16 @@ namespace MeAgendaAi.Service.Services
             }
 
             return response;
+        }
+
+        public ResponseModel GetEmployeeAvailableHours(string employeeId, string serviceId, string date)
+        {
+            var employee = _employeeRepository.GetById(Guid.Parse(employeeId));
+            var service = _serviceRepository.GetById(Guid.Parse(serviceId));
+
+            DateTime dateTime = new DateTime();
+            bool ok = DateTime.TryParse(date, out dateTime); //colocar validação do formato de data no validator
+            return _employeeWorkHoursService.GetAvailableEmployeeWorkHours(dateTime, employee, service);
         }
     }
 }
