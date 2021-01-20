@@ -6,6 +6,7 @@ namespace MeAgendaAi.Domain.EpModels.User
 {
     public class ResponseAuthentication
     {
+        public Guid Id { get; set; }
         public bool Authenticated { get; set; }
         public string Create { get; set; }
         public string Expiration { get; set; }
