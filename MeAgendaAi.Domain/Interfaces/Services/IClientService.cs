@@ -11,5 +11,6 @@ namespace MeAgendaAi.Domain.Interfaces
     public interface IClientService : IBaseService<Client>
     {
         ResponseModel AddClient(AddUserModel model);
+        ResponseModel EditClient(EditUserModel model);
     }
 }

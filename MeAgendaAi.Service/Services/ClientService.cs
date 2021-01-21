@@ -54,7 +54,50 @@ namespace MeAgendaAi.Service.Services
 
                 return resp;
             }
-            catch (Exception)
+            catch (Exception e)
+            {
+                resp.Result = "Não foi possível adicionar o cliente";
+            }
+
+            return resp;
+        }
+
+        public ResponseModel EditClient(EditUserModel model)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                var userResponse = _userService.EditUserFromModel(model);
+                if (userResponse.Success)
+                {
+                    User clientUser = userResponse.Result as User;
+
+                    var client = _clientRepository.GetClientByUserId(clientUser.UserId);
+                    if(client != null)
+                    {
+                        client.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
+                        client.UpdatedBy = clientUser.UserId;
+                        client.User = clientUser;
+                        _clientRepository.Edit(client);
+
+                        resp.Success = true;
+                        resp.Result = "Cliente editado com sucesso";
+                    }
+                    else
+                    {
+                        resp.Result = "Cliente não encontrado";
+                    }
+                    
+                }
+                else
+                {
+                    resp = userResponse;
+                }
+
+                return resp;
+            }
+            catch (Exception e)
             {
                 resp.Result = "Não foi possível adicionar o cliente";
             }

@@ -3,6 +3,7 @@ using MeAgendaAi.Domain.EpModels.User;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 
 namespace MeAgendaAi.Application.Controllers
 {

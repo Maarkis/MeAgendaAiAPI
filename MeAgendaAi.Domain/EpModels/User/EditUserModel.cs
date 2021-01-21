@@ -6,13 +6,10 @@ using System.Text;
 
 namespace MeAgendaAi.Domain.EpModels.User
 {
-    public class AddUserModel
+    public class EditUserModel
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public string UsuarioId { get; set; }
         public string Name { get; set; }
-        public string CPF { get; set; }
-        public string RG { get; set; }
         public IFormFile Imagem { get; set; }
         public List<AddLocationModel> Locations { get; set; }
     }

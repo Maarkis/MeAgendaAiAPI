@@ -19,7 +19,7 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpPost]
         [Route("AddClient")]
-        public ActionResult AddClient([FromBody] AddUserModel model)
+        public ActionResult AddClient([FromForm] AddUserModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -29,6 +29,26 @@ namespace MeAgendaAi.Application.Controllers
             try
             {
                 var result = _clientService.AddClient(model);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("EditClient")]
+        public ActionResult EditClient([FromForm] EditUserModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _clientService.EditClient(model);
                 return Ok(result);
             }
             catch (ArgumentException e)

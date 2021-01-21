@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
 using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
+using Microsoft.AspNetCore.Authorization;
+using MeAgendaAi.Domain.Enums;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -78,6 +80,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Funcionario")]
         [Route("AddWorkHoursToEmployee")]
         public ActionResult AddWorkHoursToEmployee([FromBody] AddEmployeeWorkHoursModel model)
         {
@@ -88,7 +91,7 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                var result = _employeeService.AddWorkHoursToEmployee(model, "manoela@gmail.com");
+                var result = _employeeService.AddWorkHoursToEmployee(model, User.Identity.Name);
                 return Ok(result);
             }
             catch (ArgumentException e)
