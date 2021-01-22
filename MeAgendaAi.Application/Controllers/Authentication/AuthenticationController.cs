@@ -74,7 +74,7 @@ namespace MeAgendaAi.Application.Controllers.Authentication
         }
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPut]
         [Route("ResetPassword")]
         public ActionResult ResetPassword([FromBody] ResetPassword model)
         {
