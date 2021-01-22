@@ -15,10 +15,6 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.HasKey(x => x.LocationId);
 
-            builder.HasOne(x => x.Company)
-               .WithMany(y => y.Locations)
-               .HasForeignKey(x => x.CompanyId);
-
             builder.HasOne(x => x.User)
                 .WithMany(y => y.Locations)
                 .HasForeignKey(x => x.UserId);

@@ -27,12 +27,6 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.Property(x => x.Image);
 
-            builder.Property(x => x.CPF)
-                .IsRequired();
-
-            builder.Property(x => x.RG)
-                .IsRequired();
-
             //Roles
             //builder.Property(x => x.Roles)
             //    .IsRequired();                

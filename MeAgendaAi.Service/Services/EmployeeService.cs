@@ -43,8 +43,8 @@ namespace MeAgendaAi.Service.Services
                     Email = model.Email,
                     Password = model.Password,
                     Name = model.Name,
-                    CPF = model.CPF,
-                    RG = model.RG,
+                    //CPF = model.CPF,
+                    //RG = model.RG,
                     CreatedAt = DateTimeUtil.UtcToBrasilia(),
                     LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
                 };

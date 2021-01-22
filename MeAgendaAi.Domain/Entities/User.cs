@@ -11,9 +11,6 @@ namespace MeAgendaAi.Domain.Entities
         public string Password { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
-        public string CPF { get; set; }
-        public string RG { get; set; }
-
         public virtual List<Location> Locations { get; set; }
         public virtual List<UserRole> Roles { get; set; }
     }

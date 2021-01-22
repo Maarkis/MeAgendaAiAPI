@@ -30,7 +30,7 @@ namespace MeAgendaAi.Service.Services
                     {
                         LocationId = Guid.NewGuid(),
                         UserId = userId,
-                        CompanyId = companyId,
+                        //CompanyId = companyId,
                         Name = model.Name,
                         Country = model.Country,
                         State = model.State,

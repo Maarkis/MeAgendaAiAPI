@@ -50,8 +50,8 @@ namespace MeAgendaAi.Service.Services
                 Company newCompany = new Company
                 {
                     CompanyId = companyId,
-                    Name = model.Name,
-                    CPF = model.CPF,
+                    //Name = model.Name,
+                    //CPF = model.CPF,
                     CNPJ = model.CNPJ,
                     Policy = policy,
                     CreatedAt = DateTimeUtil.UtcToBrasilia(),
@@ -213,9 +213,9 @@ namespace MeAgendaAi.Service.Services
 
                 GetCompanyByIdCompleteModel model = new GetCompanyByIdCompleteModel { 
                     CompanyId = companyComplete.CompanyId,
-                    CompanyName = companyComplete.Name,
+                    //CompanyName = companyComplete.Name,
                     LimitCancelHours = companyComplete.Policy.LimitCancelHours,
-                    CPF = companyComplete.CPF,
+                    //CPF = companyComplete.CPF,
                     CNPJ = companyComplete.CNPJ,
                     CompanyServices = companyServices,
                     Employees = companyEmployees
