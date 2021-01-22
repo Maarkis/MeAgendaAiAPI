@@ -9,7 +9,7 @@ namespace MeAgendaAi.Domain.Interfaces.Services.Email
 {
     public interface IEmailService
     {
-        Task<bool> SendRecoveryPassword(User user);
+        Task<bool> SendRecoveryPassword(User user, string token);
         
     }
 }

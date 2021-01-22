@@ -8,6 +8,7 @@ namespace MeAgendaAi.Domain.Security
 {
     public class SigningConfiguration
     {
+                
         public SecurityKey Key { get; set; }
         public SigningCredentials SigningCredentials { get; set; }
         public SigningConfiguration()

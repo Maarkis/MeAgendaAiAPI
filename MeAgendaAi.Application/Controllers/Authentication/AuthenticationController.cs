@@ -72,5 +72,29 @@ namespace MeAgendaAi.Application.Controllers.Authentication
             }
 
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("ResetPassword")]
+        public ActionResult ResetPassword([FromBody] ResetPassword model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                ResponseModel resp = _userService.ResetPassword(model);
+                if (!resp.Success)
+                {
+                    return BadRequest(resp);
+                }
+                return Ok(resp);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
     }
 }

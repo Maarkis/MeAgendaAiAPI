@@ -35,10 +35,12 @@ namespace MeAgendaAi.Service.Services.Email
             return client;
         }
 
-        public async Task<bool> SendRecoveryPassword(Domain.Entities.User user)
-        {            
+        public async Task<bool> SendRecoveryPassword(Domain.Entities.User user, string token)
+        {
 
-            const string urlResetPassword = "www.meagendaai.com.br/";
+            string urlPortal = _configuration.GetValue<string>("URLPortal");
+            
+             
             try
             {
                 MailjetClient client = newMailjetClient(APIKEY, APISECRET);
@@ -62,7 +64,8 @@ namespace MeAgendaAi.Service.Services.Email
                 .Property(Send.Vars, new JObject
                 {
                     {"user_name", user.Name},
-                    {"link_reset", urlResetPassword}
+                    {"link_reset", GenerateURL(urlPortal, user.UserId.ToString(), token) }
+
                 });
 
                 MailjetResponse resp = await client.PostAsync(request);
@@ -81,6 +84,11 @@ namespace MeAgendaAi.Service.Services.Email
 
                 throw e;
             }
+        }
+
+        private string GenerateURL(string urlPoral, string id,  string token)
+        {
+            return new Uri(urlPoral + '/' + "redefinir-senha/" + id + "/" + token).ToString();
         }
     }
 }

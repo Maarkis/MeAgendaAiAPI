@@ -181,7 +181,9 @@ namespace MeAgendaAi.Service.Services
                         return response;
                     }
 
-                    bool resp = await _email.SendRecoveryPassword(user);
+                    string token = JWTService.GenerateTokenRecoverPassword(user, _signingConfiguration, _tokenConfiguration);
+
+                    bool resp = await _email.SendRecoveryPassword(user, token);
                     if (resp)
                     {
                         response.Success = resp;
@@ -191,8 +193,6 @@ namespace MeAgendaAi.Service.Services
                     {
                         response.Result = "Não foi possível enviar o e-mail.";
                     }
-
-                    return response;
                 }
                 catch (Exception)
                 {
@@ -209,6 +209,52 @@ namespace MeAgendaAi.Service.Services
         private bool ValidatePassword(string password, User user)
         {
             return Encrypt.CompareComputeHash(password, user.UserId.ToString(), user.Password);
+        }
+
+        public ResponseModel ResetPassword(ResetPassword model)
+        {
+            ResponseModel response = new ResponseModel();
+            ValidationResult validateResetPassword = new ResetPasswordValidator().Validate(model);
+            if (validateResetPassword.IsValid)
+            {
+                try
+                {
+                    bool validateToken = JWTService.ValidateToken(model.Token, _signingConfiguration, _tokenConfiguration);
+                    if (validateToken)
+                    {
+                        User user = _userRepository.GetById(model.Id);
+                        if(user == null)
+                        {                            
+                            response.Result = "Usuário não encontrado.";
+                            return response;
+                        }
+                                                
+                        user.Password = Encrypt.EncryptString(model.Password, user.UserId.ToString());
+                        user.UpdatedBy = model.Id;
+                        user.LastUpdatedAt = DateTime.Now;
+
+                        _userRepository.Edit(user);
+
+
+                        response.Success = true;
+                        response.Result = "Senha alterada com sucesso.";
+                    }
+                    else
+                    {
+                        response.Result = "Token expirado.";
+                    }
+                }
+                catch (Exception)
+                {
+                    response.Result = "Erro ao alterar senha, entre em contato com suporte.";
+                }
+            }
+            else
+            {
+                response.Result = validateResetPassword.Errors.FirstOrDefault().ErrorMessage;
+            }
+            return response;
+                
         }
     }
 }

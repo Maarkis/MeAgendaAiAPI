@@ -22,7 +22,6 @@ namespace MeAgendaAi.JWT
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
 
-
             var claims = new List<Claim> {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
@@ -44,7 +43,36 @@ namespace MeAgendaAi.JWT
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             string token = CreateToken(identity, createDate, expirationDate, handler);
 
+            
             return SuccessObject(createDate, expirationDate, token, user);
+        }
+
+        public static string GenerateTokenRecoverPassword(User user, SigningConfiguration signingConfiguration, TokenConfiguration tokenConfiguration)
+        {
+
+            _signingConfiguration = signingConfiguration;
+            _tokenConfiguration = tokenConfiguration;
+
+
+            DateTime createDate = DateTime.Now;
+            DateTime expirationDate = createDate + TimeSpan.FromSeconds(Convert.ToDouble(_tokenConfiguration.Seconds));
+
+            var claims = new List<Claim> {
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),                    
+                    new Claim(JwtRegisteredClaimNames.NameId, user.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, user.Name),                    
+                    new Claim(ClaimTypes.Expiration, expirationDate.ToString()),
+            };
+
+
+            ClaimsIdentity identity = new ClaimsIdentity(
+              new GenericIdentity(user.Email),
+              claims);
+
+
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            return CreateToken(identity, createDate, expirationDate, handler);
+            
         }
 
         private static ResponseAuthentication SuccessObject(DateTime createDate, DateTime expirationDate, string token, User user)
@@ -76,5 +104,42 @@ namespace MeAgendaAi.JWT
             
             return handler.WriteToken(securityToken);
         }
+
+        public static bool ValidateToken(string token, SigningConfiguration signingConfiguration, TokenConfiguration tokenConfiguration)
+        {
+
+            _signingConfiguration = signingConfiguration;
+            _tokenConfiguration = tokenConfiguration;
+
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            TokenValidationParameters validationParameters = GetValidationParameters();
+
+            SecurityToken validatedToken;            
+            try
+            {
+                ClaimsPrincipal resp = handler.ValidateToken(token, validationParameters, out validatedToken);
+                
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+
+        private static TokenValidationParameters GetValidationParameters()
+        {
+            return new TokenValidationParameters()
+            {
+                ValidateLifetime = true,
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidIssuer = _tokenConfiguration.Issuer,
+                ValidAudience = _tokenConfiguration.Audience,
+                IssuerSigningKey = _signingConfiguration.Key
+            };
+        }
+
     }
 }

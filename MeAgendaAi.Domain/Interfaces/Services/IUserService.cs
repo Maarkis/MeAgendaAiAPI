@@ -11,7 +11,8 @@ namespace MeAgendaAi.Domain.Interfaces
     public interface IUserService : IBaseService<User>
     {
         ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles);
-        ResponseModel Login(LoginModel model);
+        ResponseModel Login(LoginModel model);        
+        ResponseModel ResetPassword(ResetPassword model);
         Task<ResponseModel> RetrievePassword(RecoveryPassword model);
     }
 }
