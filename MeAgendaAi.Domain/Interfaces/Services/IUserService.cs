@@ -4,6 +4,7 @@ using MeAgendaAi.Domain.EpModels.User;
 using MeAgendaAi.Domain.EpModels;
 using System.Collections.Generic;
 using MeAgendaAi.Domain.Enums;
+using System.Threading.Tasks;
 
 namespace MeAgendaAi.Domain.Interfaces
 {
@@ -11,5 +12,6 @@ namespace MeAgendaAi.Domain.Interfaces
     {
         ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles);
         ResponseModel Login(LoginModel model);
+        Task<ResponseModel> RetrievePassword(RecoveryPassword model);
     }
 }

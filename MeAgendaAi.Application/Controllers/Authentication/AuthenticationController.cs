@@ -34,7 +34,37 @@ namespace MeAgendaAi.Application.Controllers.Authentication
 
             try
             {
-                return Ok(_userService.Login(model));
+                ResponseModel resp = _userService.Login(model);
+                if (!resp.Success)
+                {
+                    return BadRequest(resp);
+                }
+                return Ok(resp);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("RecoverPassword")]
+        public async Task<ActionResult> RecoverPassword([FromBody] RecoveryPassword model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                ResponseModel resp = await _userService.RetrievePassword(model);
+                if(!resp.Success)
+                {
+                    return BadRequest(resp);
+                }                
+                return Ok(resp);
             }
             catch (ArgumentException e)
             {

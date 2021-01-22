@@ -7,13 +7,15 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="9.2.0" />
+    <PackageReference Include="Mailjet.Api" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.11" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MeAgendaAi.Cryptography\MeAgendaAi.Cryptography.csproj" />
     <ProjectReference Include="..\MeAgendaAi.Data\MeAgendaAi.Data.csproj" />
     <ProjectReference Include="..\MeAgendaAi.Domain\MeAgendaAi.Domain.csproj" />
-    <ProjectReference Include="..\MeAgendaAi.JWT\MeAgendaAi.JWT.csproj" />
+    <ProjectReference Include="..\MeAgendaAi.JWT\MeAgendaAi.JWT.csproj" />    
   </ItemGroup>
 
 </Project>

@@ -1,25 +1,21 @@
 ﻿using FluentValidation.Results;
 using MeAgendaAi.Cryptography.Cryptography;
 using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.Interfaces.Repositories;
-using MeAgendaAi.Domain.Security;
-using MeAgendaAi.Domain.Validators.User;
-using MeAgendaAi.JWT;
+using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.User;
-using MeAgendaAi.Domain.EpModels.Location;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Linq;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Collections.Generic;
+using MeAgendaAi.Domain.Interfaces;
+using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Interfaces.Services;
-using MeAgendaAi.Domain.Validators.Location;
-using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.Interfaces.Services.Email;
+using MeAgendaAi.Domain.Security;
 using MeAgendaAi.Domain.Validators.Authentication;
+using MeAgendaAi.Domain.Validators.User;
+using MeAgendaAi.JWT;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -28,17 +24,20 @@ namespace MeAgendaAi.Service.Services
         private IUserRepository _userRepository;
         private IClientRepository _clientRepository;
         private ILocationService _locationService;
+        private readonly IEmailService _email;
 
         private readonly SigningConfiguration _signingConfiguration;
         private readonly TokenConfiguration _tokenConfiguration;
 
         public UserService(
+            IEmailService email,
             IUserRepository userRepository,
             IClientRepository clientRepository,
             SigningConfiguration signingConfiguration,
             TokenConfiguration tokenConfiguration,
             ILocationService locationService) : base(userRepository)
         {
+            _email = email;
             _userRepository = userRepository;
             _clientRepository = clientRepository;
             _signingConfiguration = signingConfiguration;
@@ -163,6 +162,48 @@ namespace MeAgendaAi.Service.Services
                 resp.Result = validateLogin.Errors.FirstOrDefault().ErrorMessage;
             }
             return resp;
+        }
+
+
+        public async Task<ResponseModel> RetrievePassword(RecoveryPassword model)
+        {
+            ResponseModel response = new ResponseModel();
+            ValidationResult validateRecoveryEmail = new RecoveryEmailValidator().Validate(model);
+            if (validateRecoveryEmail.IsValid)
+            {
+                try
+                {
+                    User user = _userRepository.GetByEmail(model.Email);
+                    if (user == null)
+                    {
+                        response.Result = "Usuário não encontrado";
+
+                        return response;
+                    }
+
+                    bool resp = await _email.SendRecoveryPassword(user);
+                    if (resp)
+                    {
+                        response.Success = resp;
+                        response.Result = "E-mail enviado com sucesso.";
+                    }
+                    else
+                    {
+                        response.Result = "Não foi possível enviar o e-mail.";
+                    }
+
+                    return response;
+                }
+                catch (Exception)
+                {
+                    response.Result = "Erro no sistema, e-mail não enviado.";
+                }
+            } else
+            {
+                response.Result = validateRecoveryEmail.Errors.FirstOrDefault().ErrorMessage;
+            }
+
+            return response;
         }
 
         private bool ValidatePassword(string password, User user)
