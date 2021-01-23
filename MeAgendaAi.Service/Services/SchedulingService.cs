@@ -151,7 +151,7 @@ namespace MeAgendaAi.Service.Services
                 SchedulingId = scheduling.SchedulingId.ToString(),
                 ClientName = scheduling.Client.User.Name,
                 EmployeeName = scheduling.Employee.User.Name,
-                CompanyName = scheduling.Employee.Company.Name,
+                //CompanyName = scheduling.Employee.Company.Name,
                 Service = scheduling.Service.Name,
                 StartTime = scheduling.StartTime.ToString(),
                 EndTime = scheduling.EndTime.ToString(),

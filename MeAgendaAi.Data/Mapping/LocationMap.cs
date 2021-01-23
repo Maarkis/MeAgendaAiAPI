@@ -7,17 +7,13 @@ using System.Text;
 
 namespace MeAgendaAi.Data.Mapping
 {
-    class LocationMap : IEntityTypeConfiguration<Location>
+    public class LocationMap : IEntityTypeConfiguration<Location>
     {
         public void Configure(EntityTypeBuilder<Location> builder)
         {
             builder.ToTable("Location");
 
             builder.HasKey(x => x.LocationId);
-
-            builder.HasOne(x => x.Company)
-               .WithMany(y => y.Locations)
-               .HasForeignKey(x => x.CompanyId);
 
             builder.HasOne(x => x.User)
                 .WithMany(y => y.Locations)

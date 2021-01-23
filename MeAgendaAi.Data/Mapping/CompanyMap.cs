@@ -16,11 +16,11 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.HasKey(x => x.CompanyId);
 
-            builder.Property(x => x.Name);
+            builder.Property(x => x.UserId).IsRequired();
 
-            builder.Property(x => x.CPF);
+            builder.Property(x => x.CNPJ).IsRequired();
 
-            builder.Property(x => x.CNPJ);
+            builder.Property(x => x.Descricao);
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()

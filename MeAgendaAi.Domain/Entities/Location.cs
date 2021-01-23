@@ -7,8 +7,7 @@ namespace MeAgendaAi.Domain.Entities
     public class Location : BaseEntity
     {
         public Guid LocationId { get; set; }
-        public Guid? CompanyId { get; set; }
-        public Guid? UserId { get; set; }
+        public Guid UserId { get; set; }
         public string Name { get; set; }
         public string Country { get; set; }
         public string State { get; set; }
@@ -18,8 +17,6 @@ namespace MeAgendaAi.Domain.Entities
         public int Number { get; set; }
         public string Complement { get; set; }
         public string CEP { get; set; }
-
-        public virtual Company Company { get; set; }
         public virtual User User { get; set; }
     }
 }

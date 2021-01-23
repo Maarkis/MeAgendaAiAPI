@@ -20,30 +20,33 @@ namespace MeAgendaAi.Service.Services
             _locationRepository = locationRepository;
         }
 
-        public List<Location> CreateLocationsFromModel(List<AddLocationModel> models, Guid userId, Guid? companyId)
+        public List<Location> CreateLocationsFromModel(List<AddLocationModel> models, Guid userId)
         {
             List<Location> locations = new List<Location>();
-            models.ForEach(model => {
-                var location = new Location
-                {
-                    LocationId = Guid.NewGuid(),
-                    UserId = userId,
-                    CompanyId = companyId,
-                    Name = model.Name,
-                    Country = model.Country,
-                    State = model.State,
-                    City = model.City,
-                    Neighbourhood = model.Neighbourhood,
-                    Street = model.Street,
-                    Number = model.Number,
-                    Complement = model.Complement,
-                    CEP = model.CEP,
-                    CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                    UpdatedBy = userId
-                };
-                locations.Add(location);
-            });
+            if(models != null)
+            {
+                models.ForEach(model => {
+                    var location = new Location
+                    {
+                        LocationId = Guid.NewGuid(),
+                        UserId = userId,
+                        Name = model.Name,
+                        Country = model.Country,
+                        State = model.State,
+                        City = model.City,
+                        Neighbourhood = model.Neighbourhood,
+                        Street = model.Street,
+                        Number = model.Number,
+                        Complement = model.Complement,
+                        CEP = model.CEP,
+                        CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                        LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                        UpdatedBy = userId
+                    };
+                    locations.Add(location);
+                });
+            }
+            
             return locations;
         }
 

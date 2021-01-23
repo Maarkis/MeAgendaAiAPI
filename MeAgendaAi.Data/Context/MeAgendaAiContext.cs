@@ -28,6 +28,8 @@ namespace MeAgendaAi.Data.Context
             modelBuilder.Entity<User>(new UserMap().Configure);
             modelBuilder.Entity<Location>(new LocationMap().Configure);
             modelBuilder.Entity<UserRole>(new UserRoleMap().Configure);
+            modelBuilder.Entity<EmployeeWorkHours>(new EmployeeWorkHoursMap().Configure);
+            modelBuilder.Entity<PhoneNumber>(new PhoneNumberMap().Configure);
         }
 
         public DbSet<Client> Clients { get; set; }
@@ -39,5 +41,7 @@ namespace MeAgendaAi.Data.Context
         public DbSet<Services> Services { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<EmployeeWorkHours> EmployeeWorkHours { get; set; }
+        public DbSet<PhoneNumber> PhoneNumbers { get; set; }
     }
 }
