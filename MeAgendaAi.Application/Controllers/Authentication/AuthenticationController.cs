@@ -75,6 +75,31 @@ namespace MeAgendaAi.Application.Controllers.Authentication
 
         [AllowAnonymous]
         [HttpPut]
+        [Route("ConfirmationEmail")]
+        public ActionResult ConfirmationEmail(Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                ResponseModel resp = _userService.ConfirmationEmail(id);
+                if (!resp.Success)
+                {
+                    return BadRequest(resp);
+                }
+                return Ok(resp);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpPut]
         [Route("ResetPassword")]
         public ActionResult ResetPassword([FromBody] ResetPassword model)
         {

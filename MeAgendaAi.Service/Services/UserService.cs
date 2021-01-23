@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Results;
 using MeAgendaAi.Cryptography.Cryptography;
 using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Entities.Email;
 using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.User;
@@ -12,6 +13,7 @@ using MeAgendaAi.Domain.Security;
 using MeAgendaAi.Domain.Validators.Authentication;
 using MeAgendaAi.Domain.Validators.User;
 using MeAgendaAi.JWT;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,7 @@ namespace MeAgendaAi.Service.Services
         private IClientRepository _clientRepository;
         private ILocationService _locationService;
         private readonly IEmailService _email;
+        private readonly IConfiguration _configuration;
 
         private readonly SigningConfiguration _signingConfiguration;
         private readonly TokenConfiguration _tokenConfiguration;
@@ -35,6 +38,7 @@ namespace MeAgendaAi.Service.Services
             IClientRepository clientRepository,
             SigningConfiguration signingConfiguration,
             TokenConfiguration tokenConfiguration,
+            IConfiguration configuration,
             ILocationService locationService) : base(userRepository)
         {
             _email = email;
@@ -42,6 +46,7 @@ namespace MeAgendaAi.Service.Services
             _clientRepository = clientRepository;
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
+            _configuration = configuration;
             _locationService = locationService;
         }
 
@@ -122,8 +127,6 @@ namespace MeAgendaAi.Service.Services
         
         public ResponseModel Login(LoginModel model)
         {
-
-
             ResponseModel resp = new ResponseModel();
 
             ValidationResult validateLogin = new AuthenticationModelValidator().Validate(model);
@@ -176,14 +179,22 @@ namespace MeAgendaAi.Service.Services
                     User user = _userRepository.GetByEmail(model.Email);
                     if (user == null)
                     {
-                        response.Result = "Usuário não encontrado";
+                        response.Result = "Usuário não encontrado.";
 
                         return response;
                     }
+                    EmailRetrievePassword emailRetrieve = new EmailRetrievePassword()
+                    {
+                        FromEmail = "jeanmarkis85@hotmail.com",
+                        FromName = "Me Agenda Aí",
+                        Subject = "Link para alteração da sua senha do Me Agenda Aí",
+                        Token = JWTService.GenerateTokenRecoverPassword(user, _signingConfiguration, _tokenConfiguration),
+                        Url = _configuration.GetValue<string>("URLPortal"),
+                        Expiration = ((Convert.ToInt32(_tokenConfiguration.Seconds) / (60 * 60)).ToString())
+                    };
 
-                    string token = JWTService.GenerateTokenRecoverPassword(user, _signingConfiguration, _tokenConfiguration);
 
-                    bool resp = await _email.SendRecoveryPassword(user, token);
+                    bool resp = await _email.SendRecoveryPassword(user, emailRetrieve);
                     if (resp)
                     {
                         response.Success = resp;
@@ -206,10 +217,6 @@ namespace MeAgendaAi.Service.Services
             return response;
         }
 
-        private bool ValidatePassword(string password, User user)
-        {
-            return Encrypt.CompareComputeHash(password, user.UserId.ToString(), user.Password);
-        }
 
         public ResponseModel ResetPassword(ResetPassword model)
         {
@@ -225,7 +232,7 @@ namespace MeAgendaAi.Service.Services
                         User user = _userRepository.GetById(model.Id);
                         if(user == null)
                         {                            
-                            response.Result = "Usuário não encontrado.";
+                            response.Result = "Usuário não encontrado";
                             return response;
                         }
                                                 
@@ -237,16 +244,16 @@ namespace MeAgendaAi.Service.Services
 
 
                         response.Success = true;
-                        response.Result = "Senha alterada com sucesso.";
+                        response.Result = "Senha alterada com sucesso";
                     }
                     else
                     {
-                        response.Result = "Token expirado.";
+                        response.Result = "Token expirado";
                     }
                 }
                 catch (Exception)
                 {
-                    response.Result = "Erro ao alterar senha, entre em contato com suporte.";
+                    response.Result = "Erro ao alterar senha, entre em contato com suporte";
                 }
             }
             else
@@ -255,6 +262,40 @@ namespace MeAgendaAi.Service.Services
             }
             return response;
                 
+        }
+
+        public ResponseModel ConfirmationEmail(Guid id)
+        {            
+            ResponseModel response = new ResponseModel();
+            try
+            {                
+                if(id == null || id == Guid.Empty)
+                {
+                    response.Result = "Token não encontrado";
+                    return response;
+                }
+                User user = _userRepository.GetById(id);
+                if (user == null)
+                {
+                    response.Result = "Usuário não encontrado";
+                    return response;
+                }
+
+                response.Result = "E-mail confirmado com sucesso";
+                response.Success = true;
+
+            }
+            catch (Exception)
+            {
+                response.Result = "Erro ao confirmar e-mail, entre em contato com suporte";
+            }
+
+            return response;
+        }
+
+        private bool ValidatePassword(string password, User user)
+        {
+            return Encrypt.CompareComputeHash(password, user.UserId.ToString(), user.Password);
         }
     }
 }

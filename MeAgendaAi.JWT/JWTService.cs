@@ -22,7 +22,7 @@ namespace MeAgendaAi.JWT
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
 
-            var claims = new List<Claim> {
+            List<Claim> claims = new List<Claim> {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
                     new Claim(ClaimTypes.Name, user.Name),
@@ -57,7 +57,7 @@ namespace MeAgendaAi.JWT
             DateTime createDate = DateTime.Now;
             DateTime expirationDate = createDate + TimeSpan.FromSeconds(Convert.ToDouble(_tokenConfiguration.Seconds));
 
-            var claims = new List<Claim> {
+            List<Claim> claims = new List<Claim> {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),                    
                     new Claim(JwtRegisteredClaimNames.NameId, user.UserId.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),                    
@@ -92,7 +92,7 @@ namespace MeAgendaAi.JWT
 
         private static string CreateToken(ClaimsIdentity identity, DateTime createDate, DateTime expirationDate, JwtSecurityTokenHandler handler)
         {
-            var securityToken = handler.CreateToken(new SecurityTokenDescriptor
+            SecurityToken securityToken = handler.CreateToken(new SecurityTokenDescriptor
             {
                 Issuer = _tokenConfiguration.Issuer,
                 Audience = _tokenConfiguration.Audience,
