@@ -17,8 +17,6 @@ namespace MeAgendaAi.Domain.Entities
         public int Number { get; set; }
         public string Complement { get; set; }
         public string CEP { get; set; }
-
-        public virtual Company Company { get; set; }
         public virtual User User { get; set; }
     }
 }

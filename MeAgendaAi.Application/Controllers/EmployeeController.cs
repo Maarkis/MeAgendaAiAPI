@@ -20,6 +20,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("AddEmployee")]
         public ActionResult AddEmployee([FromBody] AddEmployeeModel model)
         {
@@ -39,7 +40,29 @@ namespace MeAgendaAi.Application.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
+        [Route("EditEmployee")]
+        public ActionResult EditEmployee([FromBody] EditEmployeeModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.EditEmployee(model);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
         [HttpGet]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa,Cliente")]
         [Route("GetEmployeeServices/{employeeId}")]
         public ActionResult GetEmployeeServices(string employeeId)
         {
@@ -60,6 +83,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
         [Route("AddServiceToEmployee")]
         public ActionResult AddServiceToEmployee(AddServiceToEmployeeModel model)
         {
@@ -80,7 +104,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Funcionario")]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
         [Route("AddWorkHoursToEmployee")]
         public ActionResult AddWorkHoursToEmployee([FromBody] AddEmployeeWorkHoursModel model)
         {
@@ -101,6 +125,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa,Cliente")]
         [Route("GetEmployeeAvailableHours")]
         public ActionResult GetEmployeeAvailableHours(string employeeId, string serviceId, string date)
         {

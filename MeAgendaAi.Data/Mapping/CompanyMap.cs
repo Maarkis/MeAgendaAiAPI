@@ -18,7 +18,7 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.Property(x => x.UserId).IsRequired();
 
-            builder.Property(x => x.CNPJ);
+            builder.Property(x => x.CNPJ).IsRequired();
 
             builder.Property(x => x.Descricao);
 

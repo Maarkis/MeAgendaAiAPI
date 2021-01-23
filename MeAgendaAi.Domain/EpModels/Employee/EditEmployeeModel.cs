@@ -5,14 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Domain.EpModels.User
+namespace MeAgendaAi.Domain.EpModels.Employee
 {
-    public class EditUserModel
+    public class EditEmployeeModel
     {
         public string UsuarioId { get; set; }
         public string Name { get; set; }
+        public string RG { get; set; }
+        public bool IsManager { get; set; }
+        public string Descricao { get; set; }
         public IFormFile Imagem { get; set; }
         public List<AddLocationModel> Locations { get; set; }
         public List<AddPhoneNumberModel> PhoneNumbers { get; set; }
+
     }
 }

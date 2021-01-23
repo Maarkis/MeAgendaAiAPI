@@ -12,6 +12,7 @@ namespace MeAgendaAi.Domain.Interfaces
     public interface IEmployeeService : IBaseService<Employee>
     {
         ResponseModel AddEmployee(AddEmployeeModel model);
+        ResponseModel EditEmployee(EditEmployeeModel model);
         ResponseModel GetEmployeeServices(string employeeId);
         ResponseModel AddServiceToEmployee(AddServiceToEmployeeModel model);
         ResponseModel AddWorkHoursToEmployee(AddEmployeeWorkHoursModel model, string userEmail);

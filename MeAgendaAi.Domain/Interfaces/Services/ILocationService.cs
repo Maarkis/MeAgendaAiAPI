@@ -9,7 +9,7 @@ namespace MeAgendaAi.Domain.Interfaces.Services
 {
     public interface ILocationService : IBaseService<Location>
     {
-        List<Location> CreateLocationsFromModel(List<AddLocationModel> models, Guid userId, Guid? companyId);
+        List<Location> CreateLocationsFromModel(List<AddLocationModel> models, Guid userId);
         ResponseModel ValidateAddLocations(List<AddLocationModel> locations);
     }
 }

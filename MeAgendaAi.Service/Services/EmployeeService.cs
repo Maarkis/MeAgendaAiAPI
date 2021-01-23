@@ -10,6 +10,10 @@ using System.Collections.Generic;
 using System.Text;
 using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
+using MeAgendaAi.Domain.Validators.Employee;
+using System.Linq;
+using MeAgendaAi.Domain.EpModels.User;
+using MeAgendaAi.Domain.Enums;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -19,16 +23,21 @@ namespace MeAgendaAi.Service.Services
         private IServiceEmployeeRepository _serviceEmployeeRepository;
         private IEmployeeWorkHoursService _employeeWorkHoursService;
         private IServiceRepository _serviceRepository;
+        private IUserService _userService;
+        private ICompanyRepository _companyRepository;
 
         public EmployeeService(IEmployeeRepository employeeRepository, 
             IServiceEmployeeRepository serviceEmployeeRepository,
             IEmployeeWorkHoursService employeeWorkHoursService,
-            IServiceRepository serviceRepository) : base(employeeRepository)
+            IServiceRepository serviceRepository, IUserService userService,
+            ICompanyRepository companyRepository) : base(employeeRepository)
         {
             _employeeRepository = employeeRepository;
             _serviceEmployeeRepository = serviceEmployeeRepository;
             _employeeWorkHoursService = employeeWorkHoursService;
             _serviceRepository = serviceRepository;
+            _userService = userService;
+            _companyRepository = companyRepository;
         }
 
         public ResponseModel AddEmployee(AddEmployeeModel model)
@@ -37,36 +46,124 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                User newUser = new User
-                {
-                    UserId = Guid.NewGuid(),
-                    Email = model.Email,
-                    Password = model.Password,
-                    Name = model.Name,
-                    //CPF = model.CPF,
-                    //RG = model.RG,
-                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
-                };
-                Employee newEmployee = new Employee
-                {
-                    EmployeeId = Guid.NewGuid(),
-                    CompanyId = Guid.Parse(model.CompanyId),
-                    IsManager = model.IsManager,
-                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
-                    User = newUser
-                };
-                _employeeRepository.Add(newEmployee);
+                var validateEmployee = new AddEmployeeModelValidator().Validate(model);
+                if (validateEmployee.IsValid) {
 
-                resp.Success = true;
-                resp.Result = "Funcionário adicionado com sucesso";
+                    // verificar se a empresa existe no sistema.
+                    var company = _companyRepository.GetById(Guid.Parse(model.CompanyId));
+                    if(company != null)
+                    {
+                        var userModel = new AddUserModel
+                        {
+                            Name = model.Name,
+                            Email = model.Email,
+                            Password = model.Password,
+                            Locations = model.Locations,
+                            PhoneNumbers = model.PhoneNumbers,
+                            Imagem = model.Imagem
+                        };
+
+                        List<Roles> roles = new List<Roles>();
+                        roles.Add(Roles.Funcionario);
+                        var userResponse = _userService.CreateUserFromModel(userModel, roles);
+                        if (userResponse.Success)
+                        {
+                            User newUser = userResponse.Result as User;
+                            Employee employee = new Employee
+                            {
+                                EmployeeId = Guid.NewGuid(),
+                                CompanyId = company.CompanyId,
+                                IsManager = model.IsManager,
+                                Descricao = model.Descricao,
+                                CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                                LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
+                                UserId = newUser.UserId,
+                                User = newUser,
+                            };
+                            _employeeRepository.Add(employee);
+
+                            resp.Success = true;
+                            resp.Result = $"{newUser.UserId}";
+                        }
+                        else
+                        {
+                            resp = userResponse;
+                        }
+                    }
+                    else
+                    {
+                        resp.Result = "Empresa não encontrada no banco de dados";
+                    }
+                }
+                else
+                {
+                    resp.Result = validateEmployee.Errors.FirstOrDefault().ToString();
+                }
+                
             }
             catch (Exception)
             {
                 resp.Result = "Não foi possível adicionar o funcionário";
             }
 
+            return resp;
+        }
+
+        public ResponseModel EditEmployee(EditEmployeeModel model)
+        {
+            ResponseModel resp = new ResponseModel();
+            try
+            {
+                var validateEmployee = new EditEmployeeModelValidator().Validate(model);
+                if (validateEmployee.IsValid)
+                {
+                    var employee = _employeeRepository.GetEmployeeByUserId(Guid.Parse(model.UsuarioId));
+                    if (employee != null)
+                    {
+                        EditUserModel editUserModel = new EditUserModel
+                        {
+                            UsuarioId = model.UsuarioId,
+                            Name = model.Name,
+                            Locations = model.Locations,
+                            PhoneNumbers = model.PhoneNumbers,
+                            Imagem = model.Imagem
+                        };
+
+                        var userResponse = _userService.EditUserFromModel(editUserModel);
+                        if (userResponse.Success)
+                        {
+                            User employeeUser = userResponse.Result as User;
+
+                            employee.RG = model.RG;
+                            employee.IsManager = model.IsManager;
+                            employee.Descricao = model.Descricao;
+                            employee.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
+                            employee.UpdatedBy = employeeUser.UserId;
+                            employee.User = employeeUser;
+                            _employeeRepository.Edit(employee);
+
+                            resp.Success = true;
+                            resp.Result = "Funcionário editado com sucesso";
+                        }
+                        else
+                        {
+                            resp = userResponse;
+                        }
+                    }
+                    else
+                    {
+                        resp.Result = "Cliente não encontrado";
+                    }
+                }
+                else
+                {
+                    resp.Result = validateEmployee.Errors.FirstOrDefault().ToString();
+                }
+            }
+            catch(Exception e)
+            {
+                resp.Result = "Não foi possível editar o funcionário";
+            }
             return resp;
         }
 

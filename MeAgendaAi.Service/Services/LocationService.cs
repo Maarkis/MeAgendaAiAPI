@@ -20,7 +20,7 @@ namespace MeAgendaAi.Service.Services
             _locationRepository = locationRepository;
         }
 
-        public List<Location> CreateLocationsFromModel(List<AddLocationModel> models, Guid userId, Guid? companyId)
+        public List<Location> CreateLocationsFromModel(List<AddLocationModel> models, Guid userId)
         {
             List<Location> locations = new List<Location>();
             if(models != null)
@@ -30,7 +30,6 @@ namespace MeAgendaAi.Service.Services
                     {
                         LocationId = Guid.NewGuid(),
                         UserId = userId,
-                        //CompanyId = companyId,
                         Name = model.Name,
                         Country = model.Country,
                         State = model.State,

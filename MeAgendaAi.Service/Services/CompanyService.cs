@@ -6,6 +6,10 @@ using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.Company;
 using System;
 using System.Collections.Generic;
+using MeAgendaAi.Domain.Validators.Company;
+using System.Linq;
+using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.EpModels.User;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -16,15 +20,17 @@ namespace MeAgendaAi.Service.Services
         private IEmployeeRepository _employeeRepository;
         private IServiceRepository _serviceRepository;
         private IPolicyRepository _policyRepository;
+        private IUserService _userService;
         public CompanyService(ICompanyRepository companyRepository, IUserRepository userRepository,
             IEmployeeRepository employeeRepository, IServiceRepository serviceRepository,
-            IPolicyRepository policyRepository) : base(companyRepository)
+            IPolicyRepository policyRepository, IUserService userService) : base(companyRepository)
         {
             _companyRepository = companyRepository;
             _userRepository = userRepository;
             _employeeRepository = employeeRepository;
             _serviceRepository = serviceRepository;
             _policyRepository = policyRepository;
+            _userService = userService;
         }
 
         public ResponseModel AddCompany(AddCompanyModel model)
@@ -33,43 +39,58 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                var userManager = _userRepository.GetById(Guid.Parse(model.ManagerUserId));
-                if(userManager == null)
+                var validateCompany = new AddCompanyModelValidator().Validate(model);
+                if (validateCompany.IsValid)
                 {
-                    resp.Result = "Não foi possível encontrar o usuário";
-                    return resp;
+                    var userModel = new AddUserModel
+                    {
+                        Name = model.Name,
+                        Email = model.Email,
+                        Password = model.Password,
+                        Locations = model.Locations,
+                        PhoneNumbers = model.PhoneNumbers,
+                        Imagem = model.Imagem
+                    };
+
+                    List<Roles> roles = new List<Roles>();
+                    roles.Add(Roles.UsuarioEmpresa);
+                    var userResponse = _userService.CreateUserFromModel(userModel, roles);
+                    if (userResponse.Success)
+                    {
+                        User newUser = userResponse.Result as User;
+                        Guid companyId = Guid.NewGuid();
+                        Policy policy = new Policy
+                        {
+                            PolicyId = Guid.NewGuid(),
+                            CompanyId = companyId,
+                            LimitCancelHours = model.LimitCancelHours
+                        };
+
+                        Company newCompany = new Company
+                        {
+                            CompanyId = companyId,
+                            CNPJ = model.CNPJ,
+                            Policy = policy,
+                            Descricao = model.Descricao,
+                            CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                            LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
+                            UserId = newUser.UserId,
+                            User = newUser
+                        };
+                        _companyRepository.Add(newCompany);
+
+                        resp.Success = true;
+                        resp.Result = $"{newUser.UserId}";
+                    }
+                    else
+                    {
+                        resp = userResponse;
+                    }
                 }
-
-                Guid companyId = Guid.NewGuid();
-                Policy policy = new Policy
+                else
                 {
-                    PolicyId = Guid.NewGuid(),
-                    CompanyId = companyId,
-                    LimitCancelHours = model.LimitCancelHours
-                };
-                Company newCompany = new Company
-                {
-                    CompanyId = companyId,
-                    //Name = model.Name,
-                    //CPF = model.CPF,
-                    CNPJ = model.CNPJ,
-                    Policy = policy,
-                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
-                };
-                _companyRepository.Add(newCompany);
-                Employee employee = new Employee
-                {
-                    UserId = userManager.UserId,
-                    CompanyId = newCompany.CompanyId,
-                    IsManager = true,
-                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
-                };
-                _employeeRepository.Add(employee);
-
-                resp.Success = true;
-                resp.Result = "Empresa adicionada com sucesso";
+                    resp.Result = validateCompany.Errors.FirstOrDefault().ToString();
+                }
             }
             catch (Exception)
             {
@@ -79,6 +100,70 @@ namespace MeAgendaAi.Service.Services
             return resp;
         }
 
+
+        public ResponseModel EditCompany(EditCompanyModel model)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            try
+            {
+                var validateCompany = new EditCompanyModelValidator().Validate(model);
+                if (validateCompany.IsValid)
+                {
+                    Company company = _companyRepository.GetCompanyByUserId(Guid.Parse(model.UserId));
+                    if(company != null)
+                    {
+                        EditUserModel editUserModel = new EditUserModel
+                        {
+                            UsuarioId = model.UserId,
+                            Name = model.Name,
+                            Locations = model.Locations,
+                            PhoneNumbers = model.PhoneNumbers,
+                            Imagem = model.Imagem
+                        };
+
+                        var userResponse = _userService.EditUserFromModel(editUserModel);
+                        if (userResponse.Success)
+                        {
+                            User companyUser = userResponse.Result as User;
+
+                            company.Policy.LimitCancelHours = model.LimitCancelHours;
+                            company.Policy.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
+                            company.Policy.UpdatedBy = companyUser.UserId;
+
+                            company.Descricao = model.Descricao;
+                            company.User = companyUser;
+
+                            company.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
+                            company.UpdatedBy = companyUser.UserId;
+
+                            _companyRepository.Edit(company);
+
+                            resp.Success = true;
+                            resp.Result = "Empresa editada com sucesso";
+                        }
+                        else
+                        {
+                            resp = userResponse;
+                        }
+                    }
+                    else
+                    {
+                        resp.Result = "Empresa não econtrada no banco de dados";
+                    }
+                }
+                else
+                {
+                    resp.Result = validateCompany.Errors.FirstOrDefault().ToString();
+                }
+
+            }catch(Exception e)
+            {
+                resp.Result = "Não foi possível editar a empresa";
+            }
+
+            return resp;
+        }
         public ResponseModel CreateServiceForCompany(AddServiceModel model)
         {
             var resp = new ResponseModel();

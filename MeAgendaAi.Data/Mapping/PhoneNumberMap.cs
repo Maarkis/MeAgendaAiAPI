@@ -7,35 +7,25 @@ using System.Text;
 
 namespace MeAgendaAi.Data.Mapping
 {
-    public class LocationMap : IEntityTypeConfiguration<Location>
+    public class PhoneNumberMap : IEntityTypeConfiguration<PhoneNumber>
     {
-        public void Configure(EntityTypeBuilder<Location> builder)
+        public void Configure(EntityTypeBuilder<PhoneNumber> builder)
         {
-            builder.ToTable("Location");
+            builder.ToTable("PhoneNumber");
 
-            builder.HasKey(x => x.LocationId);
+            builder.HasKey(x => x.PhoneNumberId);
 
             builder.HasOne(x => x.User)
-                .WithMany(y => y.Locations)
+                .WithMany(y => y.PhoneNumbers)
                 .HasForeignKey(x => x.UserId);
 
-            builder.Property(x => x.Name);
+            builder.Property(x => x.NameContact);
 
-            builder.Property(x => x.Country);
+            builder.Property(x => x.CountryCode);
 
-            builder.Property(x => x.State);
+            builder.Property(x => x.DDD);
 
-            builder.Property(x => x.City);
-
-            builder.Property(x => x.Neighbourhood);
-
-            builder.Property(x => x.Street);
-
-            builder.Property(x => x.Number);
-
-            builder.Property(x => x.Complement);
-
-            builder.Property(x => x.CEP);
+            builder.Property(x => x.Number).IsRequired();
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()

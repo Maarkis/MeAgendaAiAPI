@@ -12,6 +12,7 @@ namespace MeAgendaAi.Domain.Entities
         public string Name { get; set; }
         public string Image { get; set; }
         public virtual List<Location> Locations { get; set; }
+        public virtual List<PhoneNumber> PhoneNumbers { get; set; }
         public virtual List<UserRole> Roles { get; set; }
     }
 }

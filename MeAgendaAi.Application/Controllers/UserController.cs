@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -18,6 +19,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         [Route("GetAll")]
         public ActionResult GetAll()
         {
@@ -37,6 +39,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         [Route("GetById/{id}")]
         public ActionResult GetById(Guid id)
         {

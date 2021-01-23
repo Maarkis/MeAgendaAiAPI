@@ -21,6 +21,7 @@ using MeAgendaAi.Domain.Validators.Location;
 using MeAgendaAi.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -29,6 +30,7 @@ namespace MeAgendaAi.Service.Services
         private IUserRepository _userRepository;
         private IClientRepository _clientRepository;
         private ILocationService _locationService;
+        private IPhoneNumberService _phoneNumberService;
 
         private readonly SigningConfiguration _signingConfiguration;
         private readonly TokenConfiguration _tokenConfiguration;
@@ -38,13 +40,15 @@ namespace MeAgendaAi.Service.Services
             IClientRepository clientRepository,
             SigningConfiguration signingConfiguration,
             TokenConfiguration tokenConfiguration,
-            ILocationService locationService) : base(userRepository)
+            ILocationService locationService,
+            IPhoneNumberService phoneNumberService) : base(userRepository)
         {
             _userRepository = userRepository;
             _clientRepository = clientRepository;
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
             _locationService = locationService;
+            _phoneNumberService = phoneNumberService;
         }
 
         public ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles)
@@ -53,58 +57,71 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                // validate user
-                var validateUser = new AddUserModelValidator().Validate(model);
-                if (validateUser.IsValid)
+                var userExist = _userRepository.GetByEmail(model.Email);
+                if(userExist == null)
                 {
-
-                    if(model.Locations != null && model.Locations.Count > 0)
+                    // validate user
+                    var validateUser = new AddUserModelValidator().Validate(model);
+                    if (validateUser.IsValid)
                     {
-                        var validLocations = _locationService.ValidateAddLocations(model.Locations);
-                        if (!validLocations.Success)
+
+                        if (model.Locations != null && model.Locations.Count > 0)
                         {
-                            return validLocations;
+                            var validLocations = _locationService.ValidateAddLocations(model.Locations);
+                            if (!validLocations.Success)
+                            {
+                                return validLocations;
+                            }
                         }
-                    }
 
-                    Guid userId = Guid.NewGuid();
-
-                    string img = null;
-                    if(model.Imagem != null)
-                    {
-                        var resultImg = DownloadImage(model.Imagem, userId.ToString());
-                        if (resultImg.Success)
+                        if(model.PhoneNumbers != null && model.PhoneNumbers.Count > 0)
                         {
-                            img = resultImg.Result.ToString();
+                            var validPhoneNumbers = _phoneNumberService.ValidateAddPhoneNumbers(model.PhoneNumbers);
+                            if (!validPhoneNumbers.Success)
+                            {
+                                return validPhoneNumbers;
+                            }
                         }
+
+                        Guid userId = Guid.NewGuid();
+
+                        string img = null;
+                        if (model.Imagem != null)
+                        {
+                            ResponseModel resultImg = DownloadImage(model.Imagem, userId.ToString()).Result;
+                            if (resultImg.Success)
+                            {
+                                img = resultImg.Result.ToString();
+                            }
+                        }
+
+                        User newUser = new User
+                        {
+                            UserId = userId,
+                            Email = model.Email,
+                            Password = Encrypt.EncryptString(model.Password, userId.ToString()),
+                            Name = model.Name,
+                            Image = img,
+                            Locations = _locationService.CreateLocationsFromModel(model.Locations, userId),
+                            PhoneNumbers = _phoneNumberService.CreatePhoneNumbersFromModel(model.PhoneNumbers, userId),
+                            CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                            LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                            Roles = GenerateUserRoles(roles, userId)
+                        };
+                        //_userRepository.Add(newUser);
+
+                        resp.Success = true;
+                        resp.Result = newUser;
                     }
-
-                  
-                    User newUser = new User
+                    else
                     {
-                        UserId = userId,
-                        Email = model.Email,
-                        Password = Encrypt.EncryptString(model.Password, userId.ToString()),
-                        Name = model.Name,
-                        //CPF = model.CPF,
-                        //RG = model.RG,
-                        Image = img,
-                        Locations = _locationService.CreateLocationsFromModel(model.Locations, userId, null),
-                        CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                        LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                        Roles = GenerateUserRoles(roles, userId)
-                    };
-                    //_userRepository.Add(newUser);
-
-                    resp.Success = true;
-                    resp.Result = newUser;
+                        resp.Result = validateUser.Errors.FirstOrDefault().ToString();
+                    }
                 }
                 else
                 {
-                    resp.Result = validateUser.Errors.FirstOrDefault().ToString();
+                    resp.Result = "Já existe um usuário utilizando este E-mail, por favor escolha outro E-mail.";
                 }
-
-                return resp;
             }
             catch (Exception e)
             {
@@ -124,7 +141,6 @@ namespace MeAgendaAi.Service.Services
                 var validateUser = new EditUserModelValidator().Validate(model);
                 if (validateUser.IsValid)
                 {
-
                     var user = _userRepository.GetById(Guid.Parse(model.UsuarioId));
                     if (user != null)
                     {
@@ -137,9 +153,18 @@ namespace MeAgendaAi.Service.Services
                             }
                         }
 
+                        if (model.PhoneNumbers != null && model.PhoneNumbers.Count > 0)
+                        {
+                            var validPhoneNumbers = _phoneNumberService.ValidateAddPhoneNumbers(model.PhoneNumbers);
+                            if (!validPhoneNumbers.Success)
+                            {
+                                return validPhoneNumbers;
+                            }
+                        }
+
                         if (model.Imagem != null)
                         {
-                            var resultImg = DownloadImage(model.Imagem, user.UserId.ToString());
+                            ResponseModel resultImg = DownloadImage(model.Imagem, user.UserId.ToString()).Result;
                             if (resultImg.Success)
                             {
                                 user.Image = resultImg.Result.ToString();
@@ -147,7 +172,8 @@ namespace MeAgendaAi.Service.Services
                         }
 
                         user.Name = model.Name;
-                        user.Locations = _locationService.CreateLocationsFromModel(model.Locations, user.UserId, null);
+                        user.Locations = _locationService.CreateLocationsFromModel(model.Locations, user.UserId);
+                        user.PhoneNumbers = _phoneNumberService.CreatePhoneNumbersFromModel(model.PhoneNumbers, user.UserId);
                         user.LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia();
 
                         resp.Success = true;
@@ -156,9 +182,7 @@ namespace MeAgendaAi.Service.Services
                     else
                     {
                         resp.Result = "Usuário não encontrado";
-                    }
-
-                    
+                    }   
                 }
                 else
                 {
@@ -222,12 +246,12 @@ namespace MeAgendaAi.Service.Services
             return resp;
         }
 
-        private bool ValidatePassword(string password, User user)
+        private bool ValidatePassword (string password, User user)
         {
             return Encrypt.CompareComputeHash(password, user.UserId.ToString(), user.Password);
         }
 
-        public ResponseModel DownloadImage(IFormFile file, string userId)
+        public async Task<ResponseModel> DownloadImage(IFormFile file, string userId)
         {
             var response = new ResponseModel();
 
@@ -246,7 +270,7 @@ namespace MeAgendaAi.Service.Services
                 string filePath = Path.Combine(path, fileName);
                 using (Stream fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    file.CopyToAsync(fileStream);
+                    await file.CopyToAsync(fileStream);
                 }
 
                 //using (var ms = new MemoryStream())
