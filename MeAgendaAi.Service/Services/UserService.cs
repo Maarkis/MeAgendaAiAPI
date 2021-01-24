@@ -62,21 +62,21 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles)
         {
-            var resp = new ResponseModel();
+            ResponseModel resp = new ResponseModel();
 
             try
             {
-                var userExist = _userRepository.GetByEmail(model.Email);
+                User userExist = _userRepository.GetByEmail(model.Email);
                 if(userExist == null)
                 {
                     // validate user
-                    var validateUser = new AddUserModelValidator().Validate(model);
+                    ValidationResult validateUser = new AddUserModelValidator().Validate(model);
                     if (validateUser.IsValid)
                     {
 
                         if (model.Locations != null && model.Locations.Count > 0)
                         {
-                            var validLocations = _locationService.ValidateAddLocations(model.Locations);
+                            ResponseModel validLocations = _locationService.ValidateAddLocations(model.Locations);
                             if (!validLocations.Success)
                             {
                                 return validLocations;
@@ -85,7 +85,7 @@ namespace MeAgendaAi.Service.Services
 
                         if(model.PhoneNumbers != null && model.PhoneNumbers.Count > 0)
                         {
-                            var validPhoneNumbers = _phoneNumberService.ValidateAddPhoneNumbers(model.PhoneNumbers);
+                            ResponseModel validPhoneNumbers = _phoneNumberService.ValidateAddPhoneNumbers(model.PhoneNumbers);
                             if (!validPhoneNumbers.Success)
                             {
                                 return validPhoneNumbers;
@@ -142,20 +142,20 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel EditUserFromModel(EditUserModel model)
         {
-            var resp = new ResponseModel();
+            ResponseModel resp = new ResponseModel();
 
             try
             {
                 // validate user
-                var validateUser = new EditUserModelValidator().Validate(model);
+                ValidationResult validateUser = new EditUserModelValidator().Validate(model);
                 if (validateUser.IsValid)
                 {
-                    var user = _userRepository.GetById(Guid.Parse(model.UsuarioId));
+                    User user = _userRepository.GetById(Guid.Parse(model.UsuarioId));
                     if (user != null)
                     {
                         if (model.Locations != null && model.Locations.Count > 0)
                         {
-                            var validLocations = _locationService.ValidateAddLocations(model.Locations);
+                            ResponseModel validLocations = _locationService.ValidateAddLocations(model.Locations);
                             if (!validLocations.Success)
                             {
                                 return validLocations;
@@ -164,7 +164,7 @@ namespace MeAgendaAi.Service.Services
 
                         if (model.PhoneNumbers != null && model.PhoneNumbers.Count > 0)
                         {
-                            var validPhoneNumbers = _phoneNumberService.ValidateAddPhoneNumbers(model.PhoneNumbers);
+                            ResponseModel validPhoneNumbers = _phoneNumberService.ValidateAddPhoneNumbers(model.PhoneNumbers);
                             if (!validPhoneNumbers.Success)
                             {
                                 return validPhoneNumbers;
@@ -411,7 +411,7 @@ namespace MeAgendaAi.Service.Services
                 string dir = Directory.GetCurrentDirectory();
                 dir = dir.Replace("MeAgendaAi.Application", "MeAgendaAi.Domain");
                 string insideDir = "/Assets/UserImages/";
-                var path = dir + insideDir;
+                string path = dir + insideDir;
 
 
                 string[] subs = file.FileName.Split('.');

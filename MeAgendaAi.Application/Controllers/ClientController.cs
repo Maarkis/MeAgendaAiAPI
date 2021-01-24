@@ -31,7 +31,7 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                var result = _clientService.AddClient(model);
+                ResponseModel result = _clientService.AddClient(model);
                 return Ok(result);
             }
             catch (ArgumentException e)
@@ -52,7 +52,7 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                var result = _clientService.EditClient(model);
+                ResponseModel result = _clientService.EditClient(model);
                 return Ok(result);
             }
             catch (ArgumentException e)

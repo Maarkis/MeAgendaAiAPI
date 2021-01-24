@@ -10,6 +10,7 @@ using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.EpModels.Client;
 using MeAgendaAi.Domain.Validators.Client;
 using System.Linq;
+using FluentValidation.Results;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -27,13 +28,13 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel AddClient(AddClientModel model)
         {
-            var resp = new ResponseModel();
+            ResponseModel resp = new ResponseModel();
             try
             {
-                var validateClient = new AddClientModelValidator().Validate(model);
+                ValidationResult validateClient = new AddClientModelValidator().Validate(model);
                 if (validateClient.IsValid)
                 {
-                    var userModel = new AddUserModel
+                    AddUserModel userModel = new AddUserModel
                     {
                         Email = model.Email,
                         Name = model.Name,
@@ -45,7 +46,7 @@ namespace MeAgendaAi.Service.Services
 
                     List<Roles> roles = new List<Roles>();
                     roles.Add(Roles.Cliente);
-                    var userResponse = _userService.CreateUserFromModel(userModel, roles);
+                    ResponseModel userResponse = _userService.CreateUserFromModel(userModel, roles);
                     if (userResponse.Success)
                     {
                         User newUser = userResponse.Result as User;
@@ -54,13 +55,16 @@ namespace MeAgendaAi.Service.Services
                             ClientId = Guid.NewGuid(),
                             UserId = newUser.UserId,
                             CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                            CPF = model.CPF,
+                            RG = model.RG,
                             LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
                             User = newUser
+                            
                         };
                         _clientRepository.Add(newClient);
 
                         resp.Success = true;
-                        resp.Result = $"{newUser.UserId}";
+                        resp.Result = "Cliente adicionado com sucesso";
                     }
                     else
                     {
@@ -86,10 +90,10 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                var validateClient = new EditClientModelValidator().Validate(model);
+                ValidationResult validateClient = new EditClientModelValidator().Validate(model);
                 if (validateClient.IsValid)
                 {
-                    var client = _clientRepository.GetClientByUserId(Guid.Parse(model.UserId));
+                    Client client = _clientRepository.GetClientByUserId(Guid.Parse(model.UserId));
                     if (client != null)
                     {
                         EditUserModel editUserModel = new EditUserModel
@@ -101,7 +105,7 @@ namespace MeAgendaAi.Service.Services
                             Imagem = model.Imagem
                         };
 
-                        var userResponse = _userService.EditUserFromModel(editUserModel);
+                        ResponseModel userResponse = _userService.EditUserFromModel(editUserModel);
                         if (userResponse.Success)
                         {
                             User clientUser = userResponse.Result as User;
