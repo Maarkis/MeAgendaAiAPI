@@ -11,13 +11,16 @@ using MeAgendaAi.Domain.EpModels.Client;
 using MeAgendaAi.Domain.Validators.Client;
 using System.Linq;
 using FluentValidation.Results;
+using MeAgendaAi.Domain.Interfaces.Services.Email;
+using FluentValidation;
+using System.Threading.Tasks;
 
 namespace MeAgendaAi.Service.Services
 {
     public class ClientService : BaseService<Client>, IClientService
     {
         private IClientRepository _clientRepository;
-        private IUserService _userService;
+        private IUserService _userService;        
 
         public ClientService(IClientRepository clientRepository,
             IUserService userService) : base(clientRepository)
@@ -26,7 +29,7 @@ namespace MeAgendaAi.Service.Services
             _userService = userService;
         }
 
-        public ResponseModel AddClient(AddClientModel model)
+        public async Task<ResponseModel> AddClient(AddClientModel model)
         {
             ResponseModel resp = new ResponseModel();
             try
@@ -41,7 +44,9 @@ namespace MeAgendaAi.Service.Services
                         Imagem = model.Imagem,
                         Locations = model.Locations,
                         PhoneNumbers = model.PhoneNumbers,
-                        Password = model.Password
+                        Password = model.Password,
+                        Verified = false
+
                     };
 
                     List<Roles> roles = new List<Roles>();
@@ -59,9 +64,11 @@ namespace MeAgendaAi.Service.Services
                             RG = model.RG,
                             LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
                             User = newUser
-                            
+
                         };
                         _clientRepository.Add(newClient);
+
+                        ResponseModel send = await _userService.SendEmailConfirmation(userModel.Email);                        
 
                         resp.Success = true;
                         resp.Result = "Cliente adicionado com sucesso";
@@ -141,5 +148,78 @@ namespace MeAgendaAi.Service.Services
 
             return resp;
         }
+
+        public ResponseModel UserVerified(Guid id)
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                if (id == null)
+                {
+                    response.Result = "Id não informado";
+                    return response;
+                }
+
+                User user = _userService.GetById(id);
+                if (user == null)
+                {
+                    response.Result = "Usuário não encontrado";
+                    return response;
+                }
+
+                response.Result = new
+                {
+                    UserVerified = user.Verified
+                };
+                response.Success = true;
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return response;
+        }
+
+        public async Task<ResponseModel> SendEmail(RequestResendEmail model)
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                ValidationResult resultValidator = new RequestResendEmailValidator().Validate(model);
+                if (resultValidator.IsValid)
+                {
+                    response = await _userService.SendEmailConfirmation(model.Email);         
+                }
+                else
+                {
+                    response.Result = resultValidator.Errors.FirstOrDefault().ToString();
+                }                
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+
+            return response;
+        }
+
+        public ResponseModel ConfirmationEmail(Guid id)
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                response = _userService.ConfirmationEmail(id);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+            return response;
+        }
     }
+
+
 }

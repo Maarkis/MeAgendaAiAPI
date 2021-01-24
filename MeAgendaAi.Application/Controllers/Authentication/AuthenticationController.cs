@@ -33,7 +33,7 @@ namespace MeAgendaAi.Application.Controllers.Authentication
 
             try
             {              
-                return BadRequest(_userService.Login(model));                            
+                return Ok(_userService.Login(model));                            
             }
             catch (ArgumentException e)
             {
@@ -62,25 +62,7 @@ namespace MeAgendaAi.Application.Controllers.Authentication
 
         }
 
-        [AllowAnonymous]
-        [HttpPut]
-        [Route("ConfirmationEmail")]
-        public ActionResult ConfirmationEmail(Guid id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {                
-                return Ok(_userService.ConfirmationEmail(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
 
-        }
 
         [AllowAnonymous]
         [HttpPut]

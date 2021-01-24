@@ -16,15 +16,11 @@ using MeAgendaAi.JWT;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Domain.Validators.Location;
-using MeAgendaAi.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
-using MeAgendaAi.Domain.Validators.Authentication;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -115,7 +111,7 @@ namespace MeAgendaAi.Service.Services
                             PhoneNumbers = _phoneNumberService.CreatePhoneNumbersFromModel(model.PhoneNumbers, userId),
                             CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
                             LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                            Roles = GenerateUserRoles(roles, userId)
+                            Roles = GenerateUserRoles(roles, userId)                            
                         };
                         //_userRepository.Add(newUser);
 
@@ -240,7 +236,7 @@ namespace MeAgendaAi.Service.Services
                     User user = _userRepository.GetByEmail(model.Email);
                     if(user != null)
                     {
-
+                        
                         if (!ValidatePassword(model.Senha, user))
                         {
                             resp.Success = false;
@@ -367,35 +363,6 @@ namespace MeAgendaAi.Service.Services
                 
         }
 
-        public ResponseModel ConfirmationEmail(Guid id)
-        {            
-            ResponseModel response = new ResponseModel();
-            try
-            {                
-                if(id == null || id == Guid.Empty)
-                {
-                    response.Result = "Token não encontrado";
-                    return response;
-                }
-                User user = _userRepository.GetById(id);
-                if (user == null)
-                {
-                    response.Result = "Usuário não encontrado";
-                    return response;
-                }
-
-                response.Result = "E-mail confirmado com sucesso";
-                response.Success = true;
-
-            }
-            catch (Exception)
-            {
-                response.Result = "Erro ao confirmar e-mail, entre em contato com suporte";
-            }
-
-            return response;
-        }
-
         private bool ValidatePassword(string password, User user)
         {
             return Encrypt.CompareComputeHash(password, user.UserId.ToString(), user.Password);
@@ -439,6 +406,75 @@ namespace MeAgendaAi.Service.Services
             }
 
             return response;
+        }
+
+
+        public ResponseModel ConfirmationEmail(Guid id)
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                if (id == null || id == Guid.Empty)
+                {
+                    response.Result = "Token não encontrado";
+                    return response;
+                }
+                User user = _userRepository.GetById(id);
+                if (user == null)
+                {
+                    response.Result = "Usuário não encontrado";
+                    return response;
+                }
+
+                user.Verified = true;
+                _userRepository.Edit(user);
+
+                response.Result = "E-mail confirmado com sucesso";
+                response.Success = true;
+
+            }
+            catch (Exception)
+            {
+                response.Result = "Erro ao confirmar e-mail, entre em contato com suporte";
+            }
+
+            return response;
+        }
+
+
+        public async Task<ResponseModel> SendEmailConfirmation(string email)
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                User user = _userRepository.GetByEmail(email);
+                if(user == null)
+                {
+                    response.Result = "Usuário não encotrado";
+                    return response;
+                }
+
+                EmailConfirmation emailConfirmation = new EmailConfirmation()
+                {
+                    FromEmail = "jeanmarkis85@hotmail.com",
+                    FromName = "Me Agenda Aí",
+                    Subject = "Confirmar meu e-mail no Me Agenda Aí",
+                    Url = _configuration.GetValue<string>("URLPortal"),
+                };
+                bool emailSent = await _email.SendEmailConfirmartion(user, emailConfirmation);
+                if (emailSent)
+                {
+                    response.Success = true;
+                    response.Result = "E-mail enviado com sucesso";
+                }
+                return response;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }           
+            
         }
     }
 }

@@ -13,6 +13,7 @@ namespace MeAgendaAi.Domain.EpModels.User
         public string Password { get; set; }
         public string Name { get; set; }
         public IFormFile Imagem { get; set; }
+        public bool Verified { get; set; }
         public List<AddLocationModel> Locations { get; set; }
         public List<AddPhoneNumberModel> PhoneNumbers { get; set; }
     }

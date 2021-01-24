@@ -6,12 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MeAgendaAi.Domain.EpModels.Client;
+using System.Threading.Tasks;
 
 namespace MeAgendaAi.Domain.Interfaces
 {
     public interface IClientService : IBaseService<Client>
     {
-        ResponseModel AddClient(AddClientModel model);
+        Task<ResponseModel> AddClient(AddClientModel model);
         ResponseModel EditClient(EditClientModel model);
+        ResponseModel UserVerified(Guid id);
+        Task<ResponseModel> SendEmail(RequestResendEmail model);
+        ResponseModel ConfirmationEmail(Guid id);
     }
 }

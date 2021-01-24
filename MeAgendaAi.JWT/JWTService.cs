@@ -85,8 +85,9 @@ namespace MeAgendaAi.JWT
                 Token = token,
                 Id = user.UserId,
                 UserName = user.Name,
-                UserEmail = user.Email,
-                Message = "Usuário autenticado com sucesso"
+                UserEmail = user.Email,                
+                Message = "Usuário autenticado com sucesso"              
+                
             };
         }
 
@@ -99,7 +100,8 @@ namespace MeAgendaAi.JWT
                 SigningCredentials = _signingConfiguration.SigningCredentials,
                 Subject = identity,
                 NotBefore = createDate,
-                Expires = expirationDate,                
+                Expires = expirationDate,
+                
             });                        
             
             return handler.WriteToken(securityToken);
@@ -117,7 +119,7 @@ namespace MeAgendaAi.JWT
             SecurityToken validatedToken;            
             try
             {
-                ClaimsPrincipal resp = handler.ValidateToken(token, validationParameters, out validatedToken);
+                ClaimsPrincipal resp = handler.ValidateToken(token, validationParameters, out validatedToken);                
                 
             }
             catch (Exception e)
