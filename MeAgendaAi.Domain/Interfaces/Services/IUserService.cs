@@ -14,8 +14,7 @@ namespace MeAgendaAi.Domain.Interfaces
     {
         ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles);
         ResponseModel Login(LoginModel model);
-        ResponseModel EditUserFromModel(EditUserModel model);
-        ResponseModel Login(LoginModel model);        
+        ResponseModel EditUserFromModel(EditUserModel model);        
         ResponseModel ResetPassword(ResetPassword model);
         ResponseModel ConfirmationEmail(Guid id);
         Task<ResponseModel> RetrievePassword(RecoveryPassword model);

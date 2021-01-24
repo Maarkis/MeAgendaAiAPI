@@ -47,6 +47,7 @@ namespace MeAgendaAi.Service.Services
             SigningConfiguration signingConfiguration,
             TokenConfiguration tokenConfiguration,
             ILocationService locationService,
+            IConfiguration configuration,
             IPhoneNumberService phoneNumberService) : base(userRepository)
         {
             _email = email;
