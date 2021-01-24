@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
@@ -77,6 +78,16 @@ namespace MeAgendaAi.JWT
 
         private static ResponseAuthentication SuccessObject(DateTime createDate, DateTime expirationDate, string token, User user)
         {
+            int role = 0;
+            if(user.Roles.Any(x => x.Role == Domain.Enums.Roles.Admin))
+            {
+                role = (int)Domain.Enums.Roles.Admin;
+            }
+            else
+            {
+                role = (int)user.Roles.FirstOrDefault().Role;
+            }
+
             return new ResponseAuthentication()
             {
                 Authenticated = true,
@@ -86,8 +97,8 @@ namespace MeAgendaAi.JWT
                 Id = user.UserId,
                 UserName = user.Name,
                 UserEmail = user.Email,                
-                Message = "Usuário autenticado com sucesso"              
-                
+                Message = "Usuário autenticado com sucesso",
+                Role = role
             };
         }
 
