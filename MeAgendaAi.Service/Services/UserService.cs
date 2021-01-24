@@ -22,6 +22,7 @@ using MeAgendaAi.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
+using MeAgendaAi.Domain.Validators.Authentication;
 
 namespace MeAgendaAi.Service.Services
 {
