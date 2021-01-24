@@ -3,6 +3,7 @@ using MeAgendaAi.Domain.EpModels.Company;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -17,6 +18,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("AddCompany")]
         public ActionResult AddCompany([FromBody] AddCompanyModel model)
         {
@@ -37,6 +39,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "UsuarioEmpresa")]
         [Route("AddServiceInCompany")]
         public ActionResult AddServiceInCompany([FromBody] AddServiceModel model)
         {
@@ -57,6 +60,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "UsuarioEmpresa,Funcionario,Cliente")]
         [Route("GetServicesFromCompany/{companyId}")]
         public ActionResult GetServicesFromCompany(string companyId)
         {
@@ -77,6 +81,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "UsuarioEmpresa,Funcionario,Cliente")]
         [Route("GetCompanyComplete")]
         public ActionResult GetCompanyComplete(string companyId)
         {
@@ -97,6 +102,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "UsuarioEmpresa")]
         [Route("UpdateCompanyPolicy")]
         public ActionResult UpdateCompanyPolicy(UpdatePolicyModel model)
         {

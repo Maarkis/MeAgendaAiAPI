@@ -46,6 +46,11 @@ namespace MeAgendaAi.Data.Repository
                 .ToList();
         }
 
+        public List<Scheduling> GetDaySchedulingsByEmployee(Guid employeeId, DateTime date)
+        {
+            return _schedulings.Where(x => x.EmployeeId == employeeId && x.StartTime.Date == date.Date).ToList();
+        }
+
         public Scheduling GetSchedulingByIdComplete(Guid schedulingId)
         {
             return _schedulings.Where(x => x.SchedulingId == schedulingId)

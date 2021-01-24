@@ -23,7 +23,15 @@ namespace MeAgendaAi.Data.Mapping
                .HasForeignKey(x => x.CompanyId)
                .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Property(x => x.CPF)
+                .IsRequired();
+
+            builder.Property(x => x.RG)
+                .IsRequired();
+
             builder.Property(x => x.IsManager).HasDefaultValue(false);
+
+            builder.Property(x => x.Descricao);
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()

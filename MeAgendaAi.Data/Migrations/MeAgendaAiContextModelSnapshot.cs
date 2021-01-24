@@ -25,6 +25,10 @@ namespace MeAgendaAi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CPF")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -34,6 +38,10 @@ namespace MeAgendaAi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<string>("RG")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UpdatedBy")
                         .ValueGeneratedOnAdd()
@@ -57,9 +65,7 @@ namespace MeAgendaAi.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CNPJ")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CPF")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -67,20 +73,25 @@ namespace MeAgendaAi.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
+                    b.Property<string>("Descricao")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UpdatedBy")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("CompanyId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Company");
                 });
@@ -91,6 +102,10 @@ namespace MeAgendaAi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CPF")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -98,6 +113,9 @@ namespace MeAgendaAi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<string>("Descricao")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsManager")
                         .ValueGeneratedOnAdd()
@@ -108,6 +126,10 @@ namespace MeAgendaAi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<string>("RG")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UpdatedBy")
                         .ValueGeneratedOnAdd()
@@ -124,6 +146,49 @@ namespace MeAgendaAi.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Employee");
+                });
+
+            modelBuilder.Entity("MeAgendaAi.Domain.Entities.EmployeeWorkHours", b =>
+                {
+                    b.Property<Guid>("EmployeeWorkHoursId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EndHour")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndInterval")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<DateTime>("StartHour")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartInterval")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+
+                    b.HasKey("EmployeeWorkHoursId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeeWorkHours");
                 });
 
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.Location", b =>
@@ -177,7 +242,7 @@ namespace MeAgendaAi.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
 
-                    b.Property<Guid?>("UserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LocationId");
@@ -187,6 +252,50 @@ namespace MeAgendaAi.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Location");
+                });
+
+            modelBuilder.Entity("MeAgendaAi.Domain.Entities.PhoneNumber", b =>
+                {
+                    b.Property<Guid>("PhoneNumberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CountryCode")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<int>("DDD")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+                    b.Property<string>("NameContact")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("PhoneNumberId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PhoneNumber");
                 });
 
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.Policy", b =>
@@ -361,10 +470,6 @@ namespace MeAgendaAi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -387,10 +492,6 @@ namespace MeAgendaAi.Data.Migrations
                         .HasMaxLength(60);
 
                     b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RG")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("UpdatedBy")
@@ -451,6 +552,15 @@ namespace MeAgendaAi.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MeAgendaAi.Domain.Entities.Company", b =>
+                {
+                    b.HasOne("MeAgendaAi.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.Employee", b =>
                 {
                     b.HasOne("MeAgendaAi.Domain.Entities.Company", "Company")
@@ -466,15 +576,35 @@ namespace MeAgendaAi.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MeAgendaAi.Domain.Entities.EmployeeWorkHours", b =>
+                {
+                    b.HasOne("MeAgendaAi.Domain.Entities.Employee", "Employee")
+                        .WithMany("EmployeeWorkHours")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.Location", b =>
                 {
-                    b.HasOne("MeAgendaAi.Domain.Entities.Company", "Company")
+                    b.HasOne("MeAgendaAi.Domain.Entities.Company", null)
                         .WithMany("Locations")
                         .HasForeignKey("CompanyId");
 
                     b.HasOne("MeAgendaAi.Domain.Entities.User", "User")
                         .WithMany("Locations")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MeAgendaAi.Domain.Entities.PhoneNumber", b =>
+                {
+                    b.HasOne("MeAgendaAi.Domain.Entities.User", "User")
+                        .WithMany("PhoneNumbers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MeAgendaAi.Domain.Entities.Policy", b =>

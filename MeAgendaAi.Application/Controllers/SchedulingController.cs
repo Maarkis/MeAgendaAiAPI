@@ -3,6 +3,7 @@ using MeAgendaAi.Domain.EpModels.Scheduling;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -17,6 +18,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Cliente,UsuarioEmpresa,Funcionario")]
         [Route("CreateScheduling")]
         public ActionResult CreateScheduling([FromBody] CreateSchedulingModel model)
         {
@@ -37,6 +39,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Cliente,UsuarioEmpresa,Funcionario")]
         [Route("GetClientSchedulingsByUserId")]
         public ActionResult GetClientSchedulingsByUserId(string userId)
         {
@@ -57,6 +60,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Cliente,UsuarioEmpresa,Funcionario")]
         [Route("GetEmployeeSchedulingsByUserId/{userId}")]
         public ActionResult GetEmployeeSchedulingsByUserId(string userId)
         {
@@ -77,6 +81,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Cliente,UsuarioEmpresa,Funcionario")]
         [Route("UpdateSchedulingStatus")]
         public ActionResult UpdateSchedulingStatus(UpdateSchedulingStatusModel model)
         {

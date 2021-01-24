@@ -21,11 +21,18 @@ namespace MeAgendaAi.Data.Repository
         {
             return _employees.Where(x => x.UserId == userId).FirstOrDefault();
         }
-        public List<MeAgendaAi.Domain.Entities.Services> GetEmployeeServicesByEmployeeId(Guid employeeId)
+        public List<Services> GetEmployeeServicesByEmployeeId(Guid employeeId)
         {
             return _employees.Where(x => x.EmployeeId == employeeId)
                 .SelectMany(y => y.EmployeeServices)
                 .Select(y => y.Service).ToList();
+        }
+
+        public Employee GetEmployeeByUserEmail(string userEmail)
+        {
+            return _employees.Where(x => x.User.Email == userEmail)
+                .Include(x => x.User)
+                .FirstOrDefault();
         }
 
     }

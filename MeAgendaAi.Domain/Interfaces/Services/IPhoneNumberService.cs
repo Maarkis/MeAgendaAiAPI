@@ -1,0 +1,15 @@
+﻿using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.EpModels;
+using MeAgendaAi.Domain.EpModels.PhoneNumber;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace MeAgendaAi.Domain.Interfaces.Services
+{
+    public interface IPhoneNumberService : IBaseService<PhoneNumber>
+    {
+        List<PhoneNumber> CreatePhoneNumbersFromModel(List<AddPhoneNumberModel> models, Guid userId);
+        ResponseModel ValidateAddPhoneNumbers(List<AddPhoneNumberModel> phones);
+    }
+}

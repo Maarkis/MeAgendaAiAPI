@@ -34,5 +34,13 @@ namespace MeAgendaAi.Data.Repository
                 .Include(x => x.Services)
                 .FirstOrDefault();
         }
+
+        public Company GetCompanyByUserId(Guid userId)
+        {
+            return _companies.Where(x => x.UserId == userId)
+                .Include(x => x.User)
+                .Include(x => x.Policy)
+                .FirstOrDefault();
+        }
     }
 }

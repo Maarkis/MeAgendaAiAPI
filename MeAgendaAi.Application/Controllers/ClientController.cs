@@ -4,6 +4,8 @@ using MeAgendaAi.Domain.EpModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using MeAgendaAi.Domain.EpModels.Client;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -18,8 +20,9 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("AddClient")]
-        public ActionResult AddClient([FromBody] AddUserModel model)
+        public ActionResult AddClient([FromForm] AddClientModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -29,6 +32,27 @@ namespace MeAgendaAi.Application.Controllers
             try
             {
                 var result = _clientService.AddClient(model);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Cliente")]
+        [Route("EditClient")]
+        public ActionResult EditClient([FromForm] EditClientModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _clientService.EditClient(model);
                 return Ok(result);
             }
             catch (ArgumentException e)
