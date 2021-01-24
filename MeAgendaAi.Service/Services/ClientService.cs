@@ -46,7 +46,6 @@ namespace MeAgendaAi.Service.Services
                         PhoneNumbers = model.PhoneNumbers,
                         Password = model.Password,
                         Verified = false
-
                     };
 
                     List<Roles> roles = new List<Roles>();
@@ -71,7 +70,8 @@ namespace MeAgendaAi.Service.Services
                         ResponseModel send = await _userService.SendEmailConfirmation(userModel.Email);                        
 
                         resp.Success = true;
-                        resp.Result = "Cliente adicionado com sucesso";
+                        resp.Result = $"{newUser.UserId}";
+                        resp.Message = "Cliente adicionado com sucesso";
                     }
                     else
                     {
@@ -80,12 +80,12 @@ namespace MeAgendaAi.Service.Services
                 }
                 else
                 {
-                    resp.Result = validateClient.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateClient.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch (Exception e)
             {
-                resp.Result = "Não foi possível adicionar o cliente";
+                resp.Message = "Não foi possível adicionar o cliente";
             }
 
             return resp;
@@ -124,7 +124,7 @@ namespace MeAgendaAi.Service.Services
                             _clientRepository.Edit(client);
 
                             resp.Success = true;
-                            resp.Result = "Cliente editado com sucesso";
+                            resp.Message = "Cliente editado com sucesso";
                         }
                         else
                         {
@@ -133,17 +133,17 @@ namespace MeAgendaAi.Service.Services
                     }
                     else
                     {
-                        resp.Result = "Cliente não encontrado";
+                        resp.Message = "Cliente não encontrado";
                     }
                 }
                 else
                 {
-                    resp.Result = validateClient.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateClient.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch (Exception e)
             {
-                resp.Result = "Não foi possível editar o cliente";
+                resp.Message = "Não foi possível editar o cliente";
             }
 
             return resp;

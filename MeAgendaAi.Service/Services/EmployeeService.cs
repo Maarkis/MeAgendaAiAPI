@@ -86,6 +86,7 @@ namespace MeAgendaAi.Service.Services
 
                             resp.Success = true;
                             resp.Result = $"{newUser.UserId}";
+                            resp.Message = "Funcionário adicionado com sucesso!";
                         }
                         else
                         {
@@ -94,18 +95,18 @@ namespace MeAgendaAi.Service.Services
                     }
                     else
                     {
-                        resp.Result = "Empresa não encontrada no banco de dados";
+                        resp.Message = "Empresa não encontrada no banco de dados";
                     }
                 }
                 else
                 {
-                    resp.Result = validateEmployee.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateEmployee.Errors.FirstOrDefault().ErrorMessage;
                 }
                 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                resp.Result = "Não foi possível adicionar o funcionário";
+                resp.Message = "Não foi possível adicionar o funcionário";
             }
 
             return resp;
@@ -145,7 +146,7 @@ namespace MeAgendaAi.Service.Services
                             _employeeRepository.Edit(employee);
 
                             resp.Success = true;
-                            resp.Result = "Funcionário editado com sucesso";
+                            resp.Message = "Funcionário editado com sucesso";
                         }
                         else
                         {
@@ -154,17 +155,17 @@ namespace MeAgendaAi.Service.Services
                     }
                     else
                     {
-                        resp.Result = "Cliente não encontrado";
+                        resp.Message = "Cliente não encontrado";
                     }
                 }
                 else
                 {
-                    resp.Result = validateEmployee.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateEmployee.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch(Exception e)
             {
-                resp.Result = "Não foi possível editar o funcionário";
+                resp.Message = "Não foi possível editar o funcionário";
             }
             return resp;
         }
@@ -185,11 +186,11 @@ namespace MeAgendaAi.Service.Services
                 };
                 _serviceEmployeeRepository.Add(serviceEmployee);
                 resp.Success = true;
-                resp.Result = "Serviço adicionado ao funcionário com sucesso";
+                resp.Message = "Serviço adicionado ao funcionário com sucesso";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar o serviço ao funcionário";
+                resp.Message = "Não foi possível adicionar o serviço ao funcionário";
             }
 
             return resp;
@@ -213,10 +214,11 @@ namespace MeAgendaAi.Service.Services
                 });
                 resp.Success = true;
                 resp.Result = servicesEmployee;
+                resp.Message = "Serviços do funcionário selecionados!";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar o serviço ao funcionário";
+                resp.Message = "Não foi possível adicionar o serviço ao funcionário";
             }
 
             return resp;
@@ -233,7 +235,7 @@ namespace MeAgendaAi.Service.Services
             }
             else
             {
-                response.Result = "Funcionário não encontrado";
+                response.Message = "Funcionário não encontrado";
             }
 
             return response;

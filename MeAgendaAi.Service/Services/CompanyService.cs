@@ -83,6 +83,7 @@ namespace MeAgendaAi.Service.Services
 
                         resp.Success = true;
                         resp.Result = $"{newUser.UserId}";
+                        resp.Message = "Empresa Adicionada com sucesso!";
                     }
                     else
                     {
@@ -91,12 +92,12 @@ namespace MeAgendaAi.Service.Services
                 }
                 else
                 {
-                    resp.Result = validateCompany.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateCompany.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar a empresa";
+                resp.Message = "Não foi possível adicionar a empresa";
             }
 
             return resp;
@@ -142,7 +143,7 @@ namespace MeAgendaAi.Service.Services
                             _companyRepository.Edit(company);
 
                             resp.Success = true;
-                            resp.Result = "Empresa editada com sucesso";
+                            resp.Message = "Empresa editada com sucesso";
                         }
                         else
                         {
@@ -151,17 +152,17 @@ namespace MeAgendaAi.Service.Services
                     }
                     else
                     {
-                        resp.Result = "Empresa não econtrada no banco de dados";
+                        resp.Message = "Empresa não econtrada no banco de dados";
                     }
                 }
                 else
                 {
-                    resp.Result = validateCompany.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateCompany.Errors.FirstOrDefault().ErrorMessage;
                 }
 
             }catch(Exception e)
             {
-                resp.Result = "Não foi possível editar a empresa";
+                resp.Message = "Não foi possível editar a empresa";
             }
 
             return resp;
@@ -189,11 +190,11 @@ namespace MeAgendaAi.Service.Services
                 _serviceRepository.Add(service);
 
                 resp.Success = true;
-                resp.Result = "Serviço adicionado à empresa com sucesso";
+                resp.Message = "Serviço adicionado à empresa com sucesso";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar o serviço";
+                resp.Message = "Não foi possível adicionar o serviço";
             }
 
             return resp;
@@ -217,10 +218,11 @@ namespace MeAgendaAi.Service.Services
                 });
                 resp.Success = true;
                 resp.Result = companyServices;
+                resp.Message = "Serviços da empresa selecionados!";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível selecionar os serviços da empresa";
+                resp.Message = "Não foi possível selecionar os serviços da empresa";
             }
 
             return resp;
@@ -246,12 +248,12 @@ namespace MeAgendaAi.Service.Services
                 _policyRepository.Edit(policy);
 
                 resp.Success = true;
-                resp.Result = "Atualizado com sucesso";
+                resp.Message = "Atualizado com sucesso";
                 return resp;
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível selecionar os serviços da empresa";
+                resp.Message = "Não foi possível alterar a política da empresa";
             }
 
             return resp;
@@ -312,7 +314,7 @@ namespace MeAgendaAi.Service.Services
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível selecionar os serviços da empresa";
+                resp.Message = "Não foi possível selecionar os serviços da empresa";
             }
 
             return resp;

@@ -48,11 +48,11 @@ namespace MeAgendaAi.Service.Services
 
                     _employeeWorkHoursRepository.Add(modelWorkHours);
                     response.Success = true;
-                    response.Result = "Adicionado com sucesso";
+                    response.Message = "Horários disponíveis adicionados com sucesso";
                 });
             }catch(Exception e)
             {
-                response.Result = $"Erro ao adicionar horário de trabalho.\n {e.Message}";
+                response.Message = $"Erro ao adicionar horário de trabalho.\n {e.Message}";
             }         
 
             return response;
@@ -96,9 +96,10 @@ namespace MeAgendaAi.Service.Services
 
                 response.Success = true;
                 response.Result = intervals;
+                response.Message = "Horários selecionados com sucesso!";
             }catch(Exception e)
             {
-                response.Result = "Ocorreu um erro ao calcular a lista de horários";
+                response.Message = "Ocorreu um erro ao calcular a lista de horários";
             }
 
             return response;

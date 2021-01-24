@@ -116,21 +116,22 @@ namespace MeAgendaAi.Service.Services
                         //_userRepository.Add(newUser);
 
                         resp.Success = true;
+                        resp.Message = "Usuário adicionado com sucesso!";
                         resp.Result = newUser;
                     }
                     else
                     {
-                        resp.Result = validateUser.Errors.FirstOrDefault().ToString();
+                        resp.Message = validateUser.Errors.FirstOrDefault().ErrorMessage;
                     }
                 }
                 else
                 {
-                    resp.Result = "Já existe um usuário utilizando este E-mail, por favor escolha outro E-mail.";
+                    resp.Message = "Já existe um usuário utilizando este E-mail, por favor escolha outro E-mail.";
                 }
             }
             catch (Exception e)
             {
-                resp.Result = "Não foi possível adicionar o usuário";
+                resp.Message = "Não foi possível adicionar o usuário";
             }
 
             return resp;
@@ -182,23 +183,24 @@ namespace MeAgendaAi.Service.Services
                         user.LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia();
 
                         resp.Success = true;
+                        resp.Message = "Usuário adicionado com sucesso!";
                         resp.Result = user;
                     }
                     else
                     {
-                        resp.Result = "Usuário não encontrado";
+                        resp.Message = "Usuário não encontrado";
                     }   
                 }
                 else
                 {
-                    resp.Result = validateUser.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateUser.Errors.FirstOrDefault().ErrorMessage;
                 }
 
                 return resp;
             }
             catch (Exception e)
             {
-                resp.Result = "Não foi possível editar o usuário";
+                resp.Message = "Não foi possível editar o usuário";
             }
 
             return resp;
@@ -240,28 +242,29 @@ namespace MeAgendaAi.Service.Services
                         if (!ValidatePassword(model.Senha, user))
                         {
                             resp.Success = false;
-                            resp.Result = "Senha inválida";
+                            resp.Message = "Senha inválida";
 
                             return resp;
                         }
 
                         resp.Success = true;
+                        resp.Message = "Login efetuado";
                         resp.Result = JWTService.GenerateToken(user, _signingConfiguration, _tokenConfiguration);
                     }
                     else
                     {
-                        resp.Result = "Usuário não cadastrado";
+                        resp.Message = "Usuário não cadastrado";
                     }
 
                 }
                 catch (Exception)
                 {
-                    resp.Result = "Não foi possível encontrar o usuário";
+                    resp.Message = "Não foi possível encontrar o usuário";
                 }
             }
             else
             {
-                resp.Result = validateLogin.Errors.FirstOrDefault().ErrorMessage;
+                resp.Message = validateLogin.Errors.FirstOrDefault().ErrorMessage;
             }
             return resp;
         }
@@ -278,7 +281,7 @@ namespace MeAgendaAi.Service.Services
                     User user = _userRepository.GetByEmail(model.Email);
                     if (user == null)
                     {
-                        response.Result = "Usuário não encontrado.";
+                        response.Message = "Usuário não encontrado.";
 
                         return response;
                     }
@@ -297,20 +300,20 @@ namespace MeAgendaAi.Service.Services
                     if (resp)
                     {
                         response.Success = resp;
-                        response.Result = "E-mail enviado com sucesso.";
+                        response.Message = "E-mail enviado com sucesso.";
                     }
                     else
                     {
-                        response.Result = "Não foi possível enviar o e-mail.";
+                        response.Message = "Não foi possível enviar o e-mail.";
                     }
                 }
                 catch (Exception)
                 {
-                    response.Result = "Erro no sistema, e-mail não enviado.";
+                    response.Message = "Erro no sistema, e-mail não enviado.";
                 }
             } else
             {
-                response.Result = validateRecoveryEmail.Errors.FirstOrDefault().ErrorMessage;
+                response.Message = validateRecoveryEmail.Errors.FirstOrDefault().ErrorMessage;
             }
 
             return response;
@@ -331,7 +334,7 @@ namespace MeAgendaAi.Service.Services
                         User user = _userRepository.GetById(model.Id);
                         if(user == null)
                         {                            
-                            response.Result = "Usuário não encontrado";
+                            response.Message = "Usuário não encontrado";
                             return response;
                         }
                                                 
@@ -343,21 +346,21 @@ namespace MeAgendaAi.Service.Services
 
 
                         response.Success = true;
-                        response.Result = "Senha alterada com sucesso";
+                        response.Message = "Senha alterada com sucesso";
                     }
                     else
                     {
-                        response.Result = "Token expirado";
+                        response.Message = "Token expirado";
                     }
                 }
                 catch (Exception)
                 {
-                    response.Result = "Erro ao alterar senha, entre em contato com suporte";
+                    response.Message = "Erro ao alterar senha, entre em contato com suporte";
                 }
             }
             else
             {
-                response.Result = validateResetPassword.Errors.FirstOrDefault().ErrorMessage;
+                response.Message = validateResetPassword.Errors.FirstOrDefault().ErrorMessage;
             }
             return response;
                 
@@ -402,6 +405,7 @@ namespace MeAgendaAi.Service.Services
             }
             catch (Exception e)
             {
+                response.Message = "Erro ao adicionar a imagem";
                 response.Result = $"{e.Message}";
             }
 
@@ -416,14 +420,14 @@ namespace MeAgendaAi.Service.Services
             {
                 if (id == null)
                 {
-                    response.Result = "Id não informado";
+                    response.Message = "Id não informado";
                     return response;
                 }
 
                 User user = _userRepository.GetById(id);
                 if (user == null)
                 {
-                    response.Result = "Usuário não encontrado";
+                    response.Message = "Usuário não encontrado";
                     return response;
                 }
 
@@ -432,7 +436,7 @@ namespace MeAgendaAi.Service.Services
                     UserVerified = user.Verified
                 };
                 response.Success = true;
-
+                response.Message = "Usuário verificado!";
             }
             catch (Exception e)
             {
@@ -453,7 +457,7 @@ namespace MeAgendaAi.Service.Services
                 }
                 else
                 {
-                    response.Result = resultValidator.Errors.FirstOrDefault().ToString();
+                    response.Message = resultValidator.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch (Exception e)
@@ -472,26 +476,26 @@ namespace MeAgendaAi.Service.Services
             {
                 if (id == null || id == Guid.Empty)
                 {
-                    response.Result = "Token não encontrado";
+                    response.Message = "Token não encontrado";
                     return response;
                 }
                 User user = _userRepository.GetById(id);
                 if (user == null)
                 {
-                    response.Result = "Usuário não encontrado";
+                    response.Message = "Usuário não encontrado";
                     return response;
                 }
 
                 user.Verified = true;
                 _userRepository.Edit(user);
 
-                response.Result = "E-mail confirmado com sucesso";
+                response.Message = "E-mail confirmado com sucesso";
                 response.Success = true;
 
             }
             catch (Exception)
             {
-                response.Result = "Erro ao confirmar e-mail, entre em contato com suporte";
+                response.Message = "Erro ao confirmar e-mail, entre em contato com suporte";
             }
 
             return response;
@@ -506,7 +510,7 @@ namespace MeAgendaAi.Service.Services
                 User user = _userRepository.GetByEmail(email);
                 if(user == null)
                 {
-                    response.Result = "Usuário não encotrado";
+                    response.Message = "Usuário não encotrado";
                     return response;
                 }
 
@@ -521,7 +525,7 @@ namespace MeAgendaAi.Service.Services
                 if (emailSent)
                 {
                     response.Success = true;
-                    response.Result = "E-mail enviado com sucesso";
+                    response.Message = "E-mail enviado com sucesso";
                 }
                 return response;
             }
