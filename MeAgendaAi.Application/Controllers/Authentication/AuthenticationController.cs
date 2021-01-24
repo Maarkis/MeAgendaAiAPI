@@ -23,8 +23,7 @@ namespace MeAgendaAi.Application.Controllers.Authentication
         }
 
         [AllowAnonymous]
-        [HttpPost]
-        //public async Task<object> Login()
+        [HttpPost]        
         public ActionResult Login(LoginModel model)
         {
             if (!ModelState.IsValid)
@@ -33,13 +32,8 @@ namespace MeAgendaAi.Application.Controllers.Authentication
             }
 
             try
-            {
-                ResponseModel resp = _userService.Login(model);
-                if (!resp.Success)
-                {
-                    return BadRequest(resp);
-                }
-                return Ok(resp);
+            {              
+                return BadRequest(_userService.Login(model));                            
             }
             catch (ArgumentException e)
             {
@@ -58,13 +52,8 @@ namespace MeAgendaAi.Application.Controllers.Authentication
                 return BadRequest(ModelState);
             }
             try
-            {
-                ResponseModel resp = await _userService.RetrievePassword(model);
-                if(!resp.Success)
-                {
-                    return BadRequest(resp);
-                }                
-                return Ok(resp);
+            {                
+                return Ok(await _userService.RetrievePassword(model));
             }
             catch (ArgumentException e)
             {
@@ -83,13 +72,8 @@ namespace MeAgendaAi.Application.Controllers.Authentication
                 return BadRequest(ModelState);
             }
             try
-            {
-                ResponseModel resp = _userService.ConfirmationEmail(id);
-                if (!resp.Success)
-                {
-                    return BadRequest(resp);
-                }
-                return Ok(resp);
+            {                
+                return Ok(_userService.ConfirmationEmail(id));
             }
             catch (ArgumentException e)
             {
@@ -109,12 +93,8 @@ namespace MeAgendaAi.Application.Controllers.Authentication
             }
             try
             {
-                ResponseModel resp = _userService.ResetPassword(model);
-                if (!resp.Success)
-                {
-                    return BadRequest(resp);
-                }
-                return Ok(resp);
+                ;
+                return Ok(_userService.ResetPassword(model));
             }
             catch (ArgumentException e)
             {
