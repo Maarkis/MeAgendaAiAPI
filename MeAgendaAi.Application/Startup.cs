@@ -25,14 +25,17 @@ namespace MeAgendaAi.Application
             string connectionString = Configuration.GetConnectionString("ConnectionString");
 
             ConfigureRepository.ConfigureDependenciesService(services, connectionString);
-            ConfigureService.ConfigureDependenciesService(services);
-
+            ConfigureService.ConfigureDependenciesService(services); 
 
             // Configuration JTW
             ConfigureJwt.ConfigureDependenciesJwt(services, Configuration);
             // End Configuration JTW
 
-            services.AddControllers();
+            // Configuration MailJet
+            ConfigureMailJet.ConfigureDependecieMailJet(services, Configuration);
+            // End Configuration MailJet
+
+            services.AddControllers().AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddSwaggerGen(c =>
             {

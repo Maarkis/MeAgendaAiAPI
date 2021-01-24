@@ -29,11 +29,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.3 - Security", "4.3 - Sec
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JWT", "JWT", "{B28CE98D-ED70-4D3A-9C9D-523F22D5C771}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeAgendaAi.JWT", "MeAgendaAi.JWT\MeAgendaAi.JWT.csproj", "{C63BB8D1-98C9-4791-B984-6B6567B299E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeAgendaAi.JWT", "MeAgendaAi.JWT\MeAgendaAi.JWT.csproj", "{C63BB8D1-98C9-4791-B984-6B6567B299E5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cryptography", "Cryptography", "{F2C481DB-FE72-4C39-BE53-4C0E3B484524}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeAgendaAi.Cryptography", "MeAgendaAi.Cryptography\MeAgendaAi.Cryptography.csproj", "{F56C510D-FB24-4B08-94BD-D83DC87028D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeAgendaAi.Cryptography", "MeAgendaAi.Cryptography\MeAgendaAi.Cryptography.csproj", "{F56C510D-FB24-4B08-94BD-D83DC87028D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

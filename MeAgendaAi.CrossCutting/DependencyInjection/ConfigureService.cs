@@ -1,6 +1,8 @@
 ﻿using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.Interfaces.Services.Email;
 using MeAgendaAi.Service.Services;
+using MeAgendaAi.Service.Services.Email;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MeAgendaAi.CrossCutting.DependencyInjection
@@ -19,6 +21,7 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
             serviceCollection.AddScoped<ILocationService, LocationService>();
             serviceCollection.AddScoped<IEmployeeWorkHoursService, EmployeeWorkHoursService>();
             serviceCollection.AddScoped<IPhoneNumberService, PhoneNumberService>();
+            serviceCollection.AddScoped<IEmailService, EmailService>();
 
 
             serviceCollection.AddCors(options =>
