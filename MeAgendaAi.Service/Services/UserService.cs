@@ -409,6 +409,62 @@ namespace MeAgendaAi.Service.Services
         }
 
 
+        public ResponseModel UserVerified(Guid id)
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                if (id == null)
+                {
+                    response.Result = "Id não informado";
+                    return response;
+                }
+
+                User user = _userRepository.GetById(id);
+                if (user == null)
+                {
+                    response.Result = "Usuário não encontrado";
+                    return response;
+                }
+
+                response.Result = new
+                {
+                    UserVerified = user.Verified
+                };
+                response.Success = true;
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return response;
+        }
+
+        public async Task<ResponseModel> SendEmail(RequestResendEmail model)
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                ValidationResult resultValidator = new RequestResendEmailValidator().Validate(model);
+                if (resultValidator.IsValid)
+                {
+                    response = await SendEmailConfirmation(model.Email);
+                }
+                else
+                {
+                    response.Result = resultValidator.Errors.FirstOrDefault().ToString();
+                }
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+
+            return response;
+        }
+
         public ResponseModel ConfirmationEmail(Guid id)
         {
             ResponseModel response = new ResponseModel();
@@ -471,7 +527,6 @@ namespace MeAgendaAi.Service.Services
             }
             catch (Exception e)
             {
-
                 throw e;
             }           
             

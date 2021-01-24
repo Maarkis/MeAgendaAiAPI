@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
-using MeAgendaAi.Domain.EpModels.Client;
+using MeAgendaAi.Domain.EpModels.User;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Domain.Validators.Client
+namespace MeAgendaAi.Domain.Validators.User
 {
     public class RequestResendEmailValidator : AbstractValidator<RequestResendEmail>
     {

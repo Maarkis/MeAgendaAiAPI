@@ -14,8 +14,5 @@ namespace MeAgendaAi.Domain.Interfaces
     {
         Task<ResponseModel> AddClient(AddClientModel model);
         ResponseModel EditClient(EditClientModel model);
-        ResponseModel UserVerified(Guid id);
-        Task<ResponseModel> SendEmail(RequestResendEmail model);
-        ResponseModel ConfirmationEmail(Guid id);
     }
 }

@@ -42,7 +42,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "Cliente")]
         [Route("EditClient")]
         public ActionResult EditClient([FromForm] EditClientModel model)
         {
@@ -60,68 +60,6 @@ namespace MeAgendaAi.Application.Controllers
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
             }
-        }
-
-
-        
-        [HttpGet]
-        [Authorize(Roles = "Cliente")]
-        [Route("ClientVerified")]
-        public ActionResult ClientVerified(Guid id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                return Ok(_clientService.UserVerified(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
-
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Cliente")]
-        [Route("SendEmailConfirmation")]
-        public async Task<ActionResult> SendEmailConfirmation([FromBody] RequestResendEmail model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                return Ok(await _clientService.SendEmail(model));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
-
-        }
-
-        [HttpPut]        
-        [AllowAnonymous]
-        [Route("ConfirmationEmail")]
-        public ActionResult ConfirmationEmail(Guid id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                return Ok(_clientService.ConfirmationEmail(id));
-            }
-            catch (ArgumentException e)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
-            }
-
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MeAgendaAi.Domain.EpModels.Client
+namespace MeAgendaAi.Domain.EpModels.User
 {
     public class RequestResendEmail
     {

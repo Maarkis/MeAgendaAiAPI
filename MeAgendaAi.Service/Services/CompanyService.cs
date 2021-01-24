@@ -79,6 +79,8 @@ namespace MeAgendaAi.Service.Services
                         };
                         _companyRepository.Add(newCompany);
 
+                        ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
+
                         resp.Success = true;
                         resp.Result = $"{newUser.UserId}";
                     }
