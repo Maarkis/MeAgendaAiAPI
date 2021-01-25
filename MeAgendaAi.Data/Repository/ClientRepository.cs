@@ -19,7 +19,12 @@ namespace MeAgendaAi.Data.Repository
         }
 
         public Client GetClientByUserId(Guid userId) {
-            return _clients.Where(x => x.UserId == userId).FirstOrDefault();
+            return _clients.Where(x => x.UserId == userId).Include(x => x.User).FirstOrDefault();
+        }
+
+        public Client GetClientByUserEmail(string userEmail)
+        {
+            return _clients.Where(x => x.User.Email == userEmail).Include(x => x.User).FirstOrDefault();
         }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace MeAgendaAi.Data.Repository
 {
@@ -15,6 +15,11 @@ namespace MeAgendaAi.Data.Repository
         public PhoneNumberRepository(MeAgendaAiContext context, IConfiguration configuration) : base(context, configuration)
         {
             _phoneNumbers = context.PhoneNumbers;
+        }
+
+        public List<PhoneNumber> GetByUserID(Guid userId)
+        {
+            return _phoneNumbers.Where(x => x.UserId == userId).ToList();
         }
     }
 }

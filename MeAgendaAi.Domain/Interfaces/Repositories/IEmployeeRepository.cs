@@ -9,5 +9,6 @@ namespace MeAgendaAi.Domain.Interfaces.Repositories
         List<MeAgendaAi.Domain.Entities.Services> GetEmployeeServicesByEmployeeId(Guid employeeId);
         Employee GetEmployeeByUserId(Guid userId);
         Employee GetEmployeeByUserEmail(string userEmail);
+        Employee GetByIdComplete(Guid employeeId);
     }
 }

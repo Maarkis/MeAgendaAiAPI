@@ -61,5 +61,26 @@ namespace MeAgendaAi.Application.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Cliente")]
+        [Route("GetClientInfoPerfil/{userId}")]
+        public ActionResult GetClientInfoPerfil(string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                ResponseModel result = _clientService.GetClientPerfilInfo(userId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
     }
 }

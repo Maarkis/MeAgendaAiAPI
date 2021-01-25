@@ -35,5 +35,16 @@ namespace MeAgendaAi.Data.Repository
                 .FirstOrDefault();
         }
 
+        public Employee GetByIdComplete(Guid employeeId)
+        {
+            return _employees.Where(x => x.EmployeeId == employeeId)
+                .Include(x => x.User)
+                .Include(x => x.EmployeeServices)
+                .ThenInclude(y => y.Service)
+                .Include(x => x.Company)
+                .ThenInclude(y => y.User)
+                .FirstOrDefault();
+        }
+
     }
 }

@@ -7,5 +7,6 @@ namespace MeAgendaAi.Domain.Interfaces.Repositories
 {
     public interface ILocationRepository : IBaseRepository<Location>
     {
+        List<Location> GetLocationsByUserId(Guid userId);
     }
 }

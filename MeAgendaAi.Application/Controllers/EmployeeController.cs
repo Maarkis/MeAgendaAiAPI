@@ -82,6 +82,48 @@ namespace MeAgendaAi.Application.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa,Cliente")]
+        [Route("GetEmployeePerfilInfo/{userId}")]
+        public ActionResult GetEmployeePerfilInfo(string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeePerfilInfo(userId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa,Cliente")]
+        [Route("GetEmployeeInfoComplete/{employeeId}")]
+        public ActionResult GetEmployeeInfoComplete(string employeeId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeeInfo(employeeId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
         [HttpPost]
         [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
         [Route("AddServiceToEmployee")]

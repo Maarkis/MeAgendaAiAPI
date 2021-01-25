@@ -11,5 +11,7 @@ namespace MeAgendaAi.Domain.Interfaces.Services
     {
         List<PhoneNumber> CreatePhoneNumbersFromModel(List<AddPhoneNumberModel> models, Guid userId);
         ResponseModel ValidateAddPhoneNumbers(List<AddPhoneNumberModel> phones);
+        string GetCompletePhoneNumber(PhoneNumber phoneNumber);
+        List<PhoneNumberPerfilModel> UserPhoneNumbersToPhoneNumberModel(Guid userId);
     }
 }

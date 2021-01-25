@@ -14,19 +14,25 @@ using FluentValidation.Results;
 using MeAgendaAi.Domain.Interfaces.Services.Email;
 using FluentValidation;
 using System.Threading.Tasks;
+using MeAgendaAi.Domain.Interfaces.Services;
 
 namespace MeAgendaAi.Service.Services
 {
     public class ClientService : BaseService<Client>, IClientService
     {
         private IClientRepository _clientRepository;
-        private IUserService _userService;        
+        private IUserService _userService;
+        private ILocationService _locationService;
+        private IPhoneNumberService _phoneNumberService;
 
         public ClientService(IClientRepository clientRepository,
-            IUserService userService) : base(clientRepository)
+            IUserService userService, ILocationService locationService,
+            IPhoneNumberService phoneNumberService) : base(clientRepository)
         {
             _clientRepository = clientRepository;
             _userService = userService;
+            _locationService = locationService;
+            _phoneNumberService = phoneNumberService;
         }
 
         public async Task<ResponseModel> AddClient(AddClientModel model)
@@ -147,6 +153,50 @@ namespace MeAgendaAi.Service.Services
             }
 
             return resp;
+        }
+
+        public ResponseModel GetClientPerfilInfo(string userId)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(userId))
+                {
+                    Client cliente = _clientRepository.GetClientByUserId(Guid.Parse(userId));
+                    if (cliente != null)
+                    {
+                        var clientModel = new GetClientPerfilInfoModel
+                        {
+                            Nome = cliente.User.Name,
+                            Email = cliente.User.Email,
+                            Imagem = cliente.User.Image,
+                            CPF = cliente.CPF,
+                            RG = cliente.RG,
+                            DataCadastro = cliente.User.CreatedAt.ToString(),
+                            Locations = _locationService.UserLocationsToBasicLocationModel(cliente.UserId),
+                            PhoneNumbers = _phoneNumberService.UserPhoneNumbersToPhoneNumberModel(cliente.UserId)
+                        };
+                        response.Success = true;
+                        response.Result = clientModel;
+                        response.Message = "Informações do cliente";
+                    }
+                    else
+                    {
+                        response.Message = "Não foi possível encontrar o cliente";
+                    }
+                }
+                else
+                {
+                    response.Message = "Guid inválido";
+                }           
+            }
+            catch (Exception e)
+            {
+                response.Message = $"Não foi possível receber as informações do cliente. \n {e.Message}";
+            }
+
+            return response;
         }
     }
 }

@@ -13,6 +13,8 @@ namespace MeAgendaAi.Domain.Interfaces
     {
         ResponseModel AddEmployee(AddEmployeeModel model);
         ResponseModel EditEmployee(EditEmployeeModel model);
+        ResponseModel GetEmployeePerfilInfo(string userId);
+        ResponseModel GetEmployeeInfo(string employeeId);
         ResponseModel GetEmployeeServices(string employeeId);
         ResponseModel AddServiceToEmployee(AddServiceToEmployeeModel model);
         ResponseModel AddWorkHoursToEmployee(AddEmployeeWorkHoursModel model, string userEmail);

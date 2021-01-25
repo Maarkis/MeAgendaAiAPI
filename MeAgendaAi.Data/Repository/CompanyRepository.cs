@@ -25,6 +25,7 @@ namespace MeAgendaAi.Data.Repository
         public Company GetCompanyByIdComplete(Guid companyId)
         {
             return _companies.Where(x => x.CompanyId == companyId)
+                .Include(x => x.User)
                 .Include(x => x.Policy)
                 .Include(x => x.Employees)
                     .ThenInclude(y => y.User)
