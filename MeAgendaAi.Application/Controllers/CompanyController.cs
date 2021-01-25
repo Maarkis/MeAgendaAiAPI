@@ -102,7 +102,8 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "UsuarioEmpresa,Funcionario,Cliente")]
+        [AllowAnonymous]
+        //[Authorize(Roles = "UsuarioEmpresa,Funcionario,Cliente")]
         [Route("GetCompanyComplete")]
         public ActionResult GetCompanyComplete(string companyId)
         {

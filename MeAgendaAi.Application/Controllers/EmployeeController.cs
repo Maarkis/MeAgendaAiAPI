@@ -83,7 +83,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Funcionario,UsuarioEmpresa,Cliente")]
+        [Authorize(Roles = "Funcionario")]
         [Route("GetEmployeePerfilInfo/{userId}")]
         public ActionResult GetEmployeePerfilInfo(string userId)
         {
@@ -104,7 +104,8 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Funcionario,UsuarioEmpresa,Cliente")]
+        [AllowAnonymous]
+        //[Authorize(Roles = "Funcionario,UsuarioEmpresa,Cliente")]
         [Route("GetEmployeeInfoComplete/{employeeId}")]
         public ActionResult GetEmployeeInfoComplete(string employeeId)
         {

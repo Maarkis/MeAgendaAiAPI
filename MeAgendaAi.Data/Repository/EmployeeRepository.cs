@@ -46,5 +46,16 @@ namespace MeAgendaAi.Data.Repository
                 .FirstOrDefault();
         }
 
+        public List<Employee> GetEmployeesByClientId(Guid clientId)
+        {
+            return _employees.Where(x => x.Schedulings.Any(y => y.ClientId == clientId))
+                .Include(x => x.User)
+                .Include(x => x.EmployeeServices)
+                .ThenInclude(y => y.Service)
+                .Include(x => x.Company)
+                .ThenInclude(y => y.User)
+                .ToList();
+        }
+
     }
 }
