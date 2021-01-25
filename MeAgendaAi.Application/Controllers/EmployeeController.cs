@@ -187,5 +187,26 @@ namespace MeAgendaAi.Application.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
             }
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
+        [Route("GetEmployeeMonthSchedule/{userId}/{ano}/{mes}")]
+        public ActionResult GetEmployeeMonthSchedule(string userId, int ano, int mes)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeeMonthSchedule(userId, ano, mes);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
     }
 }

@@ -22,5 +22,15 @@ namespace MeAgendaAi.Data.Repository
         {
             return _employeeWorkHours.Where(x => x.StartHour.Date == date.Date && x.EmployeeId == employeeId).FirstOrDefault();
         }
+
+        public EmployeeWorkHours GetByDiaMesAno(int dia, int mes, int ano, Guid employeeId)
+        {
+            return _employeeWorkHours.Where(x => x.EmployeeId == employeeId && x.StartHour.Day == dia && x.StartHour.Month == mes && x.StartHour.Year == ano).FirstOrDefault();
+        }
+
+        public List<EmployeeWorkHours> GetByMesAno(int mes, int ano, Guid employeeId)
+        {
+            return _employeeWorkHours.Where(x => x.EmployeeId == employeeId &&  x.StartHour.Month == mes && x.StartHour.Year == ano).OrderBy(x => x.StartHour.Day).ToList();
+        }
     }
 }

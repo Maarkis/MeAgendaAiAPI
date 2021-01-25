@@ -376,5 +376,10 @@ namespace MeAgendaAi.Service.Services
             bool ok = DateTime.TryParse(date, out dateTime); //colocar validação do formato de data no validator
             return _employeeWorkHoursService.GetAvailableEmployeeWorkHours(dateTime, employee, service);
         }
+
+        public ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes)
+        {
+            return _employeeWorkHoursService.GetEmployeeMonthSchedule(userId, ano, mes);
+        }
     }
 }

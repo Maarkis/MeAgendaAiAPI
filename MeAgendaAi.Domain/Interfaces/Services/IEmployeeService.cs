@@ -19,6 +19,7 @@ namespace MeAgendaAi.Domain.Interfaces
         ResponseModel AddServiceToEmployee(AddServiceToEmployeeModel model);
         ResponseModel AddWorkHoursToEmployee(AddEmployeeWorkHoursModel model, string userEmail);
         ResponseModel GetEmployeeAvailableHours(string employeeId, string serviceId, string date);
+        ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes);
         string GetEmployeeLink(Guid employeeId);
     }
 }

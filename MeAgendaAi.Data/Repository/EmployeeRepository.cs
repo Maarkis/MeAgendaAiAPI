@@ -25,7 +25,9 @@ namespace MeAgendaAi.Data.Repository
         {
             return _employees.Where(x => x.EmployeeId == employeeId)
                 .SelectMany(y => y.EmployeeServices)
-                .Select(y => y.Service).ToList();
+                .Select(y => y.Service)
+                .OrderBy(x => x.Name)
+                .ToList();
         }
 
         public Employee GetEmployeeByUserEmail(string userEmail)
@@ -54,6 +56,7 @@ namespace MeAgendaAi.Data.Repository
                 .ThenInclude(y => y.Service)
                 .Include(x => x.Company)
                 .ThenInclude(y => y.User)
+                .OrderBy(x => x.User.Name)
                 .ToList();
         }
 

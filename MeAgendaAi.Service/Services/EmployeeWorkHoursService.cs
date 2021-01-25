@@ -14,12 +14,14 @@ namespace MeAgendaAi.Service.Services
     {
         private IEmployeeWorkHoursRepository _employeeWorkHoursRepository;
         private ISchedulingRepository _schedulingRepository;
+        private IEmployeeRepository _employeeRepository;
 
         public EmployeeWorkHoursService(IEmployeeWorkHoursRepository employeeWorkHoursRepository,
-            ISchedulingRepository schedulingRepository) : base(employeeWorkHoursRepository)
+            ISchedulingRepository schedulingRepository, IEmployeeRepository employeeRepository) : base(employeeWorkHoursRepository)
         {
             _employeeWorkHoursRepository = employeeWorkHoursRepository;
             _schedulingRepository = schedulingRepository;
+            _employeeRepository = employeeRepository;
         }
 
         public ResponseModel AddEmployeeWorkhours(AddEmployeeWorkHoursModel model, Employee employee)
@@ -28,6 +30,9 @@ namespace MeAgendaAi.Service.Services
             try
             {
                 model.DatasComOHorario.ForEach(data => {
+
+                    RemoveExistentWorkHours(data, employee.EmployeeId);
+
                     var startTime = GenerateDateTimeByTimeSpanAndDataModel(data, model.StartHour.TimeOfDay);
                     var endTime = GenerateDateTimeByTimeSpanAndDataModel(data, model.EndHour.TimeOfDay);
                     var startInterval = GenerateDateTimeByTimeSpanAndDataModel(data, model.StartInterval.TimeOfDay);
@@ -58,6 +63,14 @@ namespace MeAgendaAi.Service.Services
             return response;
         }
 
+        private void RemoveExistentWorkHours(DateModel date, Guid employeeId)
+        {
+            var exists = _employeeWorkHoursRepository.GetByDiaMesAno(date.Dia, date.Mes, date.Ano, employeeId);
+            if (exists != null)
+            {
+                _employeeWorkHoursRepository.Remove(exists);
+            }
+        }
         public ResponseModel GetAvailableEmployeeWorkHours(DateTime date, Employee employee, Domain.Entities.Services service)
         {
             var response = new ResponseModel();
@@ -103,6 +116,59 @@ namespace MeAgendaAi.Service.Services
             }
 
             return response;
+        }
+
+        public ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes)
+        {
+            ResponseModel resp = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(userId))
+                {
+                    var employee = _employeeRepository.GetEmployeeByUserId(Guid.Parse(userId));
+                    if(employee != null)
+                    {
+                        List<GetEmployeeWorkScheduleModel> scheduleModel = new List<GetEmployeeWorkScheduleModel>();
+                        var workHours = _employeeWorkHoursRepository.GetByMesAno(mes, ano, employee.EmployeeId);
+                        if(workHours != null && workHours.Count > 0)
+                        {
+                            workHours.ForEach(workHour => {
+
+                                GetEmployeeWorkScheduleModel model = new GetEmployeeWorkScheduleModel
+                                {
+                                    Dia = workHour.StartHour.Day,
+                                    StartHour = workHour.StartHour.ToString(),
+                                    EndHour = workHour.EndHour.ToString(),
+                                    StartInterval = workHour.StartInterval.ToString(),
+                                    EndInterval = workHour.EndInterval.ToString()
+                                };
+
+                                scheduleModel.Add(model);
+
+                            });
+                        }
+
+                        resp.Success = true;
+                        resp.Message = "Horários do mês";
+                        resp.Result = scheduleModel;
+                    }
+                    else
+                    {
+                        resp.Message = "Funcionário não encontrado";
+                    }
+                }
+                else
+                {
+                    resp.Message = "Id inválido";
+                }
+
+            }catch(Exception e)
+            {
+                resp.Message = $"Não foi possível recuperar os horários para este mês. \n{e.Message}";
+            }
+
+            return resp;
         }
 
         private DateTime GenerateDateTimeByTimeSpanAndDataModel(DateModel data, TimeSpan timeSpan)
