@@ -22,7 +22,7 @@ namespace MeAgendaAi.Application.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("AddEmployee")]
-        public ActionResult AddEmployee([FromBody] AddEmployeeModel model)
+        public ActionResult AddEmployee([FromForm] AddEmployeeModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -43,7 +43,7 @@ namespace MeAgendaAi.Application.Controllers
         [HttpPost]
         [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
         [Route("EditEmployee")]
-        public ActionResult EditEmployee([FromBody] EditEmployeeModel model)
+        public ActionResult EditEmployee([FromForm] EditEmployeeModel model)
         {
             if (!ModelState.IsValid)
             {

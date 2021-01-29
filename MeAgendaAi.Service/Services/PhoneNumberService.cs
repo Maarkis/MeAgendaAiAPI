@@ -23,22 +23,25 @@ namespace MeAgendaAi.Service.Services
         public List<PhoneNumber> CreatePhoneNumbersFromModel(List<AddPhoneNumberModel> models, Guid userId)
         {
             List<PhoneNumber> phoneNumbers = new List<PhoneNumber>();
-
-            models.ForEach(phone => {
-                PhoneNumber phoneNumber = new PhoneNumber { 
-                    PhoneNumberId = Guid.NewGuid(),
-                    UserId = userId,
-                    NameContact = phone.NameContact,
-                    CountryCode = phone.CountryCode,
-                    DDD = phone.DDD,
-                    Number = phone.Number,
-                    CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                    UpdatedBy = userId
-                };
-                phoneNumbers.Add(phoneNumber);
-            });
-
+            if(models != null && models.Count > 0)
+            {
+                models.ForEach(phone => {
+                    PhoneNumber phoneNumber = new PhoneNumber
+                    {
+                        PhoneNumberId = Guid.NewGuid(),
+                        UserId = userId,
+                        NameContact = phone.NameContact,
+                        CountryCode = phone.CountryCode,
+                        DDD = phone.DDD,
+                        Number = phone.Number,
+                        CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                        LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                        UpdatedBy = userId
+                    };
+                    phoneNumbers.Add(phoneNumber);
+                });
+            }
+         
             return phoneNumbers;
         }
 

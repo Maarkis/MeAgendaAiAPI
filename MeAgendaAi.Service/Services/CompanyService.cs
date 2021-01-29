@@ -88,7 +88,7 @@ namespace MeAgendaAi.Service.Services
                         ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
 
                         resp.Success = true;
-                        resp.Result = $"{newUser.UserId}";
+                        resp.Result = $"{newCompany.CompanyId}";
                         resp.Message = "Empresa Adicionada com sucesso!";
                     }
                     else

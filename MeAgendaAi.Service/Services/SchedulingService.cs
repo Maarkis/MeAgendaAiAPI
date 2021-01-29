@@ -17,14 +17,16 @@ namespace MeAgendaAi.Service.Services
         private IClientRepository _clientRepository;
         private IEmployeeRepository _employeeRepository;
         private ICompanyRepository _companyRepository;
+        private IServiceRepository _serviceRepository;
 
         public SchedulingService(ISchedulingRepository schedulingRepository, IClientRepository clientRepository,
-            IEmployeeRepository employeeRepository, ICompanyRepository companyRepository) : base(schedulingRepository)
+            IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IServiceRepository serviceRepository) : base(schedulingRepository)
         {
             _schedulingRepository = schedulingRepository;
             _clientRepository = clientRepository;
             _employeeRepository = employeeRepository;
             _companyRepository = companyRepository;
+            _serviceRepository = serviceRepository;
         }
 
         public ResponseModel CreateScheduling(CreateSchedulingModel model)
@@ -37,6 +39,20 @@ namespace MeAgendaAi.Service.Services
                 if(client == null)
                 {
                     resp.Message = "Não foi possível encontrar o cliente";
+                    return resp;
+                }
+
+                Employee employee = _employeeRepository.GetById(Guid.Parse(model.EmployeeId));
+                if(employee == null)
+                {
+                    resp.Message = "Não foi possível encontrar o funciónário";
+                    return resp;
+                }
+
+                Domain.Entities.Services service = _serviceRepository.GetById(Guid.Parse(model.ServiceId));
+                if(service == null)
+                {
+                    resp.Message = "Não foi possível encontrar o serviço";
                     return resp;
                 }
 
@@ -76,7 +92,7 @@ namespace MeAgendaAi.Service.Services
                 resp.Message = "Agendamento realizado com sucesso!";
                 resp.Result = SchedulingToGetSchedulingModel(scheduling);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 resp.Message = "Não foi possível realizar o agendamento";
             }
@@ -154,7 +170,7 @@ namespace MeAgendaAi.Service.Services
                 SchedulingId = scheduling.SchedulingId.ToString(),
                 ClientName = scheduling.Client.User.Name,
                 EmployeeName = scheduling.Employee.User.Name,
-                //CompanyName = scheduling.Employee.Company.Name,
+                CompanyName = scheduling.Employee.Company.User.Name,
                 Service = scheduling.Service.Name,
                 StartTime = scheduling.StartTime.ToString(),
                 EndTime = scheduling.EndTime.ToString(),

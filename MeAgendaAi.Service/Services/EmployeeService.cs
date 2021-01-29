@@ -82,6 +82,8 @@ namespace MeAgendaAi.Service.Services
                                 CompanyId = company.CompanyId,
                                 IsManager = model.IsManager,
                                 Descricao = model.Descricao,
+                                CPF = model.CPF,
+                                RG = model.RG,
                                 CreatedAt = DateTimeUtil.UtcToBrasilia(),
                                 LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
                                 UserId = newUser.UserId,
@@ -92,7 +94,7 @@ namespace MeAgendaAi.Service.Services
                             ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
 
                             resp.Success = true;
-                            resp.Result = $"{newUser.UserId}";
+                            resp.Result = $"{employee.EmployeeId}";
                             resp.Message = "Funcionário adicionado com sucesso!";
                         }
                         else
