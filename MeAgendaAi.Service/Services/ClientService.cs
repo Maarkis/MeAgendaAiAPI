@@ -14,19 +14,34 @@ using FluentValidation.Results;
 using MeAgendaAi.Domain.Interfaces.Services.Email;
 using FluentValidation;
 using System.Threading.Tasks;
+using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.EpModels.Employee;
+using MeAgendaAi.Domain.EpModels.Company;
 
 namespace MeAgendaAi.Service.Services
 {
     public class ClientService : BaseService<Client>, IClientService
     {
         private IClientRepository _clientRepository;
-        private IUserService _userService;        
+        private IUserService _userService;
+        private ILocationService _locationService;
+        private IPhoneNumberService _phoneNumberService;
+        private IEmployeeRepository _employeeRepository;
+        private IEmployeeService _employeeService;
+        private ICompanyService _companyService;
 
         public ClientService(IClientRepository clientRepository,
-            IUserService userService) : base(clientRepository)
+            IUserService userService, ILocationService locationService,
+            IPhoneNumberService phoneNumberService, IEmployeeRepository employeeRepository,
+            IEmployeeService employeeService, ICompanyService companyService) : base(clientRepository)
         {
             _clientRepository = clientRepository;
             _userService = userService;
+            _locationService = locationService;
+            _phoneNumberService = phoneNumberService;
+            _employeeRepository = employeeRepository;
+            _employeeService = employeeService;
+            _companyService = companyService;
         }
 
         public async Task<ResponseModel> AddClient(AddClientModel model)
@@ -46,7 +61,6 @@ namespace MeAgendaAi.Service.Services
                         PhoneNumbers = model.PhoneNumbers,
                         Password = model.Password,
                         Verified = false
-
                     };
 
                     List<Roles> roles = new List<Roles>();
@@ -71,7 +85,8 @@ namespace MeAgendaAi.Service.Services
                         ResponseModel send = await _userService.SendEmailConfirmation(userModel.Email);                        
 
                         resp.Success = true;
-                        resp.Result = "Cliente adicionado com sucesso";
+                        resp.Result = $"{newUser.UserId}";
+                        resp.Message = "Cliente adicionado com sucesso";
                     }
                     else
                     {
@@ -80,12 +95,12 @@ namespace MeAgendaAi.Service.Services
                 }
                 else
                 {
-                    resp.Result = validateClient.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateClient.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch (Exception e)
             {
-                resp.Result = "Não foi possível adicionar o cliente";
+                resp.Message = "Não foi possível adicionar o cliente";
             }
 
             return resp;
@@ -124,7 +139,7 @@ namespace MeAgendaAi.Service.Services
                             _clientRepository.Edit(client);
 
                             resp.Success = true;
-                            resp.Result = "Cliente editado com sucesso";
+                            resp.Message = "Cliente editado com sucesso";
                         }
                         else
                         {
@@ -133,20 +148,140 @@ namespace MeAgendaAi.Service.Services
                     }
                     else
                     {
-                        resp.Result = "Cliente não encontrado";
+                        resp.Message = "Cliente não encontrado";
                     }
                 }
                 else
                 {
-                    resp.Result = validateClient.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateClient.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch (Exception e)
             {
-                resp.Result = "Não foi possível editar o cliente";
+                resp.Message = "Não foi possível editar o cliente";
             }
 
             return resp;
+        }
+
+        public ResponseModel GetClientPerfilInfo(string userId)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(userId))
+                {
+                    Client cliente = _clientRepository.GetClientByUserId(Guid.Parse(userId));
+                    if (cliente != null)
+                    {
+                        var clientModel = new GetClientPerfilInfoModel
+                        {
+                            Nome = cliente.User.Name,
+                            Email = cliente.User.Email,
+                            Imagem = cliente.User.Image,
+                            CPF = cliente.CPF,
+                            RG = cliente.RG,
+                            DataCadastro = cliente.User.CreatedAt.ToString(),
+                            Locations = _locationService.UserLocationsToBasicLocationModel(cliente.UserId),
+                            PhoneNumbers = _phoneNumberService.UserPhoneNumbersToPhoneNumberModel(cliente.UserId)
+                        };
+                        response.Success = true;
+                        response.Result = clientModel;
+                        response.Message = "Informações do cliente";
+                    }
+                    else
+                    {
+                        response.Message = "Não foi possível encontrar o cliente";
+                    }
+                }
+                else
+                {
+                    response.Message = "Guid inválido";
+                }           
+            }
+            catch (Exception e)
+            {
+                response.Message = $"Não foi possível receber as informações do cliente. \n {e.Message}";
+            }
+
+            return response;
+        }
+
+        public ResponseModel GetClientFavoriteEmployees(string userId)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(userId))
+                {
+                    var client = _clientRepository.GetClientByUserId(Guid.Parse(userId));
+                    if (client != null)
+                    {
+                        List<EmployeeFavInfoModel> employeesModel = new List<EmployeeFavInfoModel>();
+
+                        var employees = _employeeRepository.GetEmployeesByClientId(client.ClientId);
+                        if (employees != null && employees.Count > 0)
+                        {
+                            employees.ForEach(employee =>
+                            {
+                                List<EmployeeFavServiceModel> serviceModels = new List<EmployeeFavServiceModel>();
+                                var employeeServices = employee.EmployeeServices?.Select(x => x.Service).ToList();
+                                if(employeeServices != null && employeeServices.Count > 0)
+                                {
+                                    employeeServices.ForEach(service => {
+                                        var serviceModel = new EmployeeFavServiceModel { 
+                                            ServiceId = service.ServiceId.ToString(),
+                                            ServiceName = service.Name
+                                        };
+
+                                        serviceModels.Add(serviceModel);
+                                    });
+                                }
+
+                                var companyModel = new CompanyFavInfoModel {
+                                    CompanyId = employee.Company?.CompanyId.ToString(),
+                                    Name = employee.Company?.User?.Name,
+                                    Email = employee.Company?.User?.Email,
+                                    Image = employee.Company?.User?.Image,
+                                    Descricao = employee?.Company?.Descricao,
+                                    Link = _companyService.GetCompanyLink(employee.CompanyId)
+                                };
+
+                                var employeeModel = new EmployeeFavInfoModel
+                                {
+                                    EmployeeId = employee.EmployeeId.ToString(),
+                                    Link = _employeeService.GetEmployeeLink(employee.EmployeeId),
+                                    Name = employee.User.Name,
+                                    Email = employee.User.Email,
+                                    Descricao = employee.Descricao,
+                                    Image = employee.User.Image,
+                                    Services = serviceModels,
+                                    Company = companyModel
+                                };
+                            });
+                        }
+
+                        response.Success = true;
+                        response.Message = "Funcionários do cliente";
+                        response.Result = employees;
+                    }
+                    else
+                    {
+                        response.Message = "Usuário não encontrado";
+                    }
+                }
+                else
+                {
+                    response.Message = "Guid inválido";
+                }
+            }catch(Exception e)
+            {
+                response.Message = $"Não foi possível recuperar os funcionários. \n{e.Message}";
+            }
+
+            return response;
         }
     }
 }

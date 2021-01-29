@@ -10,6 +10,7 @@ using MeAgendaAi.Domain.Validators.Company;
 using System.Linq;
 using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.EpModels.User;
+using MeAgendaAi.Domain.Interfaces.Services;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -21,9 +22,12 @@ namespace MeAgendaAi.Service.Services
         private IServiceRepository _serviceRepository;
         private IPolicyRepository _policyRepository;
         private IUserService _userService;
+        private ILocationService _locationService;
+        private IPhoneNumberService _phoneNumberService;
         public CompanyService(ICompanyRepository companyRepository, IUserRepository userRepository,
             IEmployeeRepository employeeRepository, IServiceRepository serviceRepository,
-            IPolicyRepository policyRepository, IUserService userService) : base(companyRepository)
+            IPolicyRepository policyRepository, IUserService userService,
+            ILocationService locationService, IPhoneNumberService phoneNumberService) : base(companyRepository)
         {
             _companyRepository = companyRepository;
             _userRepository = userRepository;
@@ -31,6 +35,8 @@ namespace MeAgendaAi.Service.Services
             _serviceRepository = serviceRepository;
             _policyRepository = policyRepository;
             _userService = userService;
+            _locationService = locationService;
+            _phoneNumberService = phoneNumberService;
         }
 
         public ResponseModel AddCompany(AddCompanyModel model)
@@ -82,7 +88,8 @@ namespace MeAgendaAi.Service.Services
                         ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
 
                         resp.Success = true;
-                        resp.Result = $"{newUser.UserId}";
+                        resp.Result = $"{newCompany.CompanyId}";
+                        resp.Message = "Empresa Adicionada com sucesso!";
                     }
                     else
                     {
@@ -91,17 +98,16 @@ namespace MeAgendaAi.Service.Services
                 }
                 else
                 {
-                    resp.Result = validateCompany.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateCompany.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar a empresa";
+                resp.Message = "Não foi possível adicionar a empresa";
             }
 
             return resp;
         }
-
 
         public ResponseModel EditCompany(EditCompanyModel model)
         {
@@ -142,7 +148,7 @@ namespace MeAgendaAi.Service.Services
                             _companyRepository.Edit(company);
 
                             resp.Success = true;
-                            resp.Result = "Empresa editada com sucesso";
+                            resp.Message = "Empresa editada com sucesso";
                         }
                         else
                         {
@@ -151,17 +157,17 @@ namespace MeAgendaAi.Service.Services
                     }
                     else
                     {
-                        resp.Result = "Empresa não econtrada no banco de dados";
+                        resp.Message = "Empresa não econtrada no banco de dados";
                     }
                 }
                 else
                 {
-                    resp.Result = validateCompany.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateCompany.Errors.FirstOrDefault().ErrorMessage;
                 }
 
             }catch(Exception e)
             {
-                resp.Result = "Não foi possível editar a empresa";
+                resp.Message = "Não foi possível editar a empresa";
             }
 
             return resp;
@@ -189,11 +195,11 @@ namespace MeAgendaAi.Service.Services
                 _serviceRepository.Add(service);
 
                 resp.Success = true;
-                resp.Result = "Serviço adicionado à empresa com sucesso";
+                resp.Message = "Serviço adicionado à empresa com sucesso";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar o serviço";
+                resp.Message = "Não foi possível adicionar o serviço";
             }
 
             return resp;
@@ -217,10 +223,11 @@ namespace MeAgendaAi.Service.Services
                 });
                 resp.Success = true;
                 resp.Result = companyServices;
+                resp.Message = "Serviços da empresa selecionados!";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível selecionar os serviços da empresa";
+                resp.Message = "Não foi possível selecionar os serviços da empresa";
             }
 
             return resp;
@@ -246,76 +253,137 @@ namespace MeAgendaAi.Service.Services
                 _policyRepository.Edit(policy);
 
                 resp.Success = true;
-                resp.Result = "Atualizado com sucesso";
+                resp.Message = "Atualizado com sucesso";
                 return resp;
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível selecionar os serviços da empresa";
+                resp.Message = "Não foi possível alterar a política da empresa";
             }
 
             return resp;
         }
 
-        public ResponseModel GetCompanyComplete(string companyId)
+        public ResponseModel GetCompanyInfoPerfil(string userId)
+        {
+            ResponseModel responseModel = new ResponseModel();
+
+            if (GuidUtil.IsGuidValid(userId))
+            {
+                var company = _companyRepository.GetCompanyByUserId(Guid.Parse(userId));
+                if(company != null)
+                {
+                    responseModel = GetCompanyComplete(company.CompanyId);
+                }
+                else
+                {
+                    responseModel.Message = "Não foi possível encontrar a empresa";
+                }
+            }
+            else
+            {
+                responseModel.Message = "Guid inválido";
+            }
+
+            return responseModel;
+        }
+
+        public ResponseModel GetCompanyInfo(string companyId)
+        {
+            ResponseModel responseModel = new ResponseModel();
+
+            if (GuidUtil.IsGuidValid(companyId))
+            {
+                responseModel = GetCompanyComplete(Guid.Parse(companyId));
+            }
+            else
+            {
+                responseModel.Message = "Guid inválido";
+            }
+
+            return responseModel;
+        }
+
+        private ResponseModel GetCompanyComplete(Guid companyId)
         {
             var resp = new ResponseModel();
 
             try
             {
-                Company companyComplete = _companyRepository.GetCompanyByIdComplete(Guid.Parse(companyId));
-
-                List<GetCompanyByIdCompleteServiceModel> companyServices = new List<GetCompanyByIdCompleteServiceModel>();
-                companyComplete.Services.ForEach(service => {
-                    GetCompanyByIdCompleteServiceModel companyService = new GetCompanyByIdCompleteServiceModel
-                    {
-                        ServiceId = service.ServiceId,
-                        ServiceName = service.Name,
-                        ServiceDuration = service.DurationMinutes
-                    };
-                    companyServices.Add(companyService);
-                });
-
-                List<GetCompanyByIdCompleteEmployeeModel> companyEmployees = new List<GetCompanyByIdCompleteEmployeeModel>();
-                companyComplete.Employees.ForEach(employee => {
-
-                    List<GetCompanyByIdCompleteServiceModel> employeeServices = new List<GetCompanyByIdCompleteServiceModel>();
-                    employee.EmployeeServices.ForEach(eService => {
-                        GetCompanyByIdCompleteServiceModel employeeService = new GetCompanyByIdCompleteServiceModel {
-                            ServiceId = eService.Service.ServiceId,
-                            ServiceDuration = eService.Service.DurationMinutes,
-                            ServiceName = eService.Service.Name
+                Company companyComplete = _companyRepository.GetCompanyByIdComplete(companyId);
+                if(companyComplete != null)
+                {
+                    List<GetCompanyByIdCompleteServiceModel> companyServices = new List<GetCompanyByIdCompleteServiceModel>();
+                    companyComplete.Services.ForEach(service => {
+                        GetCompanyByIdCompleteServiceModel companyService = new GetCompanyByIdCompleteServiceModel
+                        {
+                            ServiceId = service.ServiceId.ToString(),
+                            ServiceName = service.Name,
+                            ServiceDuration = service.DurationMinutes
                         };
-                        employeeServices.Add(employeeService);
+                        companyServices.Add(companyService);
                     });
 
-                    GetCompanyByIdCompleteEmployeeModel companyEmployee = new GetCompanyByIdCompleteEmployeeModel { 
-                        EmployeeId = employee.EmployeeId,
-                        EmplyeeName = employee.User.Name,
-                        IsManager = employee.IsManager,
-                        EmployeeServices = employeeServices
-                    };
-                    companyEmployees.Add(companyEmployee);
-                });
+                    List<GetCompanyByIdCompleteEmployeeModel> companyEmployees = new List<GetCompanyByIdCompleteEmployeeModel>();
+                    companyComplete.Employees.ForEach(employee => {
 
-                GetCompanyByIdCompleteModel model = new GetCompanyByIdCompleteModel { 
-                    CompanyId = companyComplete.CompanyId,
-                    //CompanyName = companyComplete.Name,
-                    LimitCancelHours = companyComplete.Policy.LimitCancelHours,
-                    //CPF = companyComplete.CPF,
-                    CNPJ = companyComplete.CNPJ,
-                    CompanyServices = companyServices,
-                    Employees = companyEmployees
-                };
-                resp.Success = true;
-                resp.Result = model;
+                        List<GetCompanyByIdCompleteServiceModel> employeeServices = new List<GetCompanyByIdCompleteServiceModel>();
+                        employee.EmployeeServices.ForEach(eService => {
+                            GetCompanyByIdCompleteServiceModel employeeService = new GetCompanyByIdCompleteServiceModel
+                            {
+                                ServiceId = eService.Service.ServiceId.ToString(),
+                                ServiceDuration = eService.Service.DurationMinutes,
+                                ServiceName = eService.Service.Name
+                            };
+                            employeeServices.Add(employeeService);
+                        });
+
+                        GetCompanyByIdCompleteEmployeeModel companyEmployee = new GetCompanyByIdCompleteEmployeeModel
+                        {
+                            EmployeeId = employee.EmployeeId.ToString(),
+                            EmplyeeName = employee.User.Name,
+                            IsManager = employee.IsManager,
+                            EmployeeServices = employeeServices
+                        };
+                        companyEmployees.Add(companyEmployee);
+                    });
+
+                    GetCompanyByIdCompleteModel model = new GetCompanyByIdCompleteModel
+                    {
+                        CompanyId = companyComplete.CompanyId,
+                        CompanyName = companyComplete.User.Name,
+                        Descricao = companyComplete.Descricao,
+                        Email = companyComplete.User.Email,
+                        Link = GetCompanyLink(companyComplete.CompanyId),
+                        LimitCancelHours = companyComplete.Policy.LimitCancelHours,
+                        CNPJ = companyComplete.CNPJ,
+                        CompanyServices = companyServices,
+                        Employees = companyEmployees,
+                        Locations = _locationService.UserLocationsToBasicLocationModel(companyComplete.UserId),
+                        PhoneNumbers = _phoneNumberService.UserPhoneNumbersToPhoneNumberModel(companyComplete.UserId)
+                    };
+
+                    resp.Success = true;
+                    resp.Message = "Informações da empresa";
+                    resp.Result = model;
+                }
+                else
+                {
+                    resp.Message = "Empresa não encontrada";
+                }
+                
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível selecionar os serviços da empresa";
+                resp.Message = "Não foi possível coletar as informações da empresa";
             }
 
             return resp;
+        }
+
+        public string GetCompanyLink(Guid companyId)
+        {
+            return $"empresa/id={companyId}";
         }
     }
 }

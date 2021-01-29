@@ -7,5 +7,6 @@ namespace MeAgendaAi.Domain.Interfaces.Repositories
 {
     public interface IPhoneNumberRepository : IBaseRepository<PhoneNumber>
     {
+        List<PhoneNumber> GetByUserID(Guid userId);
     }
 }

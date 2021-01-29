@@ -60,6 +60,7 @@ namespace MeAgendaAi.Data.Repository
                 .ThenInclude(e => e.User)
                 .Include(x => x.Employee)
                 .ThenInclude(x => x.Company)
+                .ThenInclude(y => y.User)
                 .Include(x => x.Service)
                 .FirstOrDefault();
         }

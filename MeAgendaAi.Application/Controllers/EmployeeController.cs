@@ -22,7 +22,7 @@ namespace MeAgendaAi.Application.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("AddEmployee")]
-        public ActionResult AddEmployee([FromBody] AddEmployeeModel model)
+        public ActionResult AddEmployee([FromForm] AddEmployeeModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -43,7 +43,7 @@ namespace MeAgendaAi.Application.Controllers
         [HttpPost]
         [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
         [Route("EditEmployee")]
-        public ActionResult EditEmployee([FromBody] EditEmployeeModel model)
+        public ActionResult EditEmployee([FromForm] EditEmployeeModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -74,6 +74,49 @@ namespace MeAgendaAi.Application.Controllers
             try
             {
                 var result = _employeeService.GetEmployeeServices(employeeId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Funcionario")]
+        [Route("GetEmployeePerfilInfo/{userId}")]
+        public ActionResult GetEmployeePerfilInfo(string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeePerfilInfo(userId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        //[Authorize(Roles = "Funcionario,UsuarioEmpresa,Cliente")]
+        [Route("GetEmployeeInfoComplete/{employeeId}")]
+        public ActionResult GetEmployeeInfoComplete(string employeeId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeeInfo(employeeId);
                 return Ok(result);
             }
             catch (ArgumentException e)
@@ -137,6 +180,27 @@ namespace MeAgendaAi.Application.Controllers
             try
             {
                 var result = _employeeService.GetEmployeeAvailableHours(employeeId, serviceId, date);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
+        [Route("GetEmployeeMonthSchedule/{userId}/{ano}/{mes}")]
+        public ActionResult GetEmployeeMonthSchedule(string userId, int ano, int mes)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeeMonthSchedule(userId, ano, mes);
                 return Ok(result);
             }
             catch (ArgumentException e)

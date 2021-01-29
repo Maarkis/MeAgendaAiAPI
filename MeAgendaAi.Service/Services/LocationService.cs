@@ -64,5 +64,48 @@ namespace MeAgendaAi.Service.Services
 
             return response;
         }
+
+        public string GetCompletLocation(Location location)
+        {
+            string completeLocation = (location.State != null && location.State != String.Empty) ? $"{location.State}," : "";
+            completeLocation += ((location.City != null && location.City != String.Empty) ? $"{location.City}," : "");
+            completeLocation += ((location.Neighbourhood != null && location.Neighbourhood != String.Empty) ? $"{location.Neighbourhood}," : "");
+            completeLocation += ((location.Street != null && location.Street != String.Empty) ? $"{location.Street}," : "");
+            completeLocation += ((location.Number != 0) ? $"{location.Number}" : "");
+            completeLocation += ((location.Complement != null && location.Complement != String.Empty) ? $", {location.Complement}" : "");
+
+            return completeLocation;
+        }
+
+        public List<LocationPerfilModel> UserLocationsToBasicLocationModel(Guid userId)
+        {
+            List<LocationPerfilModel> locationPerfilModels = new List<LocationPerfilModel>();
+
+            var locations = _locationRepository.GetLocationsByUserId(userId);
+            if(locations != null)
+            {
+                locations.ForEach(location => {
+
+                    var model = new LocationPerfilModel
+                    {
+                        LocationId = location.LocationId.ToString(),
+                        Name = location.Name,
+                        CompleteLocation = GetCompletLocation(location),
+                        Country = location.Country,
+                        State = location.State,
+                        City = location.City,
+                        Neighbourhood = location.Neighbourhood,
+                        Street = location.Street,
+                        Number = location.Number,
+                        Complement = location.Complement,
+                        CEP = location.CEP
+                    };
+
+                    locationPerfilModels.Add(model);
+                });
+            }
+
+            return locationPerfilModels;
+        }
     }
 }

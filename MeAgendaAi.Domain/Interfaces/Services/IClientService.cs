@@ -14,5 +14,7 @@ namespace MeAgendaAi.Domain.Interfaces
     {
         Task<ResponseModel> AddClient(AddClientModel model);
         ResponseModel EditClient(EditClientModel model);
+        ResponseModel GetClientPerfilInfo(string userId);
+        ResponseModel GetClientFavoriteEmployees(string userId);
     }
 }

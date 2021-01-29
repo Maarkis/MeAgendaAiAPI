@@ -11,5 +11,7 @@ namespace MeAgendaAi.Domain.Interfaces.Services
     {
         List<Location> CreateLocationsFromModel(List<AddLocationModel> models, Guid userId);
         ResponseModel ValidateAddLocations(List<AddLocationModel> locations);
+        string GetCompletLocation(Location location);
+        List<LocationPerfilModel> UserLocationsToBasicLocationModel(Guid userId);
     }
 }

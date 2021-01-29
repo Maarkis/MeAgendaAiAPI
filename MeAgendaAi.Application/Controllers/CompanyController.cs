@@ -20,7 +20,7 @@ namespace MeAgendaAi.Application.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("AddCompany")]
-        public ActionResult AddCompany([FromBody] AddCompanyModel model)
+        public ActionResult AddCompany([FromForm] AddCompanyModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -30,6 +30,27 @@ namespace MeAgendaAi.Application.Controllers
             try
             {
                 var result = _companyService.AddCompany(model);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpPut]
+        [AllowAnonymous]
+        [Route("EditCompany")]
+        public ActionResult EditCompany([FromBody] EditCompanyModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _companyService.EditCompany(model);
                 return Ok(result);
             }
             catch (ArgumentException e)
@@ -81,7 +102,8 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "UsuarioEmpresa,Funcionario,Cliente")]
+        [AllowAnonymous]
+        //[Authorize(Roles = "UsuarioEmpresa,Funcionario,Cliente")]
         [Route("GetCompanyComplete")]
         public ActionResult GetCompanyComplete(string companyId)
         {
@@ -92,7 +114,29 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
-                var result = _companyService.GetCompanyComplete(companyId);
+                var result = _companyService.GetCompanyInfo(companyId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+
+        [HttpGet]
+        [Authorize(Roles = "UsuarioEmpresa")]
+        [Route("GetCompanyInfoPerfil")]
+        public ActionResult GetCompanyInfoPerfil(string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _companyService.GetCompanyInfoPerfil(userId);
                 return Ok(result);
             }
             catch (ArgumentException e)

@@ -17,14 +17,16 @@ namespace MeAgendaAi.Service.Services
         private IClientRepository _clientRepository;
         private IEmployeeRepository _employeeRepository;
         private ICompanyRepository _companyRepository;
+        private IServiceRepository _serviceRepository;
 
         public SchedulingService(ISchedulingRepository schedulingRepository, IClientRepository clientRepository,
-            IEmployeeRepository employeeRepository, ICompanyRepository companyRepository) : base(schedulingRepository)
+            IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IServiceRepository serviceRepository) : base(schedulingRepository)
         {
             _schedulingRepository = schedulingRepository;
             _clientRepository = clientRepository;
             _employeeRepository = employeeRepository;
             _companyRepository = companyRepository;
+            _serviceRepository = serviceRepository;
         }
 
         public ResponseModel CreateScheduling(CreateSchedulingModel model)
@@ -36,21 +38,35 @@ namespace MeAgendaAi.Service.Services
                 Client client = _clientRepository.GetClientByUserId(Guid.Parse(model.UserId));
                 if(client == null)
                 {
-                    resp.Result = "Não foi possível encontrar o cliente";
+                    resp.Message = "Não foi possível encontrar o cliente";
+                    return resp;
+                }
+
+                Employee employee = _employeeRepository.GetById(Guid.Parse(model.EmployeeId));
+                if(employee == null)
+                {
+                    resp.Message = "Não foi possível encontrar o funciónário";
+                    return resp;
+                }
+
+                Domain.Entities.Services service = _serviceRepository.GetById(Guid.Parse(model.ServiceId));
+                if(service == null)
+                {
+                    resp.Message = "Não foi possível encontrar o serviço";
                     return resp;
                 }
 
                 DateTime startTime;
                 if (!DateTime.TryParse(model.StartTime, out startTime))
                 {
-                    resp.Result = "Start time inválida";
+                    resp.Message = "Start time inválida";
                     return resp;
                 }
                 
                 DateTime endTime;
                 if (!DateTime.TryParse(model.EndTime, out endTime))
                 {
-                    resp.Result = "Start time inválida";
+                    resp.Message = "Start time inválida";
                     return resp;
                 }
 
@@ -69,15 +85,16 @@ namespace MeAgendaAi.Service.Services
                 Scheduling scheduling = _schedulingRepository.GetSchedulingByIdComplete(newScheduling.SchedulingId);
                 if(scheduling == null)
                 {
-                    resp.Result = "Falha ao realizar o agendamento";
+                    resp.Message = "Falha ao realizar o agendamento";
                     return resp;
                 }
                 resp.Success = true;
+                resp.Message = "Agendamento realizado com sucesso!";
                 resp.Result = SchedulingToGetSchedulingModel(scheduling);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                resp.Result = "Não foi possível realizar o agendamento";
+                resp.Message = "Não foi possível realizar o agendamento";
             }
 
             return resp;
@@ -92,17 +109,18 @@ namespace MeAgendaAi.Service.Services
                 Client client = _clientRepository.GetClientByUserId(Guid.Parse(userId));
                 if(client == null)
                 {
-                    resp.Result = "Não foi possível encontrar o cliente";
+                    resp.Message = "Não foi possível encontrar o cliente";
                     return resp;
                 }
 
                 var schedulings = _schedulingRepository.GetClientSchedulings(client.ClientId);
                 resp.Result = SchedulingsToGetSchedulingsModel(schedulings);
+                resp.Message = "Agendamentos do cliente selecionados com sucesso!";
                 resp.Success = true;              
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível resgatar os agendamentos do usuário";
+                resp.Message = "Não foi possível resgatar os agendamentos do usuário";
             }
 
             return resp;
@@ -117,17 +135,18 @@ namespace MeAgendaAi.Service.Services
                 Employee employee = _employeeRepository.GetEmployeeByUserId(Guid.Parse(userId));
                 if (employee == null)
                 {
-                    resp.Result = "Não foi possível encontrar o funcionário";
+                    resp.Message = "Não foi possível encontrar o funcionário";
                     return resp;
                 }
 
                 var schedulings = _schedulingRepository.GetEmployeeSchedulings(employee.EmployeeId);
                 resp.Result = SchedulingsToGetSchedulingsModel(schedulings);
+                resp.Message = "Agendamentos do Funcionário selecionados com sucesso!";
                 resp.Success = true;
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível resgatar os agendamentos do usuário";
+                resp.Message = "Não foi possível resgatar os agendamentos do usuário";
             }
 
             return resp;
@@ -151,7 +170,7 @@ namespace MeAgendaAi.Service.Services
                 SchedulingId = scheduling.SchedulingId.ToString(),
                 ClientName = scheduling.Client.User.Name,
                 EmployeeName = scheduling.Employee.User.Name,
-                //CompanyName = scheduling.Employee.Company.Name,
+                CompanyName = scheduling.Employee.Company.User.Name,
                 Service = scheduling.Service.Name,
                 StartTime = scheduling.StartTime.ToString(),
                 EndTime = scheduling.EndTime.ToString(),
@@ -168,14 +187,14 @@ namespace MeAgendaAi.Service.Services
             {
                 if(model.NewStatus < 0 || (int)model.NewStatus > 1)
                 {
-                    resp.Result = "Novo status inválido";
+                    resp.Message = "Novo status inválido";
                     return resp;
                 }
 
                 Scheduling scheduling = _schedulingRepository.GetById(Guid.Parse(model.SchedulingId));
                 if(scheduling == null)
                 {
-                    resp.Result = "Não foi possível encontrar o agendamento";
+                    resp.Message = "Não foi possível encontrar o agendamento";
                     return resp;
                 }
 
@@ -187,7 +206,7 @@ namespace MeAgendaAi.Service.Services
                     int compare = DateTime.Compare(now, limitCancel);
                     if (compare >= 0)
                     {
-                        resp.Result = "Não é possível realizar o cancelamento." +
+                        resp.Message = "Não é possível realizar o cancelamento." +
                             "O Horário limite para cancelamento era: " + limitCancel;
                         return resp;
                     }
@@ -198,11 +217,11 @@ namespace MeAgendaAi.Service.Services
                 _schedulingRepository.Edit(scheduling);
 
                 resp.Success = true;
-                resp.Result = "Atualizado com sucesso";
+                resp.Message = "Atualizado com sucesso";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível atualizar o status do agendamento";
+                resp.Message = "Não foi possível atualizar o status do agendamento";
             }
 
             return resp;

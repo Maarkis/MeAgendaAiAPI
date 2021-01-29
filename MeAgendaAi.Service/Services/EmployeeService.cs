@@ -25,12 +25,16 @@ namespace MeAgendaAi.Service.Services
         private IServiceRepository _serviceRepository;
         private IUserService _userService;
         private ICompanyRepository _companyRepository;
+        private ICompanyService _companyService;
+        private ILocationService _locationService;
+        private IPhoneNumberService _phoneNumberService;
 
         public EmployeeService(IEmployeeRepository employeeRepository, 
             IServiceEmployeeRepository serviceEmployeeRepository,
             IEmployeeWorkHoursService employeeWorkHoursService,
             IServiceRepository serviceRepository, IUserService userService,
-            ICompanyRepository companyRepository) : base(employeeRepository)
+            ICompanyRepository companyRepository, ICompanyService companyService,
+            ILocationService locationService, IPhoneNumberService phoneNumberService) : base(employeeRepository)
         {
             _employeeRepository = employeeRepository;
             _serviceEmployeeRepository = serviceEmployeeRepository;
@@ -38,6 +42,9 @@ namespace MeAgendaAi.Service.Services
             _serviceRepository = serviceRepository;
             _userService = userService;
             _companyRepository = companyRepository;
+            _companyService = companyService;
+            _locationService = locationService;
+            _phoneNumberService = phoneNumberService;
         }
 
         public ResponseModel AddEmployee(AddEmployeeModel model)
@@ -75,6 +82,8 @@ namespace MeAgendaAi.Service.Services
                                 CompanyId = company.CompanyId,
                                 IsManager = model.IsManager,
                                 Descricao = model.Descricao,
+                                CPF = model.CPF,
+                                RG = model.RG,
                                 CreatedAt = DateTimeUtil.UtcToBrasilia(),
                                 LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
                                 UserId = newUser.UserId,
@@ -85,7 +94,8 @@ namespace MeAgendaAi.Service.Services
                             ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
 
                             resp.Success = true;
-                            resp.Result = $"{newUser.UserId}";
+                            resp.Result = $"{employee.EmployeeId}";
+                            resp.Message = "Funcionário adicionado com sucesso!";
                         }
                         else
                         {
@@ -94,18 +104,18 @@ namespace MeAgendaAi.Service.Services
                     }
                     else
                     {
-                        resp.Result = "Empresa não encontrada no banco de dados";
+                        resp.Message = "Empresa não encontrada no banco de dados";
                     }
                 }
                 else
                 {
-                    resp.Result = validateEmployee.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateEmployee.Errors.FirstOrDefault().ErrorMessage;
                 }
                 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                resp.Result = "Não foi possível adicionar o funcionário";
+                resp.Message = "Não foi possível adicionar o funcionário";
             }
 
             return resp;
@@ -145,7 +155,7 @@ namespace MeAgendaAi.Service.Services
                             _employeeRepository.Edit(employee);
 
                             resp.Success = true;
-                            resp.Result = "Funcionário editado com sucesso";
+                            resp.Message = "Funcionário editado com sucesso";
                         }
                         else
                         {
@@ -154,17 +164,17 @@ namespace MeAgendaAi.Service.Services
                     }
                     else
                     {
-                        resp.Result = "Cliente não encontrado";
+                        resp.Message = "Cliente não encontrado";
                     }
                 }
                 else
                 {
-                    resp.Result = validateEmployee.Errors.FirstOrDefault().ToString();
+                    resp.Message = validateEmployee.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
             catch(Exception e)
             {
-                resp.Result = "Não foi possível editar o funcionário";
+                resp.Message = "Não foi possível editar o funcionário";
             }
             return resp;
         }
@@ -185,11 +195,11 @@ namespace MeAgendaAi.Service.Services
                 };
                 _serviceEmployeeRepository.Add(serviceEmployee);
                 resp.Success = true;
-                resp.Result = "Serviço adicionado ao funcionário com sucesso";
+                resp.Message = "Serviço adicionado ao funcionário com sucesso";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar o serviço ao funcionário";
+                resp.Message = "Não foi possível adicionar o serviço ao funcionário";
             }
 
             return resp;
@@ -213,15 +223,135 @@ namespace MeAgendaAi.Service.Services
                 });
                 resp.Success = true;
                 resp.Result = servicesEmployee;
+                resp.Message = "Serviços do funcionário selecionados!";
             }
             catch (Exception)
             {
-                resp.Result = "Não foi possível adicionar o serviço ao funcionário";
+                resp.Message = "Não foi possível adicionar o serviço ao funcionário";
             }
 
             return resp;
         }
 
+        public ResponseModel GetEmployeePerfilInfo(string userId)
+        {
+            ResponseModel response = new ResponseModel();
+
+            if (GuidUtil.IsGuidValid(userId))
+            {
+                var employee = _employeeRepository.GetEmployeeByUserId(Guid.Parse(userId));
+                if(employee != null)
+                {
+                    response = GetEmployeeInfoComplete(employee.EmployeeId);
+                }
+                else
+                {
+                    response.Message = "Funciónário não encontrado";
+                }
+            }
+            else
+            {
+                response.Message = "Guid inválido";
+            }
+
+            return response;
+        }
+
+        public ResponseModel GetEmployeeInfo(string employeeId)
+        {
+            ResponseModel response = new ResponseModel();
+
+            if (GuidUtil.IsGuidValid(employeeId))
+            {
+                response = GetEmployeeInfoComplete(Guid.Parse(employeeId));
+            }
+            else
+            {
+                response.Message = "Guid inválido";
+            }
+
+            return response;
+        }
+
+        private ResponseModel GetEmployeeInfoComplete(Guid employeeId)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                var employeeComplete = _employeeRepository.GetByIdComplete(employeeId);
+                if(employeeComplete != null)
+                {
+                    GetEmployeeInfoCompleteModel model = new GetEmployeeInfoCompleteModel
+                    {
+                        EmployeeId = employeeId.ToString(),
+                        Name = employeeComplete.User.Name,
+                        Image = employeeComplete.User.Image,
+                        Link = GetEmployeeLink(employeeComplete.EmployeeId),
+                        CPF = employeeComplete.CPF,
+                        RG = employeeComplete.RG,
+                        Descricao = employeeComplete.Descricao,
+                        DataCadastro = employeeComplete.User.CreatedAt.ToString(),
+                        IsManager = employeeComplete.IsManager,
+                        Locations = _locationService.UserLocationsToBasicLocationModel(employeeComplete.UserId),
+                        PhoneNumbers = _phoneNumberService.UserPhoneNumbersToPhoneNumberModel(employeeComplete.UserId),
+                        Company = CompanyToCompanyBasicInfoModel(employeeComplete.Company),
+                        EmployeeServices = GetServicesModelFromServices(employeeComplete.EmployeeServices)
+                    };
+
+                    response.Success = true;
+                    response.Message = "Informações do funcionário";
+                    response.Result = model;
+                }
+                else
+                {
+                    response.Message = "Funciomário não encontrado";
+                }
+
+
+            }catch(Exception e)
+            {
+                response.Message = $"Não foi possível recuperar as informações do funcionário. \n {e.Message}";
+            }
+
+            return response;
+        }
+
+        private CompanyBasicInfoModel CompanyToCompanyBasicInfoModel(Company company)
+        {
+            return new CompanyBasicInfoModel
+            {
+                CompanyId = company.CompanyId.ToString(),
+                Image = company.User.Image,
+                Name = company.User.Name,
+                Link = _companyService.GetCompanyLink(company.CompanyId)
+            };
+        }
+        private List<GetCompanyByIdCompleteServiceModel> GetServicesModelFromServices(List<ServiceEmployee> employeeServices)
+        {
+            List<GetCompanyByIdCompleteServiceModel> serviceModels = new List<GetCompanyByIdCompleteServiceModel>();
+
+            if(employeeServices != null)
+            {
+                employeeServices.ForEach(employeeService => {
+                    var service = employeeService.Service;
+                    GetCompanyByIdCompleteServiceModel serviceModel = new GetCompanyByIdCompleteServiceModel
+                    {
+                        ServiceId = service.ServiceId.ToString(),
+                        ServiceName = service.Name,
+                        ServiceDuration = service.DurationMinutes
+                    };
+                    serviceModels.Add(serviceModel);
+                });
+            }
+
+            return serviceModels;
+        }
+
+        public string GetEmployeeLink(Guid employeeId)
+        {
+            return $"funcionario/id={employeeId}";
+        }
         public ResponseModel AddWorkHoursToEmployee(AddEmployeeWorkHoursModel model, string userEmail)
         {
             var response = new ResponseModel();
@@ -233,7 +363,7 @@ namespace MeAgendaAi.Service.Services
             }
             else
             {
-                response.Result = "Funcionário não encontrado";
+                response.Message = "Funcionário não encontrado";
             }
 
             return response;
@@ -247,6 +377,11 @@ namespace MeAgendaAi.Service.Services
             DateTime dateTime = new DateTime();
             bool ok = DateTime.TryParse(date, out dateTime); //colocar validação do formato de data no validator
             return _employeeWorkHoursService.GetAvailableEmployeeWorkHours(dateTime, employee, service);
+        }
+
+        public ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes)
+        {
+            return _employeeWorkHoursService.GetEmployeeMonthSchedule(userId, ano, mes);
         }
     }
 }
