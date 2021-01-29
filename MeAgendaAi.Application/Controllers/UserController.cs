@@ -100,7 +100,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Cliente, UsuarioEmpresa, Funcionario")]
         [Route("GetById/{id}")]
         public ActionResult GetById(Guid id)
         {
