@@ -12,8 +12,8 @@ namespace MeAgendaAi.Domain.EpModels.Scheduling
         public string EmployeeName { get; set; }
         public string CompanyName { get; set; }
         public string Service { get; set; }
-        public string StartTime { get; set; }
-        public string EndTime { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public int Status { get; set; }
     }
 }

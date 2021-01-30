@@ -113,7 +113,7 @@ namespace MeAgendaAi.Service.Services
                     return resp;
                 }
 
-                var schedulings = _schedulingRepository.GetClientSchedulings(client.ClientId);
+                List<Scheduling> schedulings = _schedulingRepository.GetClientSchedulings(client.ClientId);
                 resp.Result = SchedulingsToGetSchedulingsModel(schedulings);
                 resp.Message = "Agendamentos do cliente selecionados com sucesso!";
                 resp.Success = true;              
@@ -172,8 +172,8 @@ namespace MeAgendaAi.Service.Services
                 EmployeeName = scheduling.Employee.User.Name,
                 CompanyName = scheduling.Employee.Company.User.Name,
                 Service = scheduling.Service.Name,
-                StartTime = scheduling.StartTime.ToString(),
-                EndTime = scheduling.EndTime.ToString(),
+                StartTime = scheduling.StartTime,
+                EndTime = scheduling.EndTime,
                 Status = (int)scheduling.Status
             };
             return model;

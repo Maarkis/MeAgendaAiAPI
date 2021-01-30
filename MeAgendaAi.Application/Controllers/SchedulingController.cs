@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using MeAgendaAi.Domain.Utils;
+using MeAgendaAi.Domain.Enums;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -38,8 +40,8 @@ namespace MeAgendaAi.Application.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Cliente,UsuarioEmpresa,Funcionario")]
+        [HttpGet]        
+        [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario)]
         [Route("GetClientSchedulingsByUserId")]
         public ActionResult GetClientSchedulingsByUserId(string userId)
         {
