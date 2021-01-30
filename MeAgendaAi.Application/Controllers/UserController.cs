@@ -82,7 +82,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [AuthorizeRoles(Roles.Admin)]
         [Route("GetAll")]
         public ActionResult GetAll()
         {
@@ -102,7 +102,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin, Cliente, UsuarioEmpresa, Funcionario")]
+        [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario, Roles.Admin)]
         [Route("GetById/{id}")]
         public ActionResult GetById(Guid id)
         {
