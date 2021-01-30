@@ -1,6 +1,7 @@
 ﻿using MeAgendaAi.Data.Context;
 using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces.Repositories;
+using MeAgendaAi.Domain.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -27,6 +28,37 @@ namespace MeAgendaAi.Data.Repository
                 .ThenInclude(e => e.User)
                 .Include(x => x.Employee)
                 .ThenInclude(x => x.Company)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Service)
+                .OrderBy(x => x.StartTime)
+                .ToList();
+        }
+
+        public List<Scheduling> GetClientSchedulingsProximos(Guid clientId)
+        {
+            return _schedulings.Where(x => x.ClientId == clientId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0)
+                .Include(x => x.Client)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Employee)
+                .ThenInclude(e => e.User)
+                .Include(x => x.Employee)
+                .ThenInclude(x => x.Company)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Service)
+                .OrderBy(x => x.StartTime)
+                .ToList();
+        }
+
+        public List<Scheduling> GetClientSchedulingsExpirados(Guid clientId)
+        {
+            return _schedulings.Where(x => x.ClientId == clientId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0)
+                .Include(x => x.Client)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Employee)
+                .ThenInclude(e => e.User)
+                .Include(x => x.Employee)
+                .ThenInclude(x => x.Company)
+                .ThenInclude(y => y.User)
                 .Include(x => x.Service)
                 .OrderBy(x => x.StartTime)
                 .ToList();
@@ -41,6 +73,37 @@ namespace MeAgendaAi.Data.Repository
                 .ThenInclude(e => e.User)
                 .Include(x => x.Employee)
                 .ThenInclude(x => x.Company)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Service)
+                .OrderBy(x => x.StartTime)
+                .ToList();
+        }
+
+        public List<Scheduling> GetEmployeeSchedulingsProximos(Guid employeeId)
+        {
+            return _schedulings.Where(x => x.EmployeeId == employeeId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0)
+                .Include(x => x.Client)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Employee)
+                .ThenInclude(e => e.User)
+                .Include(x => x.Employee)
+                .ThenInclude(x => x.Company)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Service)
+                .OrderBy(x => x.StartTime)
+                .ToList();
+        }
+
+        public List<Scheduling> GetEmployeeSchedulingsAntigos(Guid employeeId)
+        {
+            return _schedulings.Where(x => x.EmployeeId == employeeId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0)
+                .Include(x => x.Client)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Employee)
+                .ThenInclude(e => e.User)
+                .Include(x => x.Employee)
+                .ThenInclude(x => x.Company)
+                .ThenInclude(y => y.User)
                 .Include(x => x.Service)
                 .OrderBy(x => x.StartTime)
                 .ToList();

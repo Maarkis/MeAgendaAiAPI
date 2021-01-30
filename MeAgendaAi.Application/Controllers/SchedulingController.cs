@@ -62,6 +62,27 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
+        [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario)]
+        [Route("GetClientHistoricoSchedulingsByUserId")]
+        public ActionResult GetClientHistoricoSchedulingsByUserId(string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _schedulingService.GetHistoricoClientSchedulings(userId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
         [Authorize(Roles = "Cliente,UsuarioEmpresa,Funcionario")]
         [Route("GetEmployeeSchedulingsByUserId/{userId}")]
         public ActionResult GetEmployeeSchedulingsByUserId(string userId)
@@ -74,6 +95,28 @@ namespace MeAgendaAi.Application.Controllers
             try
             {
                 var result = _schedulingService.GetEmployeeSchedulings(userId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+
+        [HttpGet]
+        [Authorize(Roles = "Cliente,UsuarioEmpresa,Funcionario")]
+        [Route("GetHistoricoEmployeeSchedulingsByUserId/{userId}")]
+        public ActionResult GetHistoricoEmployeeSchedulingsByUserId(string userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _schedulingService.GetHistoricoEmployeeSchedulings(userId);
                 return Ok(result);
             }
             catch (ArgumentException e)

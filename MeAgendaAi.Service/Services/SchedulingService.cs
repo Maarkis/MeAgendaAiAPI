@@ -113,10 +113,36 @@ namespace MeAgendaAi.Service.Services
                     return resp;
                 }
 
-                List<Scheduling> schedulings = _schedulingRepository.GetClientSchedulings(client.ClientId);
+                List<Scheduling> schedulings = _schedulingRepository.GetClientSchedulingsProximos(client.ClientId);
                 resp.Result = SchedulingsToGetSchedulingsModel(schedulings);
                 resp.Message = "Agendamentos do cliente selecionados com sucesso!";
                 resp.Success = true;              
+            }
+            catch (Exception)
+            {
+                resp.Message = "Não foi possível resgatar os agendamentos do usuário";
+            }
+
+            return resp;
+        }
+
+        public ResponseModel GetHistoricoClientSchedulings(string userId)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                Client client = _clientRepository.GetClientByUserId(Guid.Parse(userId));
+                if (client == null)
+                {
+                    resp.Message = "Não foi possível encontrar o cliente";
+                    return resp;
+                }
+
+                List<Scheduling> schedulings = _schedulingRepository.GetClientSchedulingsExpirados(client.ClientId);
+                resp.Result = SchedulingsToGetSchedulingsModel(schedulings);
+                resp.Message = "Agendamentos do cliente selecionados com sucesso!";
+                resp.Success = true;
             }
             catch (Exception)
             {
@@ -139,7 +165,33 @@ namespace MeAgendaAi.Service.Services
                     return resp;
                 }
 
-                var schedulings = _schedulingRepository.GetEmployeeSchedulings(employee.EmployeeId);
+                var schedulings = _schedulingRepository.GetEmployeeSchedulingsProximos(employee.EmployeeId);
+                resp.Result = SchedulingsToGetSchedulingsModel(schedulings);
+                resp.Message = "Agendamentos do Funcionário selecionados com sucesso!";
+                resp.Success = true;
+            }
+            catch (Exception)
+            {
+                resp.Message = "Não foi possível resgatar os agendamentos do usuário";
+            }
+
+            return resp;
+        }
+
+        public ResponseModel GetHistoricoEmployeeSchedulings(string userId)
+        {
+            var resp = new ResponseModel();
+
+            try
+            {
+                Employee employee = _employeeRepository.GetEmployeeByUserId(Guid.Parse(userId));
+                if (employee == null)
+                {
+                    resp.Message = "Não foi possível encontrar o funcionário";
+                    return resp;
+                }
+
+                var schedulings = _schedulingRepository.GetEmployeeSchedulingsAntigos(employee.EmployeeId);
                 resp.Result = SchedulingsToGetSchedulingsModel(schedulings);
                 resp.Message = "Agendamentos do Funcionário selecionados com sucesso!";
                 resp.Success = true;

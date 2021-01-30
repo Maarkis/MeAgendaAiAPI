@@ -12,7 +12,9 @@ namespace MeAgendaAi.Domain.Interfaces
     {
         ResponseModel CreateScheduling(CreateSchedulingModel model);
         ResponseModel GetClientSchedulings(string userId);
+        ResponseModel GetHistoricoClientSchedulings(string userId);
         ResponseModel GetEmployeeSchedulings(string userId);
+        ResponseModel GetHistoricoEmployeeSchedulings(string userId);
         ResponseModel UpdateSchedulingStatus(UpdateSchedulingStatusModel model);
     }
 }
