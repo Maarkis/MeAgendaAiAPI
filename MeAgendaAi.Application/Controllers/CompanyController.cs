@@ -20,7 +20,7 @@ namespace MeAgendaAi.Application.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("AddCompany")]
-        public ActionResult AddCompany([FromForm] AddCompanyModel model)
+        public ActionResult AddCompany([FromBody] AddCompanyModel model)
         {
             if (!ModelState.IsValid)
             {

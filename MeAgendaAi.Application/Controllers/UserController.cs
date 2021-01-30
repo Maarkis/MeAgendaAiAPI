@@ -6,6 +6,8 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.Utils;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -20,7 +22,7 @@ namespace MeAgendaAi.Application.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Cliente")]
+        [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario, Roles.Admin)]
         [Route("ClientVerified")]
         public ActionResult ClientVerified(Guid id)
         {
@@ -39,8 +41,8 @@ namespace MeAgendaAi.Application.Controllers
 
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Cliente")]
+        [HttpPost]        
+        [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario, Roles.Admin)]
         [Route("SendEmailConfirmation")]
         public async Task<ActionResult> SendEmailConfirmation([FromBody] RequestResendEmail model)
         {

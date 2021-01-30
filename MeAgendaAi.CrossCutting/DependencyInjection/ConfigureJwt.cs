@@ -1,4 +1,5 @@
-﻿using MeAgendaAi.Domain.Security;
+﻿using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -62,8 +63,26 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
                 auth.AddPolicy("Administrador", new AuthorizationPolicyBuilder()
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                     .RequireAuthenticatedUser()
-                    .RequireRole("Admin")
+                    .RequireRole(Roles.Admin.ToString())
                     .Build());
+
+                auth.AddPolicy("Cliente", new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .RequireRole(Roles.Cliente.ToString())
+                    .Build());
+
+                auth.AddPolicy("Funcionario", new AuthorizationPolicyBuilder()
+                   .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                   .RequireAuthenticatedUser()
+                   .RequireRole(Roles.Funcionario.ToString())
+                   .Build());
+
+                auth.AddPolicy("UsuarioEmpresa", new AuthorizationPolicyBuilder()
+                  .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                  .RequireAuthenticatedUser()
+                  .RequireRole(Roles.UsuarioEmpresa.ToString())
+                  .Build());
             });
 
         }

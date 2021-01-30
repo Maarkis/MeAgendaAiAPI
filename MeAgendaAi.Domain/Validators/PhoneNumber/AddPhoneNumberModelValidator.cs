@@ -13,7 +13,7 @@ namespace MeAgendaAi.Domain.Validators.PhoneNumber
             RuleFor(x => x.Number)
                 .NotNull()
                 .NotEmpty()
-                .WithMessage("");
+                .WithMessage("Número de telefone é obrigátorio");
         }
     }
 }

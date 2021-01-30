@@ -22,8 +22,8 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("AddClient")]
-        public async Task<ActionResult> AddClient([FromForm] AddClientModel model)
+        [Route("AddClient")]        
+        public async Task<ActionResult> AddClient([FromBody] AddClientModel model)
         {
             if (!ModelState.IsValid)
             {
