@@ -31,6 +31,8 @@ namespace MeAgendaAi.Service.Services
         private IClientRepository _clientRepository;
         private ILocationService _locationService;
         private IPhoneNumberService _phoneNumberService;
+        private IEmployeeRepository _employeeRepository;
+        private ICompanyRepository _companyRepository;
         private readonly IEmailService _email;
         private readonly IConfiguration _configuration;
 
@@ -45,7 +47,9 @@ namespace MeAgendaAi.Service.Services
             TokenConfiguration tokenConfiguration,
             ILocationService locationService,
             IConfiguration configuration,
-            IPhoneNumberService phoneNumberService) : base(userRepository)
+            IPhoneNumberService phoneNumberService,
+            IEmployeeRepository employeeRepository,
+            ICompanyRepository companyRepository) : base(userRepository)
         {
             _email = email;
             _userRepository = userRepository;
@@ -55,6 +59,8 @@ namespace MeAgendaAi.Service.Services
             _configuration = configuration;
             _locationService = locationService;
             _phoneNumberService = phoneNumberService;
+            _employeeRepository = employeeRepository;
+            _companyRepository = companyRepository;
         }
 
         public ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles)
@@ -64,7 +70,7 @@ namespace MeAgendaAi.Service.Services
             try
             {
                 User userExist = _userRepository.GetByEmail(model.Email);
-                if(userExist == null)
+                if (userExist == null)
                 {
                     // validate user
                     ValidationResult validateUser = new AddUserModelValidator().Validate(model);
@@ -80,7 +86,7 @@ namespace MeAgendaAi.Service.Services
                             }
                         }
 
-                        if(model.PhoneNumbers != null && model.PhoneNumbers.Count > 0)
+                        if (model.PhoneNumbers != null && model.PhoneNumbers.Count > 0)
                         {
                             ResponseModel validPhoneNumbers = _phoneNumberService.ValidateAddPhoneNumbers(model.PhoneNumbers);
                             if (!validPhoneNumbers.Success)
@@ -112,7 +118,7 @@ namespace MeAgendaAi.Service.Services
                             PhoneNumbers = _phoneNumberService.CreatePhoneNumbersFromModel(model.PhoneNumbers, userId),
                             CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
                             LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                            Roles = GenerateUserRoles(roles, userId)                            
+                            Roles = GenerateUserRoles(roles, userId)
                         };
                         //_userRepository.Add(newUser);
 
@@ -190,7 +196,7 @@ namespace MeAgendaAi.Service.Services
                     else
                     {
                         resp.Message = "Usuário não encontrado";
-                    }   
+                    }
                 }
                 else
                 {
@@ -226,7 +232,7 @@ namespace MeAgendaAi.Service.Services
 
             return userRoles;
         }
-        
+
         public ResponseModel Login(LoginModel model)
         {
             ResponseModel resp = new ResponseModel();
@@ -237,9 +243,9 @@ namespace MeAgendaAi.Service.Services
                 try
                 {
                     User user = _userRepository.GetByEmail(model.Email);
-                    if(user != null)
+                    if (user != null)
                     {
-                        
+
                         if (!ValidatePassword(model.Senha, user))
                         {
                             resp.Success = false;
@@ -248,9 +254,13 @@ namespace MeAgendaAi.Service.Services
                             return resp;
                         }
 
+
+                        Guid? secondaryId = GetSecondaryIdByUser(user);
+                        var responseJWT = JWTService.GenerateToken(user, _signingConfiguration, _tokenConfiguration);
+                        responseJWT.SecondaryId = secondaryId != null ? secondaryId.ToString() : String.Empty;
                         resp.Success = true;
                         resp.Message = "Login efetuado";
-                        resp.Result = JWTService.GenerateToken(user, _signingConfiguration, _tokenConfiguration);
+                        resp.Result = responseJWT;
                     }
                     else
                     {
@@ -333,12 +343,12 @@ namespace MeAgendaAi.Service.Services
                     if (validateToken)
                     {
                         User user = _userRepository.GetById(model.Id);
-                        if(user == null)
-                        {                            
+                        if (user == null)
+                        {
                             response.Message = "Usuário não encontrado";
                             return response;
                         }
-                                                
+
                         user.Password = Encrypt.EncryptString(model.Password, user.UserId.ToString());
                         user.UpdatedBy = model.Id;
                         user.LastUpdatedAt = DateTime.Now;
@@ -364,7 +374,7 @@ namespace MeAgendaAi.Service.Services
                 response.Message = validateResetPassword.Errors.FirstOrDefault().ErrorMessage;
             }
             return response;
-                
+
         }
 
         private bool ValidatePassword(string password, User user)
@@ -402,7 +412,7 @@ namespace MeAgendaAi.Service.Services
                 //}
 
                 response.Success = true;
-                response.Result = "MeAgendaAiAPI/MeAgendaAi.Domain" + insideDir+fileName;
+                response.Result = "MeAgendaAiAPI/MeAgendaAi.Domain" + insideDir + fileName;
             }
             catch (Exception e)
             {
@@ -509,7 +519,7 @@ namespace MeAgendaAi.Service.Services
             try
             {
                 User user = _userRepository.GetByEmail(email);
-                if(user == null)
+                if (user == null)
                 {
                     response.Message = "Usuário não encotrado";
                     return response;
@@ -533,8 +543,8 @@ namespace MeAgendaAi.Service.Services
             catch (Exception e)
             {
                 throw e;
-            }           
-            
+            }
+
         }
 
         public ResponseModel AddUserImage(AddUserImageModel model)
@@ -575,12 +585,31 @@ namespace MeAgendaAi.Service.Services
                 {
                     responseModel.Message = "Guid inválido";
                 }
-            }catch(Exception e)
+            } catch (Exception e)
             {
                 responseModel.Message = $"Não foi possível adicionar a imagem ao usuário. {e.Message} / {e.InnerException.Message}";
             }
 
             return responseModel;
+        }
+
+        public Guid? GetSecondaryIdByUser(User user)
+        {
+            Guid? secondaryId = null;
+            if (user.Roles.Any(x => x.Role == Domain.Enums.Roles.UsuarioEmpresa))
+            {
+                secondaryId = _companyRepository.GetCompanyByUserId(user.UserId)?.CompanyId;
+            }
+            else if (user.Roles.Any(x => x.Role == Domain.Enums.Roles.Funcionario))
+            {
+                secondaryId = _employeeRepository.GetEmployeeByUserId(user.UserId)?.EmployeeId;
+            }
+            else if (user.Roles.Any(x => x.Role == Domain.Enums.Roles.Cliente))
+            {
+                secondaryId = _clientRepository.GetClientByUserId(user.UserId)?.ClientId;
+            }
+
+            return secondaryId;
         }
     }
 }
