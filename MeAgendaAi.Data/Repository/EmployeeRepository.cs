@@ -60,5 +60,28 @@ namespace MeAgendaAi.Data.Repository
                 .ToList();
         }
 
+        public List<Employee> GetEmployeesByServiceId(Guid serviceId)
+        {
+            return _employees.Where(x => x.EmployeeServices.Any(y => y.ServiceId == serviceId))
+                .Include(x => x.User)
+                .Include(x => x.EmployeeServices)
+                .ThenInclude(y => y.Service)
+                .Include(x => x.Company)
+                .ThenInclude(y => y.User)
+                .OrderBy(x => x.User.Name)
+                .ToList();
+        }
+
+        public List<Employee> GetEmployeesByCompanyId(Guid companyId)
+        {
+            return _employees.Where(x => x.CompanyId == companyId)
+               .Include(x => x.User)
+               .Include(x => x.EmployeeServices)
+               .ThenInclude(y => y.Service)
+               .Include(x => x.Company)
+               .ThenInclude(y => y.User)
+               .OrderBy(x => x.User.Name)
+               .ToList();
+        }
     }
 }

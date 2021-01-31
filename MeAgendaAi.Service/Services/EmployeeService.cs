@@ -383,5 +383,113 @@ namespace MeAgendaAi.Service.Services
         {
             return _employeeWorkHoursService.GetEmployeeMonthSchedule(userId, ano, mes);
         }
+
+        public ResponseModel GetEmployeesByServiceId(string serviceId)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(serviceId))
+                {
+                    List<EmployeeFavInfoModel> employeeModels = new List<EmployeeFavInfoModel>();
+
+                    var employees = _employeeRepository.GetEmployeesByServiceId(Guid.Parse(serviceId));
+                    employees.ForEach(employee => {
+                        var employeeModel = EmployeeToEmployeeFavModel(employee);
+                        if(employeeModel != null)
+                        {
+                            employeeModels.Add(employeeModel);
+                        }
+                    });
+                    response.Message = "Funcinários encontrados!";
+                    response.Result = employeeModels;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Message = "Guid inválido";
+                }
+            }catch(Exception e)
+            {
+                response.Message = $"Não foi possível buscar os funcionários. {e.InnerException.Message}";
+            }
+
+            return response;
+        }
+
+        public ResponseModel GetEmployeesByCompanyId(string companyId)
+        {
+            ResponseModel response = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(companyId))
+                {
+                    List<EmployeeFavInfoModel> employeeModels = new List<EmployeeFavInfoModel>();
+
+                    var employees = _employeeRepository.GetEmployeesByCompanyId(Guid.Parse(companyId));
+                    employees.ForEach(employee => {
+                        var employeeModel = EmployeeToEmployeeFavModel(employee);
+                        if (employeeModel != null)
+                        {
+                            employeeModels.Add(employeeModel);
+                        }
+                    });
+                    response.Message = "Funcinários encontrados!";
+                    response.Result = employeeModels;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Message = "Guid inválido";
+                }
+            }
+            catch (Exception e)
+            {
+                response.Message = $"Não foi possível buscar os funcionários. {e.InnerException.Message}";
+            }
+
+            return response;
+        }
+        private EmployeeFavInfoModel EmployeeToEmployeeFavModel(Employee employee)
+        {
+            List<EmployeeFavServiceModel> serviceModels = new List<EmployeeFavServiceModel>();
+            if (employee.EmployeeServices != null && employee.EmployeeServices.Count > 0)
+            {
+                employee.EmployeeServices.ForEach(serviceEp => {
+                    var serviceModel = new EmployeeFavServiceModel
+                    {
+                        ServiceId = serviceEp.ServiceId.ToString(),
+                        ServiceName = serviceEp.Service.Name
+                    };
+                    serviceModels.Add(serviceModel);
+                });
+            }
+
+            var companyModel = new CompanyFavInfoModel
+            {
+                CompanyId = employee.CompanyId.ToString(),
+                Name = employee.Company?.User?.Name ?? String.Empty,
+                Image = employee.Company?.User?.Image ?? String.Empty,
+                Email = employee.Company?.User?.Email ?? String.Empty,
+                Descricao = employee?.Company?.Descricao ?? String.Empty,
+                Link = _companyService.GetCompanyLink(employee.CompanyId)
+            };
+
+            EmployeeFavInfoModel employeeModel = new EmployeeFavInfoModel
+            {
+                EmployeeId = employee.EmployeeId.ToString(),
+                Link = GetEmployeeLink(employee.EmployeeId),
+                Name = employee.User.Name,
+                Email = employee.User.Email,
+                Descricao = employee.Descricao,
+                Image = employee.User.Image,
+                Services = serviceModels,
+                Company = companyModel
+            };
+
+            return employeeModel;
+        }
     }
 }

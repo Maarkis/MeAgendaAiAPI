@@ -21,5 +21,7 @@ namespace MeAgendaAi.Domain.Interfaces
         ResponseModel GetEmployeeAvailableHours(string employeeId, string serviceId, string date);
         ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes);
         string GetEmployeeLink(Guid employeeId);
+        ResponseModel GetEmployeesByServiceId(string serviceId);
+        ResponseModel GetEmployeesByCompanyId(string companyId);
     }
 }
