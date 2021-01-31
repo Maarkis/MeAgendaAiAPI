@@ -6,6 +6,7 @@ using System.Net;
 using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
 using Microsoft.AspNetCore.Authorization;
 using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.Utils;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -127,8 +128,8 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
-        [Route("AddServiceToEmployee")]
-        public ActionResult AddServiceToEmployee(AddServiceToEmployeeModel model)
+        [Route("AddServicesToEmployee")]
+        public ActionResult AddServicesToEmployee(AddServiceToEmployeeModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -201,6 +202,48 @@ namespace MeAgendaAi.Application.Controllers
             try
             {
                 var result = _employeeService.GetEmployeeMonthSchedule(userId, ano, mes);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario, Roles.Admin)]
+        [Route("GetEmployeesByServiceId/{serviceId}")]
+        public ActionResult GetEmployeesByServiceId(string serviceId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeesByServiceId(serviceId);
+                return Ok(result);
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario, Roles.Admin)]
+        [Route("GetEmployeesByCompanyId/{companyId}")]
+        public ActionResult GetEmployeesByCompanyId(string companyId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = _employeeService.GetEmployeesByCompanyId(companyId);
                 return Ok(result);
             }
             catch (ArgumentException e)

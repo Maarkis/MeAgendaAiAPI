@@ -12,7 +12,7 @@ namespace MeAgendaAi.Domain.Interfaces
     {
         ResponseModel AddCompany(AddCompanyModel model);
         ResponseModel EditCompany(EditCompanyModel model);
-        ResponseModel CreateServiceForCompany(AddServiceModel model);
+        ResponseModel CreateServiceForCompany(AddMultipleServicesModel model);
         ResponseModel GetCompanyServices(string companyId);
         ResponseModel UpdatePolicy(UpdatePolicyModel model);
         ResponseModel GetCompanyInfoPerfil(string userId);

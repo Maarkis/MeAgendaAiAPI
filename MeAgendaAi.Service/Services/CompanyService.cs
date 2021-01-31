@@ -88,7 +88,7 @@ namespace MeAgendaAi.Service.Services
                         ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
 
                         resp.Success = true;
-                        resp.Result = $"{newCompany.CompanyId}";
+                        resp.Result = $"{newUser.UserId}";
                         resp.Message = "Empresa Adicionada com sucesso!";
                     }
                     else
@@ -172,7 +172,7 @@ namespace MeAgendaAi.Service.Services
 
             return resp;
         }
-        public ResponseModel CreateServiceForCompany(AddServiceModel model)
+        public ResponseModel CreateServiceForCompany(AddMultipleServicesModel model)
         {
             var resp = new ResponseModel();
             try
@@ -184,18 +184,42 @@ namespace MeAgendaAi.Service.Services
                     return resp;
                 }
 
-                MeAgendaAi.Domain.Entities.Services service = new MeAgendaAi.Domain.Entities.Services
+                if(model.Services != null && model.Services.Count > 0)
                 {
-                    ServiceId = Guid.NewGuid(),
-                    CompanyId = company.CompanyId,
-                    Name = model.Name,
-                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
-                };
-                _serviceRepository.Add(service);
+                    if(model.Services.All(x => x.DurationMinutes > 0))
+                    {
+                        if(model.Services.All(x => x.Name != null && x.Name != String.Empty))
+                        {
+                            model.Services.ForEach(serviceModel => {
+                                MeAgendaAi.Domain.Entities.Services service = new MeAgendaAi.Domain.Entities.Services
+                                {
+                                    ServiceId = Guid.NewGuid(),
+                                    CompanyId = company.CompanyId,
+                                    Name = serviceModel.Name,
+                                    DurationMinutes = serviceModel.DurationMinutes,
+                                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
+                                };
+                                _serviceRepository.Add(service);
+                            });
 
-                resp.Success = true;
-                resp.Message = "Serviço adicionado à empresa com sucesso";
+                            resp.Success = true;
+                            resp.Message = "Serviços adicionados à empresa com sucesso";
+                        }
+                        else
+                        {
+                            resp.Message = "Adicione um nome para o serviço";
+                        }
+                    }
+                    else
+                    {
+                        resp.Message = "Tempo de duração do serviço deve ser maior do que zero";
+                    }
+                }
+                else
+                {
+                    resp.Message = "Lista de serviços vazia, adicione algum serviço";
+                }
             }
             catch (Exception)
             {

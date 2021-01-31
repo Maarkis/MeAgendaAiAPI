@@ -21,5 +21,7 @@ namespace MeAgendaAi.Domain.Interfaces
         ResponseModel ConfirmationEmail(Guid id);
         Task<ResponseModel> RetrievePassword(RecoveryPassword model);
         Task<ResponseModel> SendEmailConfirmation(string email);
+        ResponseModel AddUserImage(AddUserImageModel model);
+        Guid? GetSecondaryIdByUser(User user);
     }
 }

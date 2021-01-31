@@ -6,7 +6,7 @@ namespace MeAgendaAi.Domain.EpModels.Employee
 {
     public class AddServiceToEmployeeModel
     {
-        public string ServiceId { get; set; }
+        public List<string> ServicesIds { get; set; }
         public string EmployeeId { get; set; }
     }
 }
