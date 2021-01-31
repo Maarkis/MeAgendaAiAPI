@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
+using MeAgendaAi.Domain.Utils;
 
 namespace MeAgendaAi.Service.Services
 {
@@ -534,6 +535,52 @@ namespace MeAgendaAi.Service.Services
                 throw e;
             }           
             
+        }
+
+        public ResponseModel AddUserImage(AddUserImageModel model)
+        {
+            ResponseModel responseModel = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(model.UserId))
+                {
+                    var user = _userRepository.GetById(Guid.Parse(model.UserId));
+                    if (user != null)
+                    {
+                        string img = null;
+                        if (model.Image != null)
+                        {
+                            ResponseModel resultImg = DownloadImage(model.Image, model.UserId).Result;
+                            if (resultImg.Success)
+                            {
+                                img = resultImg.Result.ToString();
+                            }
+                        }
+
+                        user.Image = img;
+                        user.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
+                        user.UpdatedBy = user.UserId;
+                        _userRepository.Edit(user);
+                        responseModel.Success = true;
+                        responseModel.Result = img;
+                        responseModel.Message = "Imagem atualizada com sucesso!";
+                    }
+                    else
+                    {
+                        responseModel.Message = "Usuário não encontrado";
+                    }
+                }
+                else
+                {
+                    responseModel.Message = "Guid inválido";
+                }
+            }catch(Exception e)
+            {
+                responseModel.Message = $"Não foi possível adicionar a imagem ao usuário. {e.Message} / {e.InnerException.Message}";
+            }
+
+            return responseModel;
         }
     }
 }
