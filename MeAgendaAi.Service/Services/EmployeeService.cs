@@ -185,17 +185,34 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                ServiceEmployee serviceEmployee = new ServiceEmployee
+                if (model.ServicesIds != null && model.ServicesIds.Count > 0)
                 {
-                    EmployeeServiceId = Guid.NewGuid(),
-                    ServiceId = Guid.Parse(model.ServiceId),
-                    EmployeeId = Guid.Parse(model.EmployeeId),
-                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
-                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
-                };
-                _serviceEmployeeRepository.Add(serviceEmployee);
-                resp.Success = true;
-                resp.Message = "Serviço adicionado ao funcionário com sucesso";
+                    if (GuidUtil.IsGuidValid(model.EmployeeId) && model.ServicesIds.All(x => GuidUtil.IsGuidValid(x)))
+                    {
+                        model.ServicesIds.ForEach(serviceId => {
+                            ServiceEmployee serviceEmployee = new ServiceEmployee
+                            {
+                                EmployeeServiceId = Guid.NewGuid(),
+                                ServiceId = Guid.Parse(serviceId),
+                                EmployeeId = Guid.Parse(model.EmployeeId),
+                                CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                                LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
+                            };
+                            _serviceEmployeeRepository.Add(serviceEmployee);
+                        });
+                     
+                        resp.Success = true;
+                        resp.Message = "Serviços adicionados ao funcionário com sucesso";
+                    }
+                    else
+                    {
+                        resp.Message = "Guid inválido";
+                    }
+                }
+                else
+                {
+                    resp.Message = "Lista de serviços vazia, adicione algum serviço";
+                }
             }
             catch (Exception)
             {

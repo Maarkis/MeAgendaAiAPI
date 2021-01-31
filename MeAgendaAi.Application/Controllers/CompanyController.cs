@@ -61,8 +61,8 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpPost]
         [Authorize(Roles = "UsuarioEmpresa")]
-        [Route("AddServiceInCompany")]
-        public ActionResult AddServiceInCompany([FromBody] AddServiceModel model)
+        [Route("AddServicesInCompany")]
+        public ActionResult AddServicesInCompany([FromBody] AddMultipleServicesModel model)
         {
             if (!ModelState.IsValid)
             {

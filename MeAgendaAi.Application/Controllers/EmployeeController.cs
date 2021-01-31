@@ -128,8 +128,8 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Funcionario,UsuarioEmpresa")]
-        [Route("AddServiceToEmployee")]
-        public ActionResult AddServiceToEmployee(AddServiceToEmployeeModel model)
+        [Route("AddServicesToEmployee")]
+        public ActionResult AddServicesToEmployee(AddServiceToEmployeeModel model)
         {
             if (!ModelState.IsValid)
             {
