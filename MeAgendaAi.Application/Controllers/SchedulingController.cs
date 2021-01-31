@@ -42,7 +42,7 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpGet]        
         [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario)]
-        [Route("GetClientSchedulingsByUserId")]
+        [Route("GetClientSchedulingsByUserId/{userId}")]
         public ActionResult GetClientSchedulingsByUserId(string userId)
         {
             if (!ModelState.IsValid)
@@ -63,7 +63,7 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpGet]
         [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario)]
-        [Route("GetClientHistoricoSchedulingsByUserId")]
+        [Route("GetClientHistoricoSchedulingsByUserId/{userId}")]
         public ActionResult GetClientHistoricoSchedulingsByUserId(string userId)
         {
             if (!ModelState.IsValid)
