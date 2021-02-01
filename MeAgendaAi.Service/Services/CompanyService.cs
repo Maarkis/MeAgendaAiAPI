@@ -241,7 +241,8 @@ namespace MeAgendaAi.Service.Services
                     GetCompanyServicesModel companyService = new GetCompanyServicesModel
                     {
                         ServiceId = service.ServiceId.ToString(),
-                        Name = service.Name
+                        Name = service.Name,
+                        DurationMinutes = service.DurationMinutes
                     };
                     companyServices.Add(companyService);
                 });

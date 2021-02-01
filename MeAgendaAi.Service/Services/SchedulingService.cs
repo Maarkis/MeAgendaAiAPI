@@ -208,8 +208,10 @@ namespace MeAgendaAi.Service.Services
             List<GetSchedulingsModel> listGetSchedulingModel = new List<GetSchedulingsModel>();
 
             schedulings.ForEach(scheduling => {
-                GetSchedulingsModel model = SchedulingToGetSchedulingModel(scheduling);
-                listGetSchedulingModel.Add(model);
+                if (scheduling.Status != SchedulingStatus.Canceled) {
+                    GetSchedulingsModel model = SchedulingToGetSchedulingModel(scheduling);
+                    listGetSchedulingModel.Add(model);
+                }
             });
 
             return listGetSchedulingModel;
