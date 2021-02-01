@@ -118,6 +118,61 @@ namespace MeAgendaAi.Service.Services
             return response;
         }
 
+        public ResponseModel GetWorkHoursMock(DateTime date, Employee employee, Domain.Entities.Services service)
+        {
+            var response = new ResponseModel();
+
+            try
+            {
+                // Horário comercial, 09:00 - 18:00
+                var workHours = new EmployeeWorkHours { 
+                    EmployeeWorkHoursId = Guid.NewGuid(),
+                    StartHour = new DateTime(date.Year, date.Month, date.Day, 09, 00, 00),
+                    EndHour = new DateTime(date.Year, date.Month, date.Day, 18, 00, 00),
+                    StartInterval = new DateTime(date.Year, date.Month, date.Day, 12, 00, 00),
+                    EndInterval = new DateTime(date.Year, date.Month, date.Day, 13, 00, 00)
+                };
+                var schedulings = _schedulingRepository.GetDaySchedulingsByEmployee(employee.EmployeeId, date);
+
+                DateTime StartTime = workHours.StartHour;
+                DateTime EndTime = workHours.EndHour;
+                List<DateTime> intervals = new List<DateTime>();
+                while (StartTime <= EndTime.AddMinutes(service.DurationMinutes * -1))
+                {
+                    StartTime = StartTime.AddMinutes(service.DurationMinutes);
+                    intervals.Add(StartTime);
+                }
+
+                List<DateTime> exclude = new List<DateTime>();
+                intervals.ForEach(interval => {
+                    // se estiver dentro do horário de intervalo
+                    if ((DateTime.Compare(interval, (DateTime)workHours.StartInterval) >= 0) && (DateTime.Compare(interval, (DateTime)workHours.EndInterval) < 0))
+                    {
+                        exclude.Add(interval);
+                    }
+
+                    // se estiver dentro fo horário de algum agendamento do dia
+                    if (schedulings.Any(x => DateTime.Compare(x.StartTime, interval) <= 0) && schedulings.Any(x => DateTime.Compare(x.EndTime, interval) > 0))
+                    //if (schedulings.Any(x => x.StartTime <= interval) && schedulings.Any(x => x.EndTime > interval))
+                    {
+                        exclude.Add(interval);
+                    }
+                });
+
+                exclude.ForEach(item => intervals.Remove(item));
+
+                response.Success = true;
+                response.Result = intervals;
+                response.Message = "Horários selecionados com sucesso!";
+            }
+            catch (Exception e)
+            {
+                response.Message = "Ocorreu um erro ao calcular a lista de horários";
+            }
+
+            return response;
+        }
+
         public ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes)
         {
             ResponseModel resp = new ResponseModel();

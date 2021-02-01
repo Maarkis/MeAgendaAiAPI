@@ -94,7 +94,7 @@ namespace MeAgendaAi.Service.Services
                             ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
 
                             resp.Success = true;
-                            resp.Result = $"{newUser.UserId}";
+                            resp.Result = $"{employee.EmployeeId}";
                             resp.Message = "Funcionário adicionado com sucesso!";
                         }
                         else
@@ -214,9 +214,9 @@ namespace MeAgendaAi.Service.Services
                     resp.Message = "Lista de serviços vazia, adicione algum serviço";
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                resp.Message = "Não foi possível adicionar o serviço ao funcionário";
+                resp.Message = $"Não foi possível adicionar o serviço ao funcionário: {e.Message} / {e.InnerException.Message}";
             }
 
             return resp;
@@ -393,7 +393,8 @@ namespace MeAgendaAi.Service.Services
 
             DateTime dateTime = new DateTime();
             bool ok = DateTime.TryParse(date, out dateTime); //colocar validação do formato de data no validator
-            return _employeeWorkHoursService.GetAvailableEmployeeWorkHours(dateTime, employee, service);
+            //return _employeeWorkHoursService.GetAvailableEmployeeWorkHours(dateTime, employee, service);
+            return _employeeWorkHoursService.GetWorkHoursMock(dateTime, employee, service);
         }
 
         public ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes)

@@ -180,6 +180,7 @@ namespace MeAgendaAi.Application.Controllers
 
             try
             {
+                //var result = _employeeService.GetEmployeeAvailableHours(employeeId, serviceId, date);
                 var result = _employeeService.GetEmployeeAvailableHours(employeeId, serviceId, date);
                 return Ok(result);
             }
