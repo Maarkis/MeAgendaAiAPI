@@ -30,6 +30,19 @@ namespace MeAgendaAi.Data.Repository
                 .ToList();
         }
 
+        public Employee GetEmployeeByIdWithServices(Guid employeeId)
+        {
+            return _employees.Where(x => x.EmployeeId == employeeId)
+                .Include(x => x.User)
+                .Include(x => x.EmployeeServices)
+                .ThenInclude(y => y.Service)
+                .Include(x => x.Company)
+                .ThenInclude(y => y.User)
+                .Include(x => x.Schedulings)
+                .Include(x => x.EmployeeWorkHours)
+                .FirstOrDefault();
+        }
+
         public Employee GetEmployeeByUserEmail(string userEmail)
         {
             return _employees.Where(x => x.User.Email == userEmail)

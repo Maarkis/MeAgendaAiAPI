@@ -189,20 +189,44 @@ namespace MeAgendaAi.Service.Services
                 {
                     if (GuidUtil.IsGuidValid(model.EmployeeId) && model.ServicesIds.All(x => GuidUtil.IsGuidValid(x)))
                     {
-                        model.ServicesIds.ForEach(serviceId => {
-                            ServiceEmployee serviceEmployee = new ServiceEmployee
-                            {
-                                EmployeeServiceId = Guid.NewGuid(),
-                                ServiceId = Guid.Parse(serviceId),
-                                EmployeeId = Guid.Parse(model.EmployeeId),
-                                CreatedAt = DateTimeUtil.UtcToBrasilia(),
-                                LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
-                            };
-                            _serviceEmployeeRepository.Add(serviceEmployee);
-                        });
-                     
-                        resp.Success = true;
-                        resp.Message = "Serviços adicionados ao funcionário com sucesso";
+                        var employee = _employeeRepository.GetEmployeeByIdWithServices(Guid.Parse(model.EmployeeId));
+                        if(employee != null)
+                        {
+                            //var ess = employee.EmployeeServices;
+                            //ess.ForEach(es => {
+                            //    _serviceEmployeeRepository.Remove(es);
+                            //});
+
+                            List<ServiceEmployee> ses = new List<ServiceEmployee>();
+
+                            model.ServicesIds.ForEach(serviceId => {
+                                var service = _serviceRepository.GetById(Guid.Parse(serviceId));
+
+                                ServiceEmployee serviceEmployee = new ServiceEmployee
+                                {
+                                    EmployeeServiceId = Guid.NewGuid(),
+                                    ServiceId = Guid.Parse(serviceId),
+                                    EmployeeId = Guid.Parse(model.EmployeeId),
+                                    Employee = employee,
+                                    Service = service,
+                                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
+                                    UpdatedBy = employee.UserId
+                                };
+                                //_serviceEmployeeRepository.Add(serviceEmployee);
+                                ses.Add(serviceEmployee);
+                            });
+
+                            employee.EmployeeServices = ses;
+                            _employeeRepository.Edit(employee);
+
+                            resp.Success = true;
+                            resp.Message = "Serviços adicionados ao funcionário com sucesso";
+                        }
+                        else
+                        {
+                            resp.Message = "Funcionário não encontrado";
+                        }
                     }
                     else
                     {
@@ -216,7 +240,7 @@ namespace MeAgendaAi.Service.Services
             }
             catch (Exception e)
             {
-                resp.Message = $"Não foi possível adicionar o serviço ao funcionário: {e.Message} / {e.InnerException.Message}";
+                resp.Message = $"Não foi possível adicionar o serviço ao funcionário: {e.Message} / {e.InnerException?.Message}";
             }
 
             return resp;

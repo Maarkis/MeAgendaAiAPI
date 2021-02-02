@@ -18,13 +18,11 @@ namespace MeAgendaAi.Data.Mapping
 
             builder.HasOne(x => x.Employee)
                 .WithMany(e => e.EmployeeServices)
-                .HasForeignKey(x => x.EmployeeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(x => x.EmployeeId);
 
             builder.HasOne(x => x.Service)
                 .WithMany(s => s.ServiceEmployees)
-                .HasForeignKey(x => x.ServiceId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(x => x.ServiceId);
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
