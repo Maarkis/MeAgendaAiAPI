@@ -69,7 +69,7 @@ namespace MeAgendaAi.Service.Services
                 DateTime endTime;
                 if (!DateTime.TryParse(model.EndTime, out endTime))
                 {
-                    resp.Message = "Start time inválida";
+                    resp.Message = "End time inválida";
                     return resp;
                 }
 
@@ -97,7 +97,7 @@ namespace MeAgendaAi.Service.Services
             }
             catch (Exception e)
             {
-                resp.Message = "Não foi possível realizar o agendamento";
+                resp.Message = $"Não foi possível realizar o agendamento. {e.Message}";
             }
 
             return resp;

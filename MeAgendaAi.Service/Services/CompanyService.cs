@@ -193,17 +193,24 @@ namespace MeAgendaAi.Service.Services
                     {
                         if(model.Services.All(x => x.Name != null && x.Name != String.Empty))
                         {
+                            var servicesCompany = _serviceRepository.GetServicesByCompanyId(company.CompanyId);
                             model.Services.ForEach(serviceModel => {
-                                MeAgendaAi.Domain.Entities.Services service = new MeAgendaAi.Domain.Entities.Services
+
+                                // não adicionar dois serviços com o mesmo nome na empresa
+                                if (servicesCompany.All(x => x.Name.ToLowerInvariant() != serviceModel.Name.ToLowerInvariant()))
                                 {
-                                    ServiceId = Guid.NewGuid(),
-                                    CompanyId = company.CompanyId,
-                                    Name = serviceModel.Name,
-                                    DurationMinutes = serviceModel.DurationMinutes,
-                                    CreatedAt = DateTimeUtil.UtcToBrasilia(),
-                                    LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
-                                };
-                                _serviceRepository.Add(service);
+                                    MeAgendaAi.Domain.Entities.Services service = new MeAgendaAi.Domain.Entities.Services
+                                    {
+                                        ServiceId = Guid.NewGuid(),
+                                        CompanyId = company.CompanyId,
+                                        Name = serviceModel.Name,
+                                        DurationMinutes = serviceModel.DurationMinutes,
+                                        CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                                        LastUpdatedAt = DateTimeUtil.UtcToBrasilia()
+                                    };
+                                    _serviceRepository.Add(service);
+                                }
+                                
                             });
 
                             resp.Success = true;
