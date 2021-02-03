@@ -36,7 +36,7 @@ namespace MeAgendaAi.Domain.EpModels.Company
     public class GetCompanyByIdCompleteServiceModel
     {
         public string ServiceId { get; set; }
-        public string ServiceName { get; set; }
-        public int ServiceDuration { get; set; }
+        public string Name { get; set; }
+        public int DurationMinutes { get; set; }
     }
 }

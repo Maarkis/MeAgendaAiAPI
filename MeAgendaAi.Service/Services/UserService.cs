@@ -547,6 +547,49 @@ namespace MeAgendaAi.Service.Services
 
         }
 
+        public ResponseModel Account(string id)
+        {
+            ResponseModel response = new ResponseModel();
+            try
+            {
+                if (GuidUtil.IsGuidValid(id)) {
+                    User user = _userRepository.GetAccountById(Guid.Parse(id));
+                    if (user == null)
+                    {
+                        response.Message = "Usuário não encotrado";
+                        return response;
+                    }
+                    ResponseAccount responseAccount = new ResponseAccount()
+                    {
+                        UserId = user.UserId,
+                        Email = user.Email,
+                        Image = user.Image,
+                        Name = user.Name,
+                        Roles = user.Roles,
+                        PhoneNumbers = user.PhoneNumbers,
+                        Locations = user.Locations,
+                        CreateAt = user.CreatedAt
+                    };
+                    response.Success = true;
+                    response.Message = "Informação básica da conta do usuário";
+                    response.Result = responseAccount;
+                    return response;
+
+                } 
+                else
+                {
+                    response.Message = "Guid inválido";
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return response;
+        }
+
         public ResponseModel AddUserImage(AddUserImageModel model)
         {
             ResponseModel responseModel = new ResponseModel();
