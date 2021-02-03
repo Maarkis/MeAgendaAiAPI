@@ -1,5 +1,6 @@
 ﻿using MeAgendaAi.Data.Context;
 using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -111,7 +112,7 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetDaySchedulingsByEmployee(Guid employeeId, DateTime date)
         {
-            return _schedulings.Where(x => x.EmployeeId == employeeId && x.StartTime.Date == date.Date).ToList();
+            return _schedulings.Where(x => x.EmployeeId == employeeId && x.StartTime.Date == date.Date && x.Status == SchedulingStatus.Scheduled).ToList();
         }
 
         public Scheduling GetSchedulingByIdComplete(Guid schedulingId)
