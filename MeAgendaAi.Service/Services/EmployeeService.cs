@@ -389,7 +389,8 @@ namespace MeAgendaAi.Service.Services
 
         public string GetEmployeeLink(Guid employeeId)
         {
-            return $"https://localhost:4200/perfil_funcionario/{employeeId}";
+            //return $"https://localhost:4200/perfil_funcionario/{employeeId}";
+            return _employeeRepository.GetEmployeeLink(employeeId);
         }
         public ResponseModel AddWorkHoursToEmployee(AddEmployeeWorkHoursModel model, string userEmail)
         {
