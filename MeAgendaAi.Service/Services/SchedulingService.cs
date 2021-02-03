@@ -16,17 +16,20 @@ namespace MeAgendaAi.Service.Services
         private ISchedulingRepository _schedulingRepository;
         private IClientRepository _clientRepository;
         private IEmployeeRepository _employeeRepository;
-        private ICompanyRepository _companyRepository;
+        private IEmployeeService _employeeService;
+        private ICompanyService _companyService;
         private IServiceRepository _serviceRepository;
 
         public SchedulingService(ISchedulingRepository schedulingRepository, IClientRepository clientRepository,
-            IEmployeeRepository employeeRepository, ICompanyRepository companyRepository, IServiceRepository serviceRepository) : base(schedulingRepository)
+            IEmployeeRepository employeeRepository, ICompanyService companyService, IServiceRepository serviceRepository,
+            IEmployeeService employeeService) : base(schedulingRepository)
         {
             _schedulingRepository = schedulingRepository;
             _clientRepository = clientRepository;
             _employeeRepository = employeeRepository;
-            _companyRepository = companyRepository;
+            _companyService = companyService;
             _serviceRepository = serviceRepository;
+            _employeeService = employeeService;
         }
 
         public ResponseModel CreateScheduling(CreateSchedulingModel model)
@@ -225,6 +228,8 @@ namespace MeAgendaAi.Service.Services
                 ClientName = scheduling.Client.User.Name,
                 EmployeeName = scheduling.Employee.User.Name,
                 CompanyName = scheduling.Employee.Company.User.Name,
+                CompanyLink = _companyService.GetCompanyLink(scheduling.Employee.CompanyId),
+                EmployeeLink = _employeeService.GetEmployeeLink(scheduling.EmployeeId),
                 Service = scheduling.Service.Name,
                 StartTime = scheduling.StartTime,
                 EndTime = scheduling.EndTime,

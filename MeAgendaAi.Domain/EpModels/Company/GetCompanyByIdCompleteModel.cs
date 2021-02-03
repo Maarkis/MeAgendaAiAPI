@@ -10,6 +10,7 @@ namespace MeAgendaAi.Domain.EpModels.Company
     {
         public Guid CompanyId { get; set; }
         public string CompanyName { get; set; }
+        public string Image { get; set; }
         public string Email { get; set; }
         public string Link { get; set; }
         public string Descricao { get; set; }
@@ -24,6 +25,9 @@ namespace MeAgendaAi.Domain.EpModels.Company
     public class GetCompanyByIdCompleteEmployeeModel
     {
         public string EmployeeId { get; set; }
+        public string Image { get; set; }
+        public string Descricao { get; set; }
+        public string Link { get; set; }
         public string EmplyeeName { get; set; }
         public bool IsManager { get; set; }
         public List<GetCompanyByIdCompleteServiceModel> EmployeeServices { get; set; }
