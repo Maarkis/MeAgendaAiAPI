@@ -14,5 +14,6 @@ namespace MeAgendaAi.Domain.Interfaces.Repositories
         List<Employee> GetEmployeesByServiceId(Guid serviceId);
         List<Employee> GetEmployeesByCompanyId(Guid companyId);
         Employee GetEmployeeByIdWithServices(Guid employeeId);
+        string GetEmployeeLink(Guid employeeId);
     }
 }

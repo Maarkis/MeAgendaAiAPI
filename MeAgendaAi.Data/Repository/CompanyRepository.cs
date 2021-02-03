@@ -43,5 +43,10 @@ namespace MeAgendaAi.Data.Repository
                 .Include(x => x.Policy)
                 .FirstOrDefault();
         }
+
+        public string GetCompanyLink(Guid companyId)
+        {
+            return $"https://localhost:4200/perfil_empresa/{companyId}";
+        }
     }
 }

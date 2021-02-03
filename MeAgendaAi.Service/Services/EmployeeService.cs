@@ -25,7 +25,6 @@ namespace MeAgendaAi.Service.Services
         private IServiceRepository _serviceRepository;
         private IUserService _userService;
         private ICompanyRepository _companyRepository;
-        private ICompanyService _companyService;
         private ILocationService _locationService;
         private IPhoneNumberService _phoneNumberService;
 
@@ -33,7 +32,7 @@ namespace MeAgendaAi.Service.Services
             IServiceEmployeeRepository serviceEmployeeRepository,
             IEmployeeWorkHoursService employeeWorkHoursService,
             IServiceRepository serviceRepository, IUserService userService,
-            ICompanyRepository companyRepository, ICompanyService companyService,
+            ICompanyRepository companyRepository,
             ILocationService locationService, IPhoneNumberService phoneNumberService) : base(employeeRepository)
         {
             _employeeRepository = employeeRepository;
@@ -42,7 +41,6 @@ namespace MeAgendaAi.Service.Services
             _serviceRepository = serviceRepository;
             _userService = userService;
             _companyRepository = companyRepository;
-            _companyService = companyService;
             _locationService = locationService;
             _phoneNumberService = phoneNumberService;
         }
@@ -365,7 +363,7 @@ namespace MeAgendaAi.Service.Services
                 CompanyId = company.CompanyId.ToString(),
                 Image = company.User.Image,
                 Name = company.User.Name,
-                Link = _companyService.GetCompanyLink(company.CompanyId)
+                Link = _companyRepository.GetCompanyLink(company.CompanyId)
             };
         }
         private List<GetCompanyByIdCompleteServiceModel> GetServicesModelFromServices(List<ServiceEmployee> employeeServices)
@@ -516,7 +514,7 @@ namespace MeAgendaAi.Service.Services
                 Image = employee.Company?.User?.Image ?? String.Empty,
                 Email = employee.Company?.User?.Email ?? String.Empty,
                 Descricao = employee?.Company?.Descricao ?? String.Empty,
-                Link = _companyService.GetCompanyLink(employee.CompanyId)
+                Link = _companyRepository.GetCompanyLink(employee.CompanyId)
             };
 
             EmployeeFavInfoModel employeeModel = new EmployeeFavInfoModel

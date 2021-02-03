@@ -24,12 +24,10 @@ namespace MeAgendaAi.Service.Services
         private IUserService _userService;
         private ILocationService _locationService;
         private IPhoneNumberService _phoneNumberService;
-        private IEmployeeService _employeeService;
         public CompanyService(ICompanyRepository companyRepository, IUserRepository userRepository,
             IEmployeeRepository employeeRepository, IServiceRepository serviceRepository,
             IPolicyRepository policyRepository, IUserService userService,
-            ILocationService locationService, IPhoneNumberService phoneNumberService,
-            IEmployeeService employeeService) : base(companyRepository)
+            ILocationService locationService, IPhoneNumberService phoneNumberService) : base(companyRepository)
         {
             _companyRepository = companyRepository;
             _userRepository = userRepository;
@@ -39,7 +37,6 @@ namespace MeAgendaAi.Service.Services
             _userService = userService;
             _locationService = locationService;
             _phoneNumberService = phoneNumberService;
-            _employeeService = employeeService;
         }
 
         public ResponseModel AddCompany(AddCompanyModel model)
@@ -378,7 +375,7 @@ namespace MeAgendaAi.Service.Services
                             EmployeeId = employee.EmployeeId.ToString(),
                             EmplyeeName = employee.User.Name,
                             Image = employee.User.Image,
-                            Link = _employeeService.GetEmployeeLink(employee.EmployeeId),
+                            Link = _employeeRepository.GetEmployeeLink(employee.EmployeeId),
                             Descricao = employee.Descricao,
                             IsManager = employee.IsManager,
                             EmployeeServices = employeeServices

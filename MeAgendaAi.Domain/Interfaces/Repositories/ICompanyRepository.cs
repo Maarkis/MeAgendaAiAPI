@@ -10,5 +10,6 @@ namespace MeAgendaAi.Domain.Interfaces.Repositories
         Company GetCompanyWithPolicyById(Guid companyId);
         Company GetCompanyByIdComplete(Guid companyId);
         Company GetCompanyByUserId(Guid userId);
+        string GetCompanyLink(Guid companyId);
     }
 }

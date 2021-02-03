@@ -96,5 +96,10 @@ namespace MeAgendaAi.Data.Repository
                .OrderBy(x => x.User.Name)
                .ToList();
         }
+
+        public string GetEmployeeLink(Guid employeeId)
+        {
+            return $"https://localhost:4200/perfil_funcionario/{employeeId}";
+        }
     }
 }
