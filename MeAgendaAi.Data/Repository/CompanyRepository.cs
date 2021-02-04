@@ -46,7 +46,7 @@ namespace MeAgendaAi.Data.Repository
 
         public string GetCompanyLink(Guid companyId)
         {
-            return $"https://localhost:4200/perfil_empresa/{companyId}";
+            return $"http://localhost:4200/perfil_empresa/{companyId}";
         }
     }
 }

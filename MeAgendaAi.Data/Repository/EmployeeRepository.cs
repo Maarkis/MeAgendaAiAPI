@@ -99,7 +99,7 @@ namespace MeAgendaAi.Data.Repository
 
         public string GetEmployeeLink(Guid employeeId)
         {
-            return $"https://localhost:4200/perfil_funcionario/{employeeId}";
+            return $"http://localhost:4200/perfil_funcionario/{employeeId}";
         }
     }
 }
