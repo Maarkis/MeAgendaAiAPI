@@ -124,6 +124,8 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
+                List<DateTime> intervals = new List<DateTime>();
+
                 // Horário comercial, 09:00 - 18:00
                 var workHours = new EmployeeWorkHours { 
                     EmployeeWorkHoursId = Guid.NewGuid(),
@@ -136,7 +138,7 @@ namespace MeAgendaAi.Service.Services
 
                 DateTime StartTime = workHours.StartHour;
                 DateTime EndTime = workHours.EndHour;
-                List<DateTime> intervals = new List<DateTime>();
+                
                 while (StartTime <= EndTime.AddMinutes(service.DurationMinutes * -1))
                 {
                     StartTime = StartTime.AddMinutes(service.DurationMinutes);
@@ -145,16 +147,16 @@ namespace MeAgendaAi.Service.Services
 
                 List<DateTime> exclude = new List<DateTime>();
                 intervals.ForEach(interval => {
-                    // se estiver dentro do horário de intervalo
-                    if ((DateTime.Compare(interval, (DateTime)workHours.StartInterval) >= 0) && (DateTime.Compare(interval, (DateTime)workHours.EndInterval) < 0))
+                    if (DateTime.Compare(interval, DateTimeUtil.UtcToBrasilia()) < 0)
                     {
                         exclude.Add(interval);
-                    }
-
-                    // se estiver dentro fo horário de algum agendamento do dia
-                    if (schedulings.Any(x => DateTime.Compare(x.StartTime, interval) <= 0) && schedulings.Any(x => DateTime.Compare(x.EndTime, interval) > 0))
-                    //if (schedulings.Any(x => x.StartTime <= interval) && schedulings.Any(x => x.EndTime > interval))
+                    }else if ((DateTime.Compare(interval, (DateTime)workHours.StartInterval) >= 0) && (DateTime.Compare(interval, (DateTime)workHours.EndInterval) < 0))
                     {
+                        // se estiver dentro do horário de intervalo
+                        exclude.Add(interval);
+                    }else if (schedulings.Any(x => DateTime.Compare(x.StartTime, interval) <= 0) && schedulings.Any(x => DateTime.Compare(x.EndTime, interval) > 0))
+                    {
+                        // se estiver dentro fo horário de algum agendamento do dia
                         exclude.Add(interval);
                     }
                 });
