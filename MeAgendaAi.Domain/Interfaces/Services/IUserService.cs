@@ -23,6 +23,7 @@ namespace MeAgendaAi.Domain.Interfaces
         Task<ResponseModel> SendEmailConfirmation(string email);
         ResponseModel AddUserImage(AddUserImageModel model);
         Guid? GetSecondaryIdByUser(User user);
+        ResponseModel EditName(RequestEditName model);
         ResponseModel Account(string id);
     }
 }

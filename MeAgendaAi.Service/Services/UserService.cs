@@ -590,6 +590,36 @@ namespace MeAgendaAi.Service.Services
             return response;
         }
 
+        public ResponseModel EditName(RequestEditName model)
+        {
+            ResponseModel response = new ResponseModel();
+            ValidationResult resultValidator = new RequestEditNameValidator().Validate(model);
+            if (resultValidator.IsValid)
+            {
+                User user = _userRepository.GetById(model.Id);
+                if(user != null)
+                {
+                    user.Name = model.Name;
+                    user.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
+                    user.UpdatedBy = user.UserId;
+                    _userRepository.Edit(user);
+
+                    response.Success = true;
+                    response.Result = user.Name;
+                    response.Message = "Imagem atualizada com sucesso!";
+                }
+                else
+                {
+                    response.Message = "Usuário não encontrado";
+                }
+            }
+            else
+            {
+                response.Message = resultValidator.Errors.FirstOrDefault().ErrorMessage;
+            }
+            return response;
+        }
+
         public ResponseModel AddUserImage(AddUserImageModel model)
         {
             ResponseModel responseModel = new ResponseModel();
@@ -654,5 +684,7 @@ namespace MeAgendaAi.Service.Services
 
             return secondaryId;
         }
+
+      
     }
 }
