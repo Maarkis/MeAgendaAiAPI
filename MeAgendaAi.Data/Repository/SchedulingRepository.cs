@@ -22,7 +22,7 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetClientSchedulings(Guid clientId)
         {
-            return _schedulings.Where(x => x.ClientId == clientId)
+            return _schedulings.Where(x => x.ClientId == clientId && x.Status == SchedulingStatus.Scheduled)
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -37,7 +37,7 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetClientSchedulingsProximos(Guid clientId)
         {
-            return _schedulings.Where(x => x.ClientId == clientId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0)
+            return _schedulings.Where(x => (x.ClientId == clientId) && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0) && (x.Status == SchedulingStatus.Scheduled))
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -52,7 +52,7 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetClientSchedulingsExpirados(Guid clientId)
         {
-            return _schedulings.Where(x => x.ClientId == clientId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0)
+            return _schedulings.Where(x => (x.ClientId == clientId) && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0 || x.Status == SchedulingStatus.Canceled))
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -61,13 +61,13 @@ namespace MeAgendaAi.Data.Repository
                 .ThenInclude(x => x.Company)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Service)
-                .OrderBy(x => x.StartTime)
+                .OrderByDescending(x => x.StartTime)
                 .ToList();
         }
 
         public List<Scheduling> GetEmployeeSchedulings(Guid employeeId)
         {
-            return _schedulings.Where(x => x.EmployeeId == employeeId)
+            return _schedulings.Where(x => x.EmployeeId == employeeId && x.Status == SchedulingStatus.Scheduled)
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -82,7 +82,7 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetEmployeeSchedulingsProximos(Guid employeeId)
         {
-            return _schedulings.Where(x => x.EmployeeId == employeeId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0)
+            return _schedulings.Where(x => (x.EmployeeId == employeeId) && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0) && (x.Status == SchedulingStatus.Scheduled))
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -97,7 +97,7 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetEmployeeSchedulingsAntigos(Guid employeeId)
         {
-            return _schedulings.Where(x => x.EmployeeId == employeeId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0)
+            return _schedulings.Where(x => (x.EmployeeId == employeeId) && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0 || x.Status == SchedulingStatus.Canceled))
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -106,7 +106,7 @@ namespace MeAgendaAi.Data.Repository
                 .ThenInclude(x => x.Company)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Service)
-                .OrderBy(x => x.StartTime)
+                .OrderByDescending(x => x.StartTime)
                 .ToList();
         }
 
