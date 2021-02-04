@@ -94,6 +94,7 @@ namespace MeAgendaAi.JWT
                 Create = createDate.ToString("yyyy-MM-dd HH:mm:ss"),
                 Expiration = expirationDate.ToString("yyyy-MM-dd HH:mm:ss"),
                 Token = token,
+                Image = user.Image,
                 Id = user.UserId,
                 UserName = user.Name,
                 UserEmail = user.Email,                

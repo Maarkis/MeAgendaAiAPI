@@ -41,6 +41,26 @@ namespace MeAgendaAi.Application.Controllers
 
         }
 
+        [HttpPut]       
+        [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario, Roles.Admin)]
+        [Route("EditName")]
+        public ActionResult EditName([FromBody] RequestEditName model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                return Ok(_userService.EditName(model));
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+
+        }
+
         [HttpPost]        
         [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario, Roles.Admin)]
         [Route("SendEmailConfirmation")]
