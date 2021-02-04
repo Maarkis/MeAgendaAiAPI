@@ -22,5 +22,13 @@ namespace MeAgendaAi.Data.Repository
         {
             return _users.Where(x => x.Email == email).Include(x => x.Roles).FirstOrDefault();
         }
+
+        public User GetAccountById(Guid id)
+        {
+            return _users.Where(x => x.UserId == id)
+                .Include(x => x.Roles)
+                .Include(x => x.PhoneNumbers).Include(x => x.Locations)
+                .FirstOrDefault();
+        }
     }
 }

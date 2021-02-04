@@ -350,8 +350,8 @@ namespace MeAgendaAi.Service.Services
                         GetCompanyByIdCompleteServiceModel companyService = new GetCompanyByIdCompleteServiceModel
                         {
                             ServiceId = service.ServiceId.ToString(),
-                            ServiceName = service.Name,
-                            ServiceDuration = service.DurationMinutes
+                            Name = service.Name,
+                            DurationMinutes = service.DurationMinutes
                         };
                         companyServices.Add(companyService);
                     });
@@ -364,8 +364,8 @@ namespace MeAgendaAi.Service.Services
                             GetCompanyByIdCompleteServiceModel employeeService = new GetCompanyByIdCompleteServiceModel
                             {
                                 ServiceId = eService.Service.ServiceId.ToString(),
-                                ServiceDuration = eService.Service.DurationMinutes,
-                                ServiceName = eService.Service.Name
+                                DurationMinutes = eService.Service.DurationMinutes,
+                                Name = eService.Service.Name
                             };
                             employeeServices.Add(employeeService);
                         });

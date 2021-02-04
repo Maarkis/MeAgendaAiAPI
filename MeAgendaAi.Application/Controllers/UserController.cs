@@ -103,6 +103,26 @@ namespace MeAgendaAi.Application.Controllers
 
         [HttpGet]
         [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario, Roles.Admin)]
+        [Route("Account/{id}")]
+        public ActionResult Account(string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                return Ok(_userService.Account(id));
+            }
+            catch (ArgumentException e)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [AuthorizeRoles(Roles.Admin)]
         [Route("GetById/{id}")]
         public ActionResult GetById(Guid id)
         {
