@@ -11,6 +11,7 @@ namespace MeAgendaAi.Domain.EpModels.User
         public bool Authenticated { get; set; }
         public string Create { get; set; }
         public string Expiration { get; set; }
+        public string Image { get; set; }
         public string Token { get; set; }
         public string UserName { get; set; }
         public string UserEmail { get; set; }
