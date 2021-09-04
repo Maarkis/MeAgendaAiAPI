@@ -1,7 +1,5 @@
-﻿using MeAgendaAi.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using MeAgendaAi.Domain.Enums;
 
 namespace MeAgendaAi.Domain.Entities
 {

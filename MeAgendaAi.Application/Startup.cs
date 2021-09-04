@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using MeAgendaAi.CrossCutting.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -5,8 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace MeAgendaAi.Application
 {
@@ -22,10 +23,10 @@ namespace MeAgendaAi.Application
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = Configuration.GetConnectionString("ConnectionString");
+            var connectionString = Configuration.GetConnectionString("ConnectionString");
 
             ConfigureRepository.ConfigureDependenciesService(services, connectionString);
-            ConfigureService.ConfigureDependenciesService(services); 
+            ConfigureService.ConfigureDependenciesService(services);
 
             // Configuration JTW
             ConfigureJwt.ConfigureDependenciesJwt(services, Configuration);
@@ -35,7 +36,8 @@ namespace MeAgendaAi.Application
             ConfigureMailJet.ConfigureDependecieMailJet(services, Configuration);
             // End Configuration MailJet
 
-            services.AddControllers().AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddControllers().AddNewtonsoftJson(op =>
+                op.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             services.AddSwaggerGen(c =>
             {
@@ -49,12 +51,12 @@ namespace MeAgendaAi.Application
                     {
                         Name = "Jean Markis - Manoela Viana - Vitória Simões",
                         Email = "jeanmarkis85@gmail.com;manoelanardy@gmail.com;vitoriasimoes_2000@outlook.com",
-                        Url = new Uri("https://github.com/Maarkis/MeAgendaAiAPI"),
+                        Url = new Uri("https://github.com/Maarkis/MeAgendaAiAPI")
                     },
                     License = new OpenApiLicense
                     {
                         Name = "Use under LICX",
-                        Url = new Uri("https://example.com/license"),
+                        Url = new Uri("https://example.com/license")
                     }
                 });
 
@@ -69,13 +71,15 @@ namespace MeAgendaAi.Application
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
-                        new OpenApiSecurityScheme {
+                        new OpenApiSecurityScheme
+                        {
                             Reference = new OpenApiReference
                             {
                                 Id = "Bearer",
                                 Type = ReferenceType.SecurityScheme
                             }
-                        }, new List<string>()
+                        },
+                        new List<string>()
                     }
                 });
             });
@@ -84,10 +88,7 @@ namespace MeAgendaAi.Application
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
 
@@ -95,19 +96,13 @@ namespace MeAgendaAi.Application
 
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Me Agenda Ai API - v1");
-            });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Me Agenda Ai API - v1"); });
 
             app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

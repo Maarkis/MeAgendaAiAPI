@@ -1,8 +1,6 @@
-﻿using MeAgendaAi.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+using MeAgendaAi.Domain.Entities;
 
 namespace MeAgendaAi.Domain.Interfaces.Services
 {

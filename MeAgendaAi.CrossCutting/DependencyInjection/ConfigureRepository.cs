@@ -10,10 +10,7 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
     {
         public static void ConfigureDependenciesService(IServiceCollection serviceCollection, string connectionString)
         {
-            serviceCollection.AddDbContext<MeAgendaAiContext>(options =>
-            {
-                options.UseSqlServer(connectionString);
-            });
+            serviceCollection.AddDbContext<MeAgendaAiContext>(options => { options.UseSqlServer(connectionString); });
 
             serviceCollection.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             serviceCollection.AddScoped<IUserRepository, UserRepository>();

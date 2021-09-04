@@ -1,9 +1,4 @@
-﻿using MeAgendaAi.Domain.EpModels.Employee;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MeAgendaAi.Domain.EpModels.Company
+﻿namespace MeAgendaAi.Domain.EpModels.Company
 {
     public class CompanyFavInfoModel
     {

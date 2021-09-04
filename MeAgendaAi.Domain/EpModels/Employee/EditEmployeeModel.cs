@@ -1,9 +1,7 @@
-﻿using MeAgendaAi.Domain.EpModels.Location;
+﻿using System.Collections.Generic;
+using MeAgendaAi.Domain.EpModels.Location;
 using MeAgendaAi.Domain.EpModels.PhoneNumber;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Domain.EpModels.Employee
 {
@@ -17,6 +15,5 @@ namespace MeAgendaAi.Domain.EpModels.Employee
         public IFormFile Imagem { get; set; }
         public List<AddLocationModel> Locations { get; set; }
         public List<AddPhoneNumberModel> PhoneNumbers { get; set; }
-
     }
 }

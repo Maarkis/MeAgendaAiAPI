@@ -1,14 +1,14 @@
-﻿using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.EpModels.User;
-using MeAgendaAi.Domain.Security;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Text;
+using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.EpModels.User;
+using MeAgendaAi.Domain.Security;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MeAgendaAi.JWT
 {
@@ -17,78 +17,73 @@ namespace MeAgendaAi.JWT
         private static SigningConfiguration _signingConfiguration;
         private static TokenConfiguration _tokenConfiguration;
 
-        public static ResponseAuthentication GenerateToken(User user, SigningConfiguration signingConfiguration, TokenConfiguration tokenConfiguration)
+        public static ResponseAuthentication GenerateToken(User user, SigningConfiguration signingConfiguration,
+            TokenConfiguration tokenConfiguration)
         {
-
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
 
-            List<Claim> claims = new List<Claim> {
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
-                    new Claim(ClaimTypes.Name, user.Name),
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
+                new Claim(ClaimTypes.Name, user.Name)
             };
 
-            user.Roles.ForEach(role =>
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role.Role.ToString()));
-            });
+            user.Roles.ForEach(role => { claims.Add(new Claim(ClaimTypes.Role, role.Role.ToString())); });
 
-            ClaimsIdentity identity = new ClaimsIdentity(
-              new GenericIdentity(user.Email),
-              claims);
+            var identity = new ClaimsIdentity(
+                new GenericIdentity(user.Email),
+                claims);
 
-            DateTime createDate = DateTime.Now;
-            DateTime expirationDate = createDate + TimeSpan.FromSeconds(Convert.ToDouble(_tokenConfiguration.Seconds));
+            var createDate = DateTime.Now;
+            var expirationDate = createDate + TimeSpan.FromSeconds(Convert.ToDouble(_tokenConfiguration.Seconds));
 
-            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            string token = CreateToken(identity, createDate, expirationDate, handler);
+            var handler = new JwtSecurityTokenHandler();
+            var token = CreateToken(identity, createDate, expirationDate, handler);
 
-            
+
             return SuccessObject(createDate, expirationDate, token, user);
         }
 
-        public static string GenerateTokenRecoverPassword(User user, SigningConfiguration signingConfiguration, TokenConfiguration tokenConfiguration)
+        public static string GenerateTokenRecoverPassword(User user, SigningConfiguration signingConfiguration,
+            TokenConfiguration tokenConfiguration)
         {
-
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
 
 
-            DateTime createDate = DateTime.Now;
-            DateTime expirationDate = createDate + TimeSpan.FromSeconds(Convert.ToDouble(_tokenConfiguration.Seconds));
+            var createDate = DateTime.Now;
+            var expirationDate = createDate + TimeSpan.FromSeconds(Convert.ToDouble(_tokenConfiguration.Seconds));
 
-            List<Claim> claims = new List<Claim> {
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),                    
-                    new Claim(JwtRegisteredClaimNames.NameId, user.UserId.ToString()),
-                    new Claim(ClaimTypes.Name, user.Name),                    
-                    new Claim(ClaimTypes.Expiration, expirationDate.ToString()),
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.NameId, user.UserId.ToString()),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Expiration, expirationDate.ToString())
             };
 
 
-            ClaimsIdentity identity = new ClaimsIdentity(
-              new GenericIdentity(user.Email),
-              claims);
+            var identity = new ClaimsIdentity(
+                new GenericIdentity(user.Email),
+                claims);
 
 
-            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            var handler = new JwtSecurityTokenHandler();
             return CreateToken(identity, createDate, expirationDate, handler);
-            
         }
 
-        private static ResponseAuthentication SuccessObject(DateTime createDate, DateTime expirationDate, string token, User user)
+        private static ResponseAuthentication SuccessObject(DateTime createDate, DateTime expirationDate, string token,
+            User user)
         {
-            int role = 0;
-            if(user.Roles.Any(x => x.Role == Domain.Enums.Roles.Admin))
-            {
-                role = (int)Domain.Enums.Roles.Admin;
-            }
+            var role = 0;
+            if (user.Roles.Any(x => x.Role == Roles.Admin))
+                role = (int)Roles.Admin;
             else
-            {
                 role = (int)user.Roles.FirstOrDefault().Role;
-            }
 
-            return new ResponseAuthentication()
+            return new ResponseAuthentication
             {
                 Authenticated = true,
                 Create = createDate.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -97,54 +92,53 @@ namespace MeAgendaAi.JWT
                 Image = user.Image,
                 Id = user.UserId,
                 UserName = user.Name,
-                UserEmail = user.Email,                
+                UserEmail = user.Email,
                 Message = "Usuário autenticado com sucesso",
                 Role = role
             };
         }
 
-        private static string CreateToken(ClaimsIdentity identity, DateTime createDate, DateTime expirationDate, JwtSecurityTokenHandler handler)
+        private static string CreateToken(ClaimsIdentity identity, DateTime createDate, DateTime expirationDate,
+            JwtSecurityTokenHandler handler)
         {
-            SecurityToken securityToken = handler.CreateToken(new SecurityTokenDescriptor
+            var securityToken = handler.CreateToken(new SecurityTokenDescriptor
             {
                 Issuer = _tokenConfiguration.Issuer,
                 Audience = _tokenConfiguration.Audience,
                 SigningCredentials = _signingConfiguration.SigningCredentials,
                 Subject = identity,
                 NotBefore = createDate,
-                Expires = expirationDate,
-                
-            });                        
-            
+                Expires = expirationDate
+            });
+
             return handler.WriteToken(securityToken);
         }
 
-        public static bool ValidateToken(string token, SigningConfiguration signingConfiguration, TokenConfiguration tokenConfiguration)
+        public static bool ValidateToken(string token, SigningConfiguration signingConfiguration,
+            TokenConfiguration tokenConfiguration)
         {
-
             _signingConfiguration = signingConfiguration;
             _tokenConfiguration = tokenConfiguration;
 
-            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
-            TokenValidationParameters validationParameters = GetValidationParameters();
+            var handler = new JwtSecurityTokenHandler();
+            var validationParameters = GetValidationParameters();
 
-            SecurityToken validatedToken;            
+            SecurityToken validatedToken;
             try
             {
-                ClaimsPrincipal resp = handler.ValidateToken(token, validationParameters, out validatedToken);                
-                
+                var resp = handler.ValidateToken(token, validationParameters, out validatedToken);
             }
             catch (Exception e)
             {
                 return false;
             }
-            
+
             return true;
         }
 
         private static TokenValidationParameters GetValidationParameters()
         {
-            return new TokenValidationParameters()
+            return new TokenValidationParameters
             {
                 ValidateLifetime = true,
                 ValidateAudience = true,
@@ -154,6 +148,5 @@ namespace MeAgendaAi.JWT
                 IssuerSigningKey = _signingConfiguration.Key
             };
         }
-
     }
 }

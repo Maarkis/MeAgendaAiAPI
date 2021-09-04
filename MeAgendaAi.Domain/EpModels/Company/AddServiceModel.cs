@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace MeAgendaAi.Domain.EpModels.Company
 {
@@ -9,6 +7,7 @@ namespace MeAgendaAi.Domain.EpModels.Company
         public string CompanyId { get; set; }
         public List<AddServiceModel> Services { get; set; }
     }
+
     public class AddServiceModel
     {
         public string Name { get; set; }

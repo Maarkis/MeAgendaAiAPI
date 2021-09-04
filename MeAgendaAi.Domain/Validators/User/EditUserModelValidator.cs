@@ -1,9 +1,6 @@
 ﻿using FluentValidation;
 using MeAgendaAi.Domain.EpModels.User;
 using MeAgendaAi.Domain.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Domain.Validators.User
 {

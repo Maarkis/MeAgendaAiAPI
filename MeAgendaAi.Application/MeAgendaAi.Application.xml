@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
+
 <doc>
-    <assembly>
-        <name>MeAgendaAi.Application</name>
-    </assembly>
-    <members>
-    </members>
+  <assembly>
+    <name>MeAgendaAi.Application</name>
+  </assembly>
+  <members>
+  </members>
 </doc>

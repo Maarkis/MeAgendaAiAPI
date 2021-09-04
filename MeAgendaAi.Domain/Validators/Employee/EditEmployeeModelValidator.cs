@@ -1,10 +1,7 @@
-﻿using FluentValidation;
+﻿using System.Text.RegularExpressions;
+using FluentValidation;
 using MeAgendaAi.Domain.EpModels.Employee;
 using MeAgendaAi.Domain.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace MeAgendaAi.Domain.Validators.Employee
 {
@@ -20,15 +17,16 @@ namespace MeAgendaAi.Domain.Validators.Employee
 
             RuleFor(x => x.RG)
                 .NotNull()
-                .Must(rg => {
-                    Regex rx = new Regex(@"(^\d{1,2}).?(\d{3}).?(\d{3})-?(\d{1}|X|x$)", RegexOptions.None);
+                .Must(rg =>
+                {
+                    var rx = new Regex(@"(^\d{1,2}).?(\d{3}).?(\d{3})-?(\d{1}|X|x$)", RegexOptions.None);
                     return rx.IsMatch(rg);
                 })
                 .WithMessage("CPF com formato inválido");
 
             RuleFor(x => x.IsManager)
-               .NotNull()
-               .WithMessage("O campo IsManager não pode ser nulo");
+                .NotNull()
+                .WithMessage("O campo IsManager não pode ser nulo");
         }
     }
 }

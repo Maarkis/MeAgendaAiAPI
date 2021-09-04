@@ -1,34 +1,31 @@
-﻿using MeAgendaAi.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.EpModels;
+using MeAgendaAi.Domain.EpModels.Client;
+using MeAgendaAi.Domain.EpModels.Company;
+using MeAgendaAi.Domain.EpModels.Employee;
+using MeAgendaAi.Domain.EpModels.User;
 using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Repositories;
-using MeAgendaAi.Domain.Utils;
-using MeAgendaAi.Domain.EpModels;
-using MeAgendaAi.Domain.EpModels.User;
-using System;
-using System.Collections.Generic;
-using MeAgendaAi.Domain.Enums;
-using MeAgendaAi.Domain.EpModels.Client;
-using MeAgendaAi.Domain.Validators.Client;
-using System.Linq;
-using FluentValidation.Results;
-using MeAgendaAi.Domain.Interfaces.Services.Email;
-using FluentValidation;
-using System.Threading.Tasks;
 using MeAgendaAi.Domain.Interfaces.Services;
-using MeAgendaAi.Domain.EpModels.Employee;
-using MeAgendaAi.Domain.EpModels.Company;
+using MeAgendaAi.Domain.Utils;
+using MeAgendaAi.Domain.Validators.Client;
 
 namespace MeAgendaAi.Service.Services
 {
     public class ClientService : BaseService<Client>, IClientService
     {
-        private IClientRepository _clientRepository;
-        private IUserService _userService;
-        private ILocationService _locationService;
-        private IPhoneNumberService _phoneNumberService;
-        private IEmployeeRepository _employeeRepository;
-        private IEmployeeService _employeeService;
-        private ICompanyService _companyService;
+        private readonly IClientRepository _clientRepository;
+        private readonly ICompanyService _companyService;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IEmployeeService _employeeService;
+        private readonly ILocationService _locationService;
+        private readonly IPhoneNumberService _phoneNumberService;
+        private readonly IUserService _userService;
 
         public ClientService(IClientRepository clientRepository,
             IUserService userService, ILocationService locationService,
@@ -46,13 +43,13 @@ namespace MeAgendaAi.Service.Services
 
         public async Task<ResponseModel> AddClient(AddClientModel model)
         {
-            ResponseModel resp = new ResponseModel();
+            var resp = new ResponseModel();
             try
             {
-                ValidationResult validateClient = new AddClientModelValidator().Validate(model);
+                var validateClient = new AddClientModelValidator().Validate(model);
                 if (validateClient.IsValid)
                 {
-                    AddUserModel userModel = new AddUserModel
+                    var userModel = new AddUserModel
                     {
                         Email = model.Email,
                         Name = model.Name,
@@ -63,13 +60,13 @@ namespace MeAgendaAi.Service.Services
                         Verified = false
                     };
 
-                    List<Roles> roles = new List<Roles>();
+                    var roles = new List<Roles>();
                     roles.Add(Roles.Cliente);
-                    ResponseModel userResponse = _userService.CreateUserFromModel(userModel, roles);
+                    var userResponse = _userService.CreateUserFromModel(userModel, roles);
                     if (userResponse.Success)
                     {
-                        User newUser = userResponse.Result as User;
-                        Client newClient = new Client
+                        var newUser = userResponse.Result as User;
+                        var newClient = new Client
                         {
                             ClientId = Guid.NewGuid(),
                             UserId = newUser.UserId,
@@ -78,11 +75,10 @@ namespace MeAgendaAi.Service.Services
                             RG = model.RG,
                             LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
                             User = newUser
-
                         };
                         _clientRepository.Add(newClient);
 
-                        ResponseModel send = await _userService.SendEmailConfirmation(userModel.Email);                        
+                        var send = await _userService.SendEmailConfirmation(userModel.Email);
 
                         resp.Success = true;
                         resp.Result = $"{newUser.UserId}";
@@ -112,13 +108,13 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                ValidationResult validateClient = new EditClientModelValidator().Validate(model);
+                var validateClient = new EditClientModelValidator().Validate(model);
                 if (validateClient.IsValid)
                 {
-                    Client client = _clientRepository.GetClientByUserId(Guid.Parse(model.UserId));
+                    var client = _clientRepository.GetClientByUserId(Guid.Parse(model.UserId));
                     if (client != null)
                     {
-                        EditUserModel editUserModel = new EditUserModel
+                        var editUserModel = new EditUserModel
                         {
                             UsuarioId = model.UserId,
                             Name = model.Name,
@@ -127,10 +123,10 @@ namespace MeAgendaAi.Service.Services
                             Imagem = model.Imagem
                         };
 
-                        ResponseModel userResponse = _userService.EditUserFromModel(editUserModel);
+                        var userResponse = _userService.EditUserFromModel(editUserModel);
                         if (userResponse.Success)
                         {
-                            User clientUser = userResponse.Result as User;
+                            var clientUser = userResponse.Result as User;
 
                             client.RG = model.RG;
                             client.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
@@ -166,13 +162,13 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel GetClientPerfilInfo(string userId)
         {
-            ResponseModel response = new ResponseModel();
+            var response = new ResponseModel();
 
             try
             {
                 if (GuidUtil.IsGuidValid(userId))
                 {
-                    Client cliente = _clientRepository.GetClientByUserId(Guid.Parse(userId));
+                    var cliente = _clientRepository.GetClientByUserId(Guid.Parse(userId));
                     if (cliente != null)
                     {
                         var clientModel = new GetClientPerfilInfoModel
@@ -198,7 +194,7 @@ namespace MeAgendaAi.Service.Services
                 else
                 {
                     response.Message = "Guid inválido";
-                }           
+                }
             }
             catch (Exception e)
             {
@@ -210,7 +206,7 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel GetClientFavoriteEmployees(string userId)
         {
-            ResponseModel response = new ResponseModel();
+            var response = new ResponseModel();
 
             try
             {
@@ -219,28 +215,28 @@ namespace MeAgendaAi.Service.Services
                     var client = _clientRepository.GetClientByUserId(Guid.Parse(userId));
                     if (client != null)
                     {
-                        List<EmployeeFavInfoModel> employeesModel = new List<EmployeeFavInfoModel>();
+                        var employeesModel = new List<EmployeeFavInfoModel>();
 
                         var employees = _employeeRepository.GetEmployeesByClientId(client.ClientId);
                         if (employees != null && employees.Count > 0)
-                        {
                             employees.ForEach(employee =>
                             {
-                                List<EmployeeFavServiceModel> serviceModels = new List<EmployeeFavServiceModel>();
+                                var serviceModels = new List<EmployeeFavServiceModel>();
                                 var employeeServices = employee.EmployeeServices?.Select(x => x.Service).ToList();
-                                if(employeeServices != null && employeeServices.Count > 0)
-                                {
-                                    employeeServices.ForEach(service => {
-                                        var serviceModel = new EmployeeFavServiceModel { 
+                                if (employeeServices != null && employeeServices.Count > 0)
+                                    employeeServices.ForEach(service =>
+                                    {
+                                        var serviceModel = new EmployeeFavServiceModel
+                                        {
                                             ServiceId = service.ServiceId.ToString(),
                                             ServiceName = service.Name
                                         };
 
                                         serviceModels.Add(serviceModel);
                                     });
-                                }
 
-                                var companyModel = new CompanyFavInfoModel {
+                                var companyModel = new CompanyFavInfoModel
+                                {
                                     CompanyId = employee.Company?.CompanyId.ToString(),
                                     Name = employee.Company?.User?.Name,
                                     Email = employee.Company?.User?.Email,
@@ -261,7 +257,6 @@ namespace MeAgendaAi.Service.Services
                                     Company = companyModel
                                 };
                             });
-                        }
 
                         response.Success = true;
                         response.Message = "Funcionários do cliente";
@@ -276,7 +271,8 @@ namespace MeAgendaAi.Service.Services
                 {
                     response.Message = "Guid inválido";
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 response.Message = $"Não foi possível recuperar os funcionários. \n{e.Message}";
             }

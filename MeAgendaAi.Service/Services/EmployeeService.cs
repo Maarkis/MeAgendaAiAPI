@@ -1,34 +1,33 @@
-﻿using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.Interfaces.Repositories;
-using MeAgendaAi.Domain.Utils;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.Company;
 using MeAgendaAi.Domain.EpModels.Employee;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using MeAgendaAi.Domain.Interfaces.Services;
 using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
-using MeAgendaAi.Domain.Validators.Employee;
-using System.Linq;
 using MeAgendaAi.Domain.EpModels.User;
-using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.Interfaces;
+using MeAgendaAi.Domain.Interfaces.Repositories;
+using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.Utils;
+using MeAgendaAi.Domain.Validators.Employee;
 
 namespace MeAgendaAi.Service.Services
 {
     public class EmployeeService : BaseService<Employee>, IEmployeeService
     {
-        private IEmployeeRepository _employeeRepository;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IEmployeeWorkHoursService _employeeWorkHoursService;
+        private readonly ILocationService _locationService;
+        private readonly IPhoneNumberService _phoneNumberService;
+        private readonly IServiceRepository _serviceRepository;
+        private readonly IUserService _userService;
         private IServiceEmployeeRepository _serviceEmployeeRepository;
-        private IEmployeeWorkHoursService _employeeWorkHoursService;
-        private IServiceRepository _serviceRepository;
-        private IUserService _userService;
-        private ICompanyRepository _companyRepository;
-        private ILocationService _locationService;
-        private IPhoneNumberService _phoneNumberService;
 
-        public EmployeeService(IEmployeeRepository employeeRepository, 
+        public EmployeeService(IEmployeeRepository employeeRepository,
             IServiceEmployeeRepository serviceEmployeeRepository,
             IEmployeeWorkHoursService employeeWorkHoursService,
             IServiceRepository serviceRepository, IUserService userService,
@@ -52,11 +51,11 @@ namespace MeAgendaAi.Service.Services
             try
             {
                 var validateEmployee = new AddEmployeeModelValidator().Validate(model);
-                if (validateEmployee.IsValid) {
-
+                if (validateEmployee.IsValid)
+                {
                     // verificar se a empresa existe no sistema.
                     var company = _companyRepository.GetById(Guid.Parse(model.CompanyId));
-                    if(company != null)
+                    if (company != null)
                     {
                         var userModel = new AddUserModel
                         {
@@ -68,13 +67,13 @@ namespace MeAgendaAi.Service.Services
                             Imagem = model.Imagem
                         };
 
-                        List<Roles> roles = new List<Roles>();
+                        var roles = new List<Roles>();
                         roles.Add(Roles.Funcionario);
                         var userResponse = _userService.CreateUserFromModel(userModel, roles);
                         if (userResponse.Success)
                         {
-                            User newUser = userResponse.Result as User;
-                            Employee employee = new Employee
+                            var newUser = userResponse.Result as User;
+                            var employee = new Employee
                             {
                                 EmployeeId = Guid.NewGuid(),
                                 CompanyId = company.CompanyId,
@@ -85,11 +84,11 @@ namespace MeAgendaAi.Service.Services
                                 CreatedAt = DateTimeUtil.UtcToBrasilia(),
                                 LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
                                 UserId = newUser.UserId,
-                                User = newUser,
+                                User = newUser
                             };
                             _employeeRepository.Add(employee);
 
-                            ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
+                            var send = _userService.SendEmailConfirmation(userModel.Email).Result;
 
                             resp.Success = true;
                             resp.Result = $"{employee.EmployeeId}";
@@ -109,7 +108,6 @@ namespace MeAgendaAi.Service.Services
                 {
                     resp.Message = validateEmployee.Errors.FirstOrDefault().ErrorMessage;
                 }
-                
             }
             catch (Exception e)
             {
@@ -121,7 +119,7 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel EditEmployee(EditEmployeeModel model)
         {
-            ResponseModel resp = new ResponseModel();
+            var resp = new ResponseModel();
             try
             {
                 var validateEmployee = new EditEmployeeModelValidator().Validate(model);
@@ -130,7 +128,7 @@ namespace MeAgendaAi.Service.Services
                     var employee = _employeeRepository.GetEmployeeByUserId(Guid.Parse(model.UsuarioId));
                     if (employee != null)
                     {
-                        EditUserModel editUserModel = new EditUserModel
+                        var editUserModel = new EditUserModel
                         {
                             UsuarioId = model.UsuarioId,
                             Name = model.Name,
@@ -142,7 +140,7 @@ namespace MeAgendaAi.Service.Services
                         var userResponse = _userService.EditUserFromModel(editUserModel);
                         if (userResponse.Success)
                         {
-                            User employeeUser = userResponse.Result as User;
+                            var employeeUser = userResponse.Result as User;
 
                             employee.RG = model.RG;
                             employee.IsManager = model.IsManager;
@@ -170,10 +168,11 @@ namespace MeAgendaAi.Service.Services
                     resp.Message = validateEmployee.Errors.FirstOrDefault().ErrorMessage;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 resp.Message = "Não foi possível editar o funcionário";
             }
+
             return resp;
         }
 
@@ -188,19 +187,20 @@ namespace MeAgendaAi.Service.Services
                     if (GuidUtil.IsGuidValid(model.EmployeeId) && model.ServicesIds.All(x => GuidUtil.IsGuidValid(x)))
                     {
                         var employee = _employeeRepository.GetEmployeeByIdWithServices(Guid.Parse(model.EmployeeId));
-                        if(employee != null)
+                        if (employee != null)
                         {
                             //var ess = employee.EmployeeServices;
                             //ess.ForEach(es => {
                             //    _serviceEmployeeRepository.Remove(es);
                             //});
 
-                            List<ServiceEmployee> ses = new List<ServiceEmployee>();
+                            var ses = new List<ServiceEmployee>();
 
-                            model.ServicesIds.ForEach(serviceId => {
+                            model.ServicesIds.ForEach(serviceId =>
+                            {
                                 var service = _serviceRepository.GetById(Guid.Parse(serviceId));
 
-                                ServiceEmployee serviceEmployee = new ServiceEmployee
+                                var serviceEmployee = new ServiceEmployee
                                 {
                                     EmployeeServiceId = Guid.NewGuid(),
                                     ServiceId = Guid.Parse(serviceId),
@@ -238,7 +238,8 @@ namespace MeAgendaAi.Service.Services
             }
             catch (Exception e)
             {
-                resp.Message = $"Não foi possível adicionar o serviço ao funcionário: {e.Message} / {e.InnerException?.Message}";
+                resp.Message =
+                    $"Não foi possível adicionar o serviço ao funcionário: {e.Message} / {e.InnerException?.Message}";
             }
 
             return resp;
@@ -250,10 +251,11 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                List<Domain.Entities.Services> services = _employeeRepository.GetEmployeeServicesByEmployeeId(Guid.Parse(employeeId));
-                List<GetCompanyServicesModel> servicesEmployee = new List<GetCompanyServicesModel>();
-                services.ForEach(service => {
-                    GetCompanyServicesModel serviceEmployee = new GetCompanyServicesModel
+                var services = _employeeRepository.GetEmployeeServicesByEmployeeId(Guid.Parse(employeeId));
+                var servicesEmployee = new List<GetCompanyServicesModel>();
+                services.ForEach(service =>
+                {
+                    var serviceEmployee = new GetCompanyServicesModel
                     {
                         ServiceId = service.ServiceId.ToString(),
                         Name = service.Name,
@@ -275,19 +277,15 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel GetEmployeePerfilInfo(string userId)
         {
-            ResponseModel response = new ResponseModel();
+            var response = new ResponseModel();
 
             if (GuidUtil.IsGuidValid(userId))
             {
                 var employee = _employeeRepository.GetEmployeeByUserId(Guid.Parse(userId));
-                if(employee != null)
-                {
+                if (employee != null)
                     response = GetEmployeeInfoComplete(employee.EmployeeId);
-                }
                 else
-                {
                     response.Message = "Funciónário não encontrado";
-                }
             }
             else
             {
@@ -299,15 +297,112 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel GetEmployeeInfo(string employeeId)
         {
-            ResponseModel response = new ResponseModel();
+            var response = new ResponseModel();
 
             if (GuidUtil.IsGuidValid(employeeId))
-            {
                 response = GetEmployeeInfoComplete(Guid.Parse(employeeId));
-            }
             else
-            {
                 response.Message = "Guid inválido";
+
+            return response;
+        }
+
+        public string GetEmployeeLink(Guid employeeId)
+        {
+            //return $"http://localhost:4200/perfil_funcionario/{employeeId}";
+            return _employeeRepository.GetEmployeeLink(employeeId);
+        }
+
+        public ResponseModel AddWorkHoursToEmployee(AddEmployeeWorkHoursModel model, string userEmail)
+        {
+            var response = new ResponseModel();
+
+            var employee = _employeeRepository.GetEmployeeByUserEmail(userEmail);
+            if (employee != null)
+                response = _employeeWorkHoursService.AddEmployeeWorkhours(model, employee);
+            else
+                response.Message = "Funcionário não encontrado";
+
+            return response;
+        }
+
+        public ResponseModel GetEmployeeAvailableHours(string employeeId, string serviceId, string date)
+        {
+            var employee = _employeeRepository.GetById(Guid.Parse(employeeId));
+            var service = _serviceRepository.GetById(Guid.Parse(serviceId));
+
+            var dateTime = new DateTime();
+            var ok = DateTime.TryParse(date, out dateTime); //colocar validação do formato de data no validator
+            //return _employeeWorkHoursService.GetAvailableEmployeeWorkHours(dateTime, employee, service);
+            return _employeeWorkHoursService.GetWorkHoursMock(dateTime, employee, service);
+        }
+
+        public ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes)
+        {
+            return _employeeWorkHoursService.GetEmployeeMonthSchedule(userId, ano, mes);
+        }
+
+        public ResponseModel GetEmployeesByServiceId(string serviceId)
+        {
+            var response = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(serviceId))
+                {
+                    var employeeModels = new List<EmployeeFavInfoModel>();
+
+                    var employees = _employeeRepository.GetEmployeesByServiceId(Guid.Parse(serviceId));
+                    employees.ForEach(employee =>
+                    {
+                        var employeeModel = EmployeeToEmployeeFavModel(employee);
+                        if (employeeModel != null) employeeModels.Add(employeeModel);
+                    });
+                    response.Message = "Funcinários encontrados!";
+                    response.Result = employeeModels;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Message = "Guid inválido";
+                }
+            }
+            catch (Exception e)
+            {
+                response.Message = $"Não foi possível buscar os funcionários. {e.InnerException.Message}";
+            }
+
+            return response;
+        }
+
+        public ResponseModel GetEmployeesByCompanyId(string companyId)
+        {
+            var response = new ResponseModel();
+
+            try
+            {
+                if (GuidUtil.IsGuidValid(companyId))
+                {
+                    var employeeModels = new List<EmployeeFavInfoModel>();
+
+                    var employees = _employeeRepository.GetEmployeesByCompanyId(Guid.Parse(companyId));
+                    employees.ForEach(employee =>
+                    {
+                        var employeeModel = EmployeeToEmployeeFavModel(employee);
+                        if (employeeModel != null) employeeModels.Add(employeeModel);
+                    });
+                    response.Message = "Funcinários encontrados!";
+                    response.Result = employeeModels;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Message = "Guid inválido";
+                }
+            }
+            catch (Exception e)
+            {
+                response.Message = $"Não foi possível buscar os funcionários. {e.InnerException.Message}";
             }
 
             return response;
@@ -315,14 +410,14 @@ namespace MeAgendaAi.Service.Services
 
         private ResponseModel GetEmployeeInfoComplete(Guid employeeId)
         {
-            ResponseModel response = new ResponseModel();
+            var response = new ResponseModel();
 
             try
             {
                 var employeeComplete = _employeeRepository.GetByIdComplete(employeeId);
-                if(employeeComplete != null)
+                if (employeeComplete != null)
                 {
-                    GetEmployeeInfoCompleteModel model = new GetEmployeeInfoCompleteModel
+                    var model = new GetEmployeeInfoCompleteModel
                     {
                         EmployeeId = employeeId.ToString(),
                         Name = employeeComplete.User.Name,
@@ -347,9 +442,8 @@ namespace MeAgendaAi.Service.Services
                 {
                     response.Message = "Funciomário não encontrado";
                 }
-
-
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 response.Message = $"Não foi possível recuperar as informações do funcionário. \n {e.Message}";
             }
@@ -367,15 +461,17 @@ namespace MeAgendaAi.Service.Services
                 Link = _companyRepository.GetCompanyLink(company.CompanyId)
             };
         }
-        private List<GetCompanyByIdCompleteServiceModel> GetServicesModelFromServices(List<ServiceEmployee> employeeServices)
-        {
-            List<GetCompanyByIdCompleteServiceModel> serviceModels = new List<GetCompanyByIdCompleteServiceModel>();
 
-            if(employeeServices != null)
-            {
-                employeeServices.ForEach(employeeService => {
+        private List<GetCompanyByIdCompleteServiceModel> GetServicesModelFromServices(
+            List<ServiceEmployee> employeeServices)
+        {
+            var serviceModels = new List<GetCompanyByIdCompleteServiceModel>();
+
+            if (employeeServices != null)
+                employeeServices.ForEach(employeeService =>
+                {
                     var service = employeeService.Service;
-                    GetCompanyByIdCompleteServiceModel serviceModel = new GetCompanyByIdCompleteServiceModel
+                    var serviceModel = new GetCompanyByIdCompleteServiceModel
                     {
                         ServiceId = service.ServiceId.ToString(),
                         Name = service.Name,
@@ -383,123 +479,16 @@ namespace MeAgendaAi.Service.Services
                     };
                     serviceModels.Add(serviceModel);
                 });
-            }
 
             return serviceModels;
         }
 
-        public string GetEmployeeLink(Guid employeeId)
-        {
-            //return $"http://localhost:4200/perfil_funcionario/{employeeId}";
-            return _employeeRepository.GetEmployeeLink(employeeId);
-        }
-        public ResponseModel AddWorkHoursToEmployee(AddEmployeeWorkHoursModel model, string userEmail)
-        {
-            var response = new ResponseModel();
-
-            var employee = _employeeRepository.GetEmployeeByUserEmail(userEmail);
-            if(employee != null)
-            {
-                response = _employeeWorkHoursService.AddEmployeeWorkhours(model, employee);
-            }
-            else
-            {
-                response.Message = "Funcionário não encontrado";
-            }
-
-            return response;
-        }
-
-        public ResponseModel GetEmployeeAvailableHours(string employeeId, string serviceId, string date)
-        {
-            var employee = _employeeRepository.GetById(Guid.Parse(employeeId));
-            var service = _serviceRepository.GetById(Guid.Parse(serviceId));
-
-            DateTime dateTime = new DateTime();
-            bool ok = DateTime.TryParse(date, out dateTime); //colocar validação do formato de data no validator
-            //return _employeeWorkHoursService.GetAvailableEmployeeWorkHours(dateTime, employee, service);
-            return _employeeWorkHoursService.GetWorkHoursMock(dateTime, employee, service);
-        }
-
-        public ResponseModel GetEmployeeMonthSchedule(string userId, int ano, int mes)
-        {
-            return _employeeWorkHoursService.GetEmployeeMonthSchedule(userId, ano, mes);
-        }
-
-        public ResponseModel GetEmployeesByServiceId(string serviceId)
-        {
-            ResponseModel response = new ResponseModel();
-
-            try
-            {
-                if (GuidUtil.IsGuidValid(serviceId))
-                {
-                    List<EmployeeFavInfoModel> employeeModels = new List<EmployeeFavInfoModel>();
-
-                    var employees = _employeeRepository.GetEmployeesByServiceId(Guid.Parse(serviceId));
-                    employees.ForEach(employee => {
-                        var employeeModel = EmployeeToEmployeeFavModel(employee);
-                        if(employeeModel != null)
-                        {
-                            employeeModels.Add(employeeModel);
-                        }
-                    });
-                    response.Message = "Funcinários encontrados!";
-                    response.Result = employeeModels;
-                    response.Success = true;
-                }
-                else
-                {
-                    response.Message = "Guid inválido";
-                }
-            }catch(Exception e)
-            {
-                response.Message = $"Não foi possível buscar os funcionários. {e.InnerException.Message}";
-            }
-
-            return response;
-        }
-
-        public ResponseModel GetEmployeesByCompanyId(string companyId)
-        {
-            ResponseModel response = new ResponseModel();
-
-            try
-            {
-                if (GuidUtil.IsGuidValid(companyId))
-                {
-                    List<EmployeeFavInfoModel> employeeModels = new List<EmployeeFavInfoModel>();
-
-                    var employees = _employeeRepository.GetEmployeesByCompanyId(Guid.Parse(companyId));
-                    employees.ForEach(employee => {
-                        var employeeModel = EmployeeToEmployeeFavModel(employee);
-                        if (employeeModel != null)
-                        {
-                            employeeModels.Add(employeeModel);
-                        }
-                    });
-                    response.Message = "Funcinários encontrados!";
-                    response.Result = employeeModels;
-                    response.Success = true;
-                }
-                else
-                {
-                    response.Message = "Guid inválido";
-                }
-            }
-            catch (Exception e)
-            {
-                response.Message = $"Não foi possível buscar os funcionários. {e.InnerException.Message}";
-            }
-
-            return response;
-        }
         private EmployeeFavInfoModel EmployeeToEmployeeFavModel(Employee employee)
         {
-            List<EmployeeFavServiceModel> serviceModels = new List<EmployeeFavServiceModel>();
+            var serviceModels = new List<EmployeeFavServiceModel>();
             if (employee.EmployeeServices != null && employee.EmployeeServices.Count > 0)
-            {
-                employee.EmployeeServices.ForEach(serviceEp => {
+                employee.EmployeeServices.ForEach(serviceEp =>
+                {
                     var serviceModel = new EmployeeFavServiceModel
                     {
                         ServiceId = serviceEp.ServiceId.ToString(),
@@ -507,19 +496,18 @@ namespace MeAgendaAi.Service.Services
                     };
                     serviceModels.Add(serviceModel);
                 });
-            }
 
             var companyModel = new CompanyFavInfoModel
             {
                 CompanyId = employee.CompanyId.ToString(),
-                Name = employee.Company?.User?.Name ?? String.Empty,
-                Image = employee.Company?.User?.Image ?? String.Empty,
-                Email = employee.Company?.User?.Email ?? String.Empty,
-                Descricao = employee?.Company?.Descricao ?? String.Empty,
+                Name = employee.Company?.User?.Name ?? string.Empty,
+                Image = employee.Company?.User?.Image ?? string.Empty,
+                Email = employee.Company?.User?.Email ?? string.Empty,
+                Descricao = employee?.Company?.Descricao ?? string.Empty,
                 Link = _companyRepository.GetCompanyLink(employee.CompanyId)
             };
 
-            EmployeeFavInfoModel employeeModel = new EmployeeFavInfoModel
+            var employeeModel = new EmployeeFavInfoModel
             {
                 EmployeeId = employee.EmployeeId.ToString(),
                 Link = GetEmployeeLink(employee.EmployeeId),

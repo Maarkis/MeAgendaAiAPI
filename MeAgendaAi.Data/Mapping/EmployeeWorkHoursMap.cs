@@ -1,9 +1,7 @@
-﻿using MeAgendaAi.Domain.Entities;
+﻿using System;
+using MeAgendaAi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Data.Mapping
 {
@@ -19,7 +17,7 @@ namespace MeAgendaAi.Data.Mapping
                 .IsRequired();
 
             builder.Property(x => x.EndHour)
-               .IsRequired();
+                .IsRequired();
 
             builder.Property(x => x.StartInterval);
 
@@ -30,8 +28,8 @@ namespace MeAgendaAi.Data.Mapping
                 .HasForeignKey(x => x.EmployeeId);
 
             builder.Property(x => x.CreatedAt)
-               .IsRequired()
-               .HasDefaultValue(new DateTime(2010, 1, 1));
+                .IsRequired()
+                .HasDefaultValue(new DateTime(2010, 1, 1));
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()

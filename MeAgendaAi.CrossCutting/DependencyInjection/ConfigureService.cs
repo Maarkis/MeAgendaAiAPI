@@ -9,7 +9,7 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
 {
     public class ConfigureService
     {
-        public static void ConfigureDependenciesService (IServiceCollection serviceCollection)
+        public static void ConfigureDependenciesService(IServiceCollection serviceCollection)
         {
             // Services
             serviceCollection.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
@@ -36,13 +36,9 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
                 //                                .AllowAnyOrigin();
                 //        });
 
-                options.AddPolicy("MyAllowSpecificOrigins", builder =>
-                {
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                });
-
+                options.AddPolicy("MyAllowSpecificOrigins",
+                    builder => { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
             });
-
         }
     }
 }

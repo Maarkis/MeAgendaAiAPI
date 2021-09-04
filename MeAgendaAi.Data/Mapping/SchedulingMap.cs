@@ -1,11 +1,8 @@
-﻿using MeAgendaAi.Domain.Entities;
+﻿using System;
+using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Enums;
-using MeAgendaAi.Domain.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Data.Mapping
 {

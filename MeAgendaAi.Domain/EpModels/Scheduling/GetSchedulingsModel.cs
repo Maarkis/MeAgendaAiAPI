@@ -1,7 +1,4 @@
-﻿using MeAgendaAi.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace MeAgendaAi.Domain.EpModels.Scheduling
 {

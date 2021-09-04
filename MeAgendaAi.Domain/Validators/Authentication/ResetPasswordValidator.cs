@@ -1,8 +1,5 @@
 ﻿using FluentValidation;
 using MeAgendaAi.Domain.EpModels.User;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Domain.Validators.Authentication
 {
@@ -10,7 +7,7 @@ namespace MeAgendaAi.Domain.Validators.Authentication
     {
         public ResetPasswordValidator()
         {
-            RuleFor(x => x.Id)                
+            RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Usuário não encontrado.");
 
             RuleFor(x => x.Password)
@@ -21,8 +18,8 @@ namespace MeAgendaAi.Domain.Validators.Authentication
                 .Equal(x => x.Password)
                 .WithMessage("Senha de confirmação deve ser igual a nova senha");
 
-            RuleFor(x => x.Token)                
-              .NotEmpty().WithMessage("Token não encontrado.");
+            RuleFor(x => x.Token)
+                .NotEmpty().WithMessage("Token não encontrado.");
         }
     }
 }

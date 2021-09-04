@@ -1,19 +1,19 @@
-﻿using MeAgendaAi.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.Location;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Domain.Validators.Location;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Service.Services
 {
     public class LocationService : BaseService<Location>, ILocationService
     {
-        private ILocationRepository _locationRepository;
+        private readonly ILocationRepository _locationRepository;
 
         public LocationService(ILocationRepository locationRepository) : base(locationRepository)
         {
@@ -22,10 +22,10 @@ namespace MeAgendaAi.Service.Services
 
         public List<Location> CreateLocationsFromModel(List<AddLocationModel> models, Guid userId)
         {
-            List<Location> locations = new List<Location>();
-            if(models != null)
-            {
-                models.ForEach(model => {
+            var locations = new List<Location>();
+            if (models != null)
+                models.ForEach(model =>
+                {
                     var location = new Location
                     {
                         LocationId = Guid.NewGuid(),
@@ -39,27 +39,24 @@ namespace MeAgendaAi.Service.Services
                         Number = model.Number,
                         Complement = model.Complement,
                         CEP = model.CEP,
-                        CreatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
-                        LastUpdatedAt = Domain.Utils.DateTimeUtil.UtcToBrasilia(),
+                        CreatedAt = DateTimeUtil.UtcToBrasilia(),
+                        LastUpdatedAt = DateTimeUtil.UtcToBrasilia(),
                         UpdatedBy = userId
                     };
                     locations.Add(location);
                 });
-            }
-            
+
             return locations;
         }
 
         public ResponseModel ValidateAddLocations(List<AddLocationModel> locations)
         {
-            ResponseModel response = new ResponseModel { Success = true};
+            var response = new ResponseModel { Success = true };
 
-            locations.ForEach(location => {
+            locations.ForEach(location =>
+            {
                 var validate = new AddLocationModelValidator().Validate(location);
-                if (!validate.IsValid)
-                {
-                    response.Result = validate.Errors.FirstOrDefault();
-                }
+                if (!validate.IsValid) response.Result = validate.Errors.FirstOrDefault();
             });
 
             return response;
@@ -67,25 +64,28 @@ namespace MeAgendaAi.Service.Services
 
         public string GetCompletLocation(Location location)
         {
-            string completeLocation = (location.State != null && location.State != String.Empty) ? $"{location.State}," : "";
-            completeLocation += ((location.City != null && location.City != String.Empty) ? $"{location.City}," : "");
-            completeLocation += ((location.Neighbourhood != null && location.Neighbourhood != String.Empty) ? $"{location.Neighbourhood}," : "");
-            completeLocation += ((location.Street != null && location.Street != String.Empty) ? $"{location.Street}," : "");
-            completeLocation += ((location.Number != 0) ? $"{location.Number}" : "");
-            completeLocation += ((location.Complement != null && location.Complement != String.Empty) ? $", {location.Complement}" : "");
+            var completeLocation = location.State != null && location.State != string.Empty ? $"{location.State}," : "";
+            completeLocation += location.City != null && location.City != string.Empty ? $"{location.City}," : "";
+            completeLocation += location.Neighbourhood != null && location.Neighbourhood != string.Empty
+                ? $"{location.Neighbourhood},"
+                : "";
+            completeLocation += location.Street != null && location.Street != string.Empty ? $"{location.Street}," : "";
+            completeLocation += location.Number != 0 ? $"{location.Number}" : "";
+            completeLocation += location.Complement != null && location.Complement != string.Empty
+                ? $", {location.Complement}"
+                : "";
 
             return completeLocation;
         }
 
         public List<LocationPerfilModel> UserLocationsToBasicLocationModel(Guid userId)
         {
-            List<LocationPerfilModel> locationPerfilModels = new List<LocationPerfilModel>();
+            var locationPerfilModels = new List<LocationPerfilModel>();
 
             var locations = _locationRepository.GetLocationsByUserId(userId);
-            if(locations != null)
-            {
-                locations.ForEach(location => {
-
+            if (locations != null)
+                locations.ForEach(location =>
+                {
                     var model = new LocationPerfilModel
                     {
                         LocationId = location.LocationId.ToString(),
@@ -103,7 +103,6 @@ namespace MeAgendaAi.Service.Services
 
                     locationPerfilModels.Add(model);
                 });
-            }
 
             return locationPerfilModels;
         }

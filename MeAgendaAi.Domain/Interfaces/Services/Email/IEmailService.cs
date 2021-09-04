@@ -1,10 +1,6 @@
-﻿using MeAgendaAi.Domain.Entities;
+﻿using System.Threading.Tasks;
+using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Entities.Email;
-using MeAgendaAi.Domain.EpModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MeAgendaAi.Domain.Interfaces.Services.Email
 {

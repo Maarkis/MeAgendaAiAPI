@@ -1,21 +1,22 @@
-﻿using MeAgendaAi.Data.Context;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MeAgendaAi.Data.Context;
 using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MeAgendaAi.Data.Repository
 {
     public class SchedulingRepository : BaseRepository<Scheduling>, ISchedulingRepository
     {
-        private DbSet<Scheduling> _schedulings;
-        public SchedulingRepository(MeAgendaAiContext context, IConfiguration configuration) : base(context, configuration)
+        private readonly DbSet<Scheduling> _schedulings;
+
+        public SchedulingRepository(MeAgendaAiContext context, IConfiguration configuration) : base(context,
+            configuration)
         {
             _schedulings = context.Schedulings;
         }
@@ -37,7 +38,9 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetClientSchedulingsProximos(Guid clientId)
         {
-            return _schedulings.Where(x => (x.ClientId == clientId) && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0) && (x.Status == SchedulingStatus.Scheduled))
+            return _schedulings.Where(x =>
+                    x.ClientId == clientId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0 &&
+                    x.Status == SchedulingStatus.Scheduled)
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -52,7 +55,9 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetClientSchedulingsExpirados(Guid clientId)
         {
-            return _schedulings.Where(x => (x.ClientId == clientId) && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0 || x.Status == SchedulingStatus.Canceled))
+            return _schedulings.Where(x =>
+                    x.ClientId == clientId && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0 ||
+                                               x.Status == SchedulingStatus.Canceled))
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -82,7 +87,9 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetEmployeeSchedulingsProximos(Guid employeeId)
         {
-            return _schedulings.Where(x => (x.EmployeeId == employeeId) && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0) && (x.Status == SchedulingStatus.Scheduled))
+            return _schedulings.Where(x =>
+                    x.EmployeeId == employeeId && DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) >= 0 &&
+                    x.Status == SchedulingStatus.Scheduled)
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -97,7 +104,9 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetEmployeeSchedulingsAntigos(Guid employeeId)
         {
-            return _schedulings.Where(x => (x.EmployeeId == employeeId) && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0 || x.Status == SchedulingStatus.Canceled))
+            return _schedulings.Where(x =>
+                    x.EmployeeId == employeeId && (DateTime.Compare(x.StartTime, DateTimeUtil.UtcToBrasilia()) < 0 ||
+                                                   x.Status == SchedulingStatus.Canceled))
                 .Include(x => x.Client)
                 .ThenInclude(y => y.User)
                 .Include(x => x.Employee)
@@ -112,7 +121,10 @@ namespace MeAgendaAi.Data.Repository
 
         public List<Scheduling> GetDaySchedulingsByEmployee(Guid employeeId, DateTime date)
         {
-            return _schedulings.Where(x => x.EmployeeId == employeeId && x.StartTime.Date == date.Date && x.Status == SchedulingStatus.Scheduled).ToList();
+            return _schedulings.Where(x =>
+                    x.EmployeeId == employeeId && x.StartTime.Date == date.Date &&
+                    x.Status == SchedulingStatus.Scheduled)
+                .ToList();
         }
 
         public Scheduling GetSchedulingByIdComplete(Guid schedulingId)

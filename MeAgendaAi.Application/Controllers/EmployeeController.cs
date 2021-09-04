@@ -1,12 +1,12 @@
-﻿using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.EpModels.Employee;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Net;
-using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
-using Microsoft.AspNetCore.Authorization;
 using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.EpModels.Employee;
+using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
+using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -15,6 +15,7 @@ namespace MeAgendaAi.Application.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
+
         public EmployeeController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
@@ -25,10 +26,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("AddEmployee")]
         public ActionResult AddEmployee([FromBody] AddEmployeeModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -46,10 +44,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("EditEmployee")]
         public ActionResult EditEmployee([FromForm] EditEmployeeModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -67,10 +62,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetEmployeeServices/{employeeId}")]
         public ActionResult GetEmployeeServices(string employeeId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -88,10 +80,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetEmployeePerfilInfo/{userId}")]
         public ActionResult GetEmployeePerfilInfo(string userId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -110,10 +99,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetEmployeeInfoComplete/{employeeId}")]
         public ActionResult GetEmployeeInfoComplete(string employeeId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -131,10 +117,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("AddServicesToEmployee")]
         public ActionResult AddServicesToEmployee(AddServiceToEmployeeModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -152,10 +135,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("AddWorkHoursToEmployee")]
         public ActionResult AddWorkHoursToEmployee([FromBody] AddEmployeeWorkHoursModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -173,10 +153,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetEmployeeAvailableHours")]
         public ActionResult GetEmployeeAvailableHours(string employeeId, string serviceId, string date)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -195,10 +172,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetEmployeeMonthSchedule/{userId}/{ano}/{mes}")]
         public ActionResult GetEmployeeMonthSchedule(string userId, int ano, int mes)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -216,10 +190,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetEmployeesByServiceId/{serviceId}")]
         public ActionResult GetEmployeesByServiceId(string serviceId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -237,10 +208,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetEmployeesByCompanyId/{companyId}")]
         public ActionResult GetEmployeesByCompanyId(string companyId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {

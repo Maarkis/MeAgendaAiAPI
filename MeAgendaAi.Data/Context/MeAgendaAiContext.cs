@@ -1,20 +1,28 @@
 ﻿using MeAgendaAi.Data.Mapping;
 using MeAgendaAi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Data.Context
 {
     public class MeAgendaAiContext : DbContext
     {
-        public MeAgendaAiContext (DbContextOptions<MeAgendaAiContext> options) : base(options)
+        public MeAgendaAiContext(DbContextOptions<MeAgendaAiContext> options) : base(options)
         {
-
         }
 
-        protected override void OnModelCreating (ModelBuilder modelBuilder)
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<Company> Companies { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<ServiceEmployee> ServiceEmployees { get; set; }
+        public DbSet<Policy> Policies { get; set; }
+        public DbSet<Scheduling> Schedulings { get; set; }
+        public DbSet<Services> Services { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<EmployeeWorkHours> EmployeeWorkHours { get; set; }
+        public DbSet<PhoneNumber> PhoneNumbers { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -31,17 +39,5 @@ namespace MeAgendaAi.Data.Context
             modelBuilder.Entity<EmployeeWorkHours>(new EmployeeWorkHoursMap().Configure);
             modelBuilder.Entity<PhoneNumber>(new PhoneNumberMap().Configure);
         }
-
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Company> Companies { get; set; }
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<ServiceEmployee> ServiceEmployees { get; set; }
-        public DbSet<Policy> Policies { get; set; }
-        public DbSet<Scheduling> Schedulings { get; set; }
-        public DbSet<Services> Services { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<EmployeeWorkHours> EmployeeWorkHours { get; set; }
-        public DbSet<PhoneNumber> PhoneNumbers { get; set; }
     }
 }

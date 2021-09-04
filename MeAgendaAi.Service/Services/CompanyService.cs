@@ -1,29 +1,30 @@
-﻿using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.Interfaces.Repositories;
-using MeAgendaAi.Domain.Utils;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.Company;
-using System;
-using System.Collections.Generic;
-using MeAgendaAi.Domain.Validators.Company;
-using System.Linq;
-using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.EpModels.User;
+using MeAgendaAi.Domain.Interfaces;
+using MeAgendaAi.Domain.Interfaces.Repositories;
 using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.Utils;
+using MeAgendaAi.Domain.Validators.Company;
 
 namespace MeAgendaAi.Service.Services
 {
     public class CompanyService : BaseService<Company>, ICompanyService
     {
-        private ICompanyRepository _companyRepository;
+        private readonly ICompanyRepository _companyRepository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly ILocationService _locationService;
+        private readonly IPhoneNumberService _phoneNumberService;
+        private readonly IPolicyRepository _policyRepository;
+        private readonly IServiceRepository _serviceRepository;
+        private readonly IUserService _userService;
         private IUserRepository _userRepository;
-        private IEmployeeRepository _employeeRepository;
-        private IServiceRepository _serviceRepository;
-        private IPolicyRepository _policyRepository;
-        private IUserService _userService;
-        private ILocationService _locationService;
-        private IPhoneNumberService _phoneNumberService;
+
         public CompanyService(ICompanyRepository companyRepository, IUserRepository userRepository,
             IEmployeeRepository employeeRepository, IServiceRepository serviceRepository,
             IPolicyRepository policyRepository, IUserService userService,
@@ -58,21 +59,21 @@ namespace MeAgendaAi.Service.Services
                         Imagem = model.Imagem
                     };
 
-                    List<Roles> roles = new List<Roles>();
+                    var roles = new List<Roles>();
                     roles.Add(Roles.UsuarioEmpresa);
                     var userResponse = _userService.CreateUserFromModel(userModel, roles);
                     if (userResponse.Success)
                     {
-                        User newUser = userResponse.Result as User;
-                        Guid companyId = Guid.NewGuid();
-                        Policy policy = new Policy
+                        var newUser = userResponse.Result as User;
+                        var companyId = Guid.NewGuid();
+                        var policy = new Policy
                         {
                             PolicyId = Guid.NewGuid(),
                             CompanyId = companyId,
                             LimitCancelHours = model.LimitCancelHours
                         };
 
-                        Company newCompany = new Company
+                        var newCompany = new Company
                         {
                             CompanyId = companyId,
                             CNPJ = model.CNPJ,
@@ -85,7 +86,7 @@ namespace MeAgendaAi.Service.Services
                         };
                         _companyRepository.Add(newCompany);
 
-                        ResponseModel send = _userService.SendEmailConfirmation(userModel.Email).Result;
+                        var send = _userService.SendEmailConfirmation(userModel.Email).Result;
 
                         resp.Success = true;
                         resp.Result = $"{newUser.UserId}";
@@ -111,17 +112,17 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel EditCompany(EditCompanyModel model)
         {
-            ResponseModel resp = new ResponseModel();
+            var resp = new ResponseModel();
 
             try
             {
                 var validateCompany = new EditCompanyModelValidator().Validate(model);
                 if (validateCompany.IsValid)
                 {
-                    Company company = _companyRepository.GetCompanyByUserId(Guid.Parse(model.UserId));
-                    if(company != null)
+                    var company = _companyRepository.GetCompanyByUserId(Guid.Parse(model.UserId));
+                    if (company != null)
                     {
-                        EditUserModel editUserModel = new EditUserModel
+                        var editUserModel = new EditUserModel
                         {
                             UsuarioId = model.UserId,
                             Name = model.Name,
@@ -133,7 +134,7 @@ namespace MeAgendaAi.Service.Services
                         var userResponse = _userService.EditUserFromModel(editUserModel);
                         if (userResponse.Success)
                         {
-                            User companyUser = userResponse.Result as User;
+                            var companyUser = userResponse.Result as User;
 
                             company.Policy.LimitCancelHours = model.LimitCancelHours;
                             company.Policy.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
@@ -164,14 +165,15 @@ namespace MeAgendaAi.Service.Services
                 {
                     resp.Message = validateCompany.Errors.FirstOrDefault().ErrorMessage;
                 }
-
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 resp.Message = "Não foi possível editar a empresa";
             }
 
             return resp;
         }
+
         public ResponseModel CreateServiceForCompany(AddMultipleServicesModel model)
         {
             var resp = new ResponseModel();
@@ -184,19 +186,20 @@ namespace MeAgendaAi.Service.Services
                     return resp;
                 }
 
-                if(model.Services != null && model.Services.Count > 0)
+                if (model.Services != null && model.Services.Count > 0)
                 {
-                    if(model.Services.All(x => x.DurationMinutes > 0))
+                    if (model.Services.All(x => x.DurationMinutes > 0))
                     {
-                        if(model.Services.All(x => x.Name != null && x.Name != String.Empty))
+                        if (model.Services.All(x => x.Name != null && x.Name != string.Empty))
                         {
                             var servicesCompany = _serviceRepository.GetServicesByCompanyId(company.CompanyId);
-                            model.Services.ForEach(serviceModel => {
-
+                            model.Services.ForEach(serviceModel =>
+                            {
                                 // não adicionar dois serviços com o mesmo nome na empresa
-                                if (servicesCompany.All(x => x.Name.ToLowerInvariant() != serviceModel.Name.ToLowerInvariant()))
+                                if (servicesCompany.All(x =>
+                                    x.Name.ToLowerInvariant() != serviceModel.Name.ToLowerInvariant()))
                                 {
-                                    MeAgendaAi.Domain.Entities.Services service = new MeAgendaAi.Domain.Entities.Services
+                                    var service = new Domain.Entities.Services
                                     {
                                         ServiceId = Guid.NewGuid(),
                                         CompanyId = company.CompanyId,
@@ -207,7 +210,6 @@ namespace MeAgendaAi.Service.Services
                                     };
                                     _serviceRepository.Add(service);
                                 }
-                                
                             });
 
                             resp.Success = true;
@@ -243,9 +245,10 @@ namespace MeAgendaAi.Service.Services
             try
             {
                 var services = _serviceRepository.GetServicesByCompanyId(Guid.Parse(companyId));
-                List<GetCompanyServicesModel> companyServices = new List<GetCompanyServicesModel>();
-                services.ForEach(service => {
-                    GetCompanyServicesModel companyService = new GetCompanyServicesModel
+                var companyServices = new List<GetCompanyServicesModel>();
+                services.ForEach(service =>
+                {
+                    var companyService = new GetCompanyServicesModel
                     {
                         ServiceId = service.ServiceId.ToString(),
                         Name = service.Name,
@@ -272,13 +275,13 @@ namespace MeAgendaAi.Service.Services
             try
             {
                 var company = _companyRepository.GetCompanyWithPolicyById(Guid.Parse(model.CompanyId));
-                if(company == null)
+                if (company == null)
                 {
                     resp.Result = "Não foi posível encontrar a empresa ou a política requisitadas";
                     return resp;
                 }
 
-                Policy policy = company.Policy;
+                var policy = company.Policy;
                 policy.LimitCancelHours = model.LimitCancelHours;
                 policy.LastUpdatedAt = DateTimeUtil.UtcToBrasilia();
 
@@ -298,19 +301,15 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel GetCompanyInfoPerfil(string userId)
         {
-            ResponseModel responseModel = new ResponseModel();
+            var responseModel = new ResponseModel();
 
             if (GuidUtil.IsGuidValid(userId))
             {
                 var company = _companyRepository.GetCompanyByUserId(Guid.Parse(userId));
-                if(company != null)
-                {
+                if (company != null)
                     responseModel = GetCompanyComplete(company.CompanyId);
-                }
                 else
-                {
                     responseModel.Message = "Não foi possível encontrar a empresa";
-                }
             }
             else
             {
@@ -322,18 +321,20 @@ namespace MeAgendaAi.Service.Services
 
         public ResponseModel GetCompanyInfo(string companyId)
         {
-            ResponseModel responseModel = new ResponseModel();
+            var responseModel = new ResponseModel();
 
             if (GuidUtil.IsGuidValid(companyId))
-            {
                 responseModel = GetCompanyComplete(Guid.Parse(companyId));
-            }
             else
-            {
                 responseModel.Message = "Guid inválido";
-            }
 
             return responseModel;
+        }
+
+        public string GetCompanyLink(Guid companyId)
+        {
+            return _companyRepository.GetCompanyLink(companyId);
+            //return $"http://localhost:4200/perfil_empresa/{companyId}";
         }
 
         private ResponseModel GetCompanyComplete(Guid companyId)
@@ -342,12 +343,13 @@ namespace MeAgendaAi.Service.Services
 
             try
             {
-                Company companyComplete = _companyRepository.GetCompanyByIdComplete(companyId);
-                if(companyComplete != null)
+                var companyComplete = _companyRepository.GetCompanyByIdComplete(companyId);
+                if (companyComplete != null)
                 {
-                    List<GetCompanyByIdCompleteServiceModel> companyServices = new List<GetCompanyByIdCompleteServiceModel>();
-                    companyComplete.Services.ForEach(service => {
-                        GetCompanyByIdCompleteServiceModel companyService = new GetCompanyByIdCompleteServiceModel
+                    var companyServices = new List<GetCompanyByIdCompleteServiceModel>();
+                    companyComplete.Services.ForEach(service =>
+                    {
+                        var companyService = new GetCompanyByIdCompleteServiceModel
                         {
                             ServiceId = service.ServiceId.ToString(),
                             Name = service.Name,
@@ -356,12 +358,13 @@ namespace MeAgendaAi.Service.Services
                         companyServices.Add(companyService);
                     });
 
-                    List<GetCompanyByIdCompleteEmployeeModel> companyEmployees = new List<GetCompanyByIdCompleteEmployeeModel>();
-                    companyComplete.Employees.ForEach(employee => {
-
-                        List<GetCompanyByIdCompleteServiceModel> employeeServices = new List<GetCompanyByIdCompleteServiceModel>();
-                        employee.EmployeeServices.ForEach(eService => {
-                            GetCompanyByIdCompleteServiceModel employeeService = new GetCompanyByIdCompleteServiceModel
+                    var companyEmployees = new List<GetCompanyByIdCompleteEmployeeModel>();
+                    companyComplete.Employees.ForEach(employee =>
+                    {
+                        var employeeServices = new List<GetCompanyByIdCompleteServiceModel>();
+                        employee.EmployeeServices.ForEach(eService =>
+                        {
+                            var employeeService = new GetCompanyByIdCompleteServiceModel
                             {
                                 ServiceId = eService.Service.ServiceId.ToString(),
                                 DurationMinutes = eService.Service.DurationMinutes,
@@ -370,7 +373,7 @@ namespace MeAgendaAi.Service.Services
                             employeeServices.Add(employeeService);
                         });
 
-                        GetCompanyByIdCompleteEmployeeModel companyEmployee = new GetCompanyByIdCompleteEmployeeModel
+                        var companyEmployee = new GetCompanyByIdCompleteEmployeeModel
                         {
                             EmployeeId = employee.EmployeeId.ToString(),
                             EmplyeeName = employee.User.Name,
@@ -383,7 +386,7 @@ namespace MeAgendaAi.Service.Services
                         companyEmployees.Add(companyEmployee);
                     });
 
-                    GetCompanyByIdCompleteModel model = new GetCompanyByIdCompleteModel
+                    var model = new GetCompanyByIdCompleteModel
                     {
                         CompanyId = companyComplete.CompanyId,
                         CompanyName = companyComplete.User.Name,
@@ -407,7 +410,6 @@ namespace MeAgendaAi.Service.Services
                 {
                     resp.Message = "Empresa não encontrada";
                 }
-                
             }
             catch (Exception)
             {
@@ -415,12 +417,6 @@ namespace MeAgendaAi.Service.Services
             }
 
             return resp;
-        }
-
-        public string GetCompanyLink(Guid companyId)
-        {
-            return _companyRepository.GetCompanyLink(companyId);
-            //return $"http://localhost:4200/perfil_empresa/{companyId}";
         }
     }
 }

@@ -1,22 +1,13 @@
 ﻿using MeAgendaAi.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Domain.Utils
 {
     public class AuthorizeRolesAttribute : AuthorizeAttribute
     {
-        public AuthorizeRolesAttribute(params Roles[] roles) : base()
+        public AuthorizeRolesAttribute(params Roles[] roles)
         {
-
-            
-            foreach (Roles role in roles)
-            {                                
-                Roles += role.ToString() + ", ";
-            }
-            
+            foreach (var role in roles) Roles += role + ", ";
         }
     }
 }

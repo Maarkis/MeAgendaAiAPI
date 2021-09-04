@@ -1,9 +1,6 @@
 ﻿using FluentValidation;
 using MeAgendaAi.Domain.EpModels.Company;
 using MeAgendaAi.Domain.Utils;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Domain.Validators.Company
 {
@@ -12,10 +9,10 @@ namespace MeAgendaAi.Domain.Validators.Company
         public EditCompanyModelValidator()
         {
             RuleFor(x => x.UserId)
-             .NotNull()
-             .NotEmpty()
-             .Must(id => GuidUtil.IsGuidValid(id))
-             .WithMessage("UserId inválido");
+                .NotNull()
+                .NotEmpty()
+                .Must(id => GuidUtil.IsGuidValid(id))
+                .WithMessage("UserId inválido");
 
             RuleFor(x => x.LimitCancelHours)
                 .NotNull()

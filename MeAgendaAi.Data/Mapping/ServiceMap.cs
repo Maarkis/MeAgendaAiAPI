@@ -1,12 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using MeAgendaAi.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 
 namespace MeAgendaAi.Data.Mapping
 {
-    public class ServiceMap : IEntityTypeConfiguration<MeAgendaAi.Domain.Entities.Services>
+    public class ServiceMap : IEntityTypeConfiguration<Services>
     {
-        public void Configure(EntityTypeBuilder<MeAgendaAi.Domain.Entities.Services> builder)
+        public void Configure(EntityTypeBuilder<Services> builder)
         {
             builder.ToTable("Service");
 

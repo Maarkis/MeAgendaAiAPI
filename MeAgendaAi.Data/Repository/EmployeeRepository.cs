@@ -1,18 +1,20 @@
-﻿using MeAgendaAi.Data.Context;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MeAgendaAi.Data.Context;
 using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MeAgendaAi.Data.Repository
 {
     public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
-        private DbSet<Employee> _employees;
-        public EmployeeRepository(MeAgendaAiContext context, IConfiguration configuration) : base(context, configuration)
+        private readonly DbSet<Employee> _employees;
+
+        public EmployeeRepository(MeAgendaAiContext context, IConfiguration configuration) : base(context,
+            configuration)
         {
             _employees = context.Employees;
         }
@@ -21,6 +23,7 @@ namespace MeAgendaAi.Data.Repository
         {
             return _employees.Where(x => x.UserId == userId).FirstOrDefault();
         }
+
         public List<Services> GetEmployeeServicesByEmployeeId(Guid employeeId)
         {
             return _employees.Where(x => x.EmployeeId == employeeId)
@@ -88,13 +91,13 @@ namespace MeAgendaAi.Data.Repository
         public List<Employee> GetEmployeesByCompanyId(Guid companyId)
         {
             return _employees.Where(x => x.CompanyId == companyId)
-               .Include(x => x.User)
-               .Include(x => x.EmployeeServices)
-               .ThenInclude(y => y.Service)
-               .Include(x => x.Company)
-               .ThenInclude(y => y.User)
-               .OrderBy(x => x.User.Name)
-               .ToList();
+                .Include(x => x.User)
+                .Include(x => x.EmployeeServices)
+                .ThenInclude(y => y.Service)
+                .Include(x => x.Company)
+                .ThenInclude(y => y.User)
+                .OrderBy(x => x.User.Name)
+                .ToList();
         }
 
         public string GetEmployeeLink(Guid employeeId)

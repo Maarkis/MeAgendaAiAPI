@@ -1,16 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Security.Cryptography;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MeAgendaAi.Domain.Security
 {
     public class SigningConfiguration
     {
-                
-        public SecurityKey Key { get; set; }
-        public SigningCredentials SigningCredentials { get; set; }
         public SigningConfiguration()
         {
             using (var provider = new RSACryptoServiceProvider(2048))
@@ -20,5 +14,8 @@ namespace MeAgendaAi.Domain.Security
 
             SigningCredentials = new SigningCredentials(Key, SecurityAlgorithms.RsaSha256Signature);
         }
+
+        public SecurityKey Key { get; set; }
+        public SigningCredentials SigningCredentials { get; set; }
     }
 }

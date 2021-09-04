@@ -1,11 +1,11 @@
-﻿using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.EpModels.Scheduling;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Net;
-using Microsoft.AspNetCore.Authorization;
-using MeAgendaAi.Domain.Utils;
 using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.EpModels.Scheduling;
+using MeAgendaAi.Domain.Interfaces;
+using MeAgendaAi.Domain.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -14,6 +14,7 @@ namespace MeAgendaAi.Application.Controllers
     public class SchedulingController : ControllerBase
     {
         private readonly ISchedulingService _schedulingService;
+
         public SchedulingController(ISchedulingService schedulingService)
         {
             _schedulingService = schedulingService;
@@ -24,10 +25,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("CreateScheduling")]
         public ActionResult CreateScheduling([FromBody] CreateSchedulingModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -40,15 +38,12 @@ namespace MeAgendaAi.Application.Controllers
             }
         }
 
-        [HttpGet]        
+        [HttpGet]
         [AuthorizeRoles(Roles.Cliente, Roles.UsuarioEmpresa, Roles.Funcionario)]
         [Route("GetClientSchedulingsByUserId/{userId}")]
         public ActionResult GetClientSchedulingsByUserId(string userId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -66,10 +61,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetClientHistoricoSchedulingsByUserId/{userId}")]
         public ActionResult GetClientHistoricoSchedulingsByUserId(string userId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -87,10 +79,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetEmployeeSchedulingsByUserId/{userId}")]
         public ActionResult GetEmployeeSchedulingsByUserId(string userId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -109,10 +98,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetHistoricoEmployeeSchedulingsByUserId/{userId}")]
         public ActionResult GetHistoricoEmployeeSchedulingsByUserId(string userId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -130,10 +116,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("UpdateSchedulingStatus")]
         public ActionResult UpdateSchedulingStatus(UpdateSchedulingStatusModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {

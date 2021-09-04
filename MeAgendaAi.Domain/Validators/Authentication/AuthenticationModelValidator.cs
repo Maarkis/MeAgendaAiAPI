@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using MeAgendaAi.Domain.EpModels.User;
-using MeAgendaAi.Domain.Interfaces.Repositories;
 
 namespace MeAgendaAi.Domain.Validators.Authentication
 {
@@ -10,13 +9,13 @@ namespace MeAgendaAi.Domain.Validators.Authentication
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
-                    .WithMessage("E-mail obrigátorio")
+                .WithMessage("E-mail obrigátorio")
                 .EmailAddress()
-                    .WithMessage("Digite um e-mail válido");
+                .WithMessage("Digite um e-mail válido");
 
             RuleFor(x => x.Senha)
                 .NotEmpty()
-                    .WithMessage("A senha está vazia!");
+                .WithMessage("A senha está vazia!");
         }
     }
 }

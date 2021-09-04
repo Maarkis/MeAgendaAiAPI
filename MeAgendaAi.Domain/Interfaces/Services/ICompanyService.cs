@@ -1,10 +1,8 @@
-﻿using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.Interfaces.Services;
+﻿using System;
+using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.Company;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using MeAgendaAi.Domain.Interfaces.Services;
 
 namespace MeAgendaAi.Domain.Interfaces
 {

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System;
+﻿using System;
 using System.Text;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace MeAgendaAi.Cryptography.Cryptography
 {
@@ -10,7 +10,7 @@ namespace MeAgendaAi.Cryptography.Cryptography
 
         public static bool CompareComputeHash(string password, string salt, string storedPassword)
         {
-            string hashPassword = EncryptString(password, salt);
+            var hashPassword = EncryptString(password, salt);
 
             return hashPassword.Equals(storedPassword);
         }
@@ -19,22 +19,18 @@ namespace MeAgendaAi.Cryptography.Cryptography
         {
             try
             {
-                byte[] byteSalt = GenerateSalt(salt);
+                var byteSalt = GenerateSalt(salt);
 
-                byte[] bytes = ComputeHash(str, byteSalt);
+                var bytes = ComputeHash(str, byteSalt);
 
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    builder.Append(bytes[i].ToString());
-                }
+                var builder = new StringBuilder();
+                for (var i = 0; i < bytes.Length; i++) builder.Append(bytes[i].ToString());
                 return builder.ToString();
             }
             catch (Exception e)
             {
                 throw e;
             }
-
         }
 
 
@@ -46,11 +42,11 @@ namespace MeAgendaAi.Cryptography.Cryptography
         private static byte[] ComputeHash(string password, byte[] salt, int iterations = HasingIterationsCount)
         {
             return KeyDerivation.Pbkdf2(
-             password: password,
-             salt: salt,
-             prf: KeyDerivationPrf.HMACSHA256,
-             iterationCount: iterations,
-             numBytesRequested: (256 / 8));
+                password,
+                salt,
+                KeyDerivationPrf.HMACSHA256,
+                iterations,
+                256 / 8);
         }
     }
 }

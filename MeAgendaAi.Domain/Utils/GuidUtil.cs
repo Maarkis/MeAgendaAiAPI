@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Domain.Utils
 {
@@ -8,31 +7,25 @@ namespace MeAgendaAi.Domain.Utils
     {
         public static bool IsGuidValid(string guidString)
         {
-            return Guid.TryParse(guidString, out Guid idGuid);
+            return Guid.TryParse(guidString, out var idGuid);
         }
 
         public static Guid? ReturnGuidIfValid(string stringGuid)
         {
-            if (GuidUtil.IsGuidValid(stringGuid))
-            {
-                return Guid.Parse(stringGuid);
-            }
+            if (IsGuidValid(stringGuid)) return Guid.Parse(stringGuid);
 
             return null;
         }
 
         public static string GetGuidListSeparadaPorVirgula(List<Guid> guids)
         {
-            string textoFormatado = string.Empty;
+            var textoFormatado = string.Empty;
 
             for (var i = 0; i < guids.Count; i++)
             {
                 textoFormatado += guids[i].ToString();
 
-                if (i != guids.Count - 1)
-                {
-                    textoFormatado += ", ";
-                }
+                if (i != guids.Count - 1) textoFormatado += ", ";
             }
 
             return textoFormatado;

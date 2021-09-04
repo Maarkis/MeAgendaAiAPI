@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MeAgendaAi.Domain.EpModels.PhoneNumber
+﻿namespace MeAgendaAi.Domain.EpModels.PhoneNumber
 {
     public class PhoneNumberPerfilModel
     {

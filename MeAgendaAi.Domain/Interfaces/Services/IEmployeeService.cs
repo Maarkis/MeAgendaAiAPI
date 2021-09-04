@@ -1,11 +1,9 @@
-﻿using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.Interfaces.Services;
+﻿using System;
+using MeAgendaAi.Domain.Entities;
 using MeAgendaAi.Domain.EpModels;
 using MeAgendaAi.Domain.EpModels.Employee;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MeAgendaAi.Domain.EpModels.EmployeeWorkHours;
+using MeAgendaAi.Domain.Interfaces.Services;
 
 namespace MeAgendaAi.Domain.Interfaces
 {

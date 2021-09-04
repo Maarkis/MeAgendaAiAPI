@@ -1,12 +1,11 @@
-﻿using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.Interfaces.Services;
-using MeAgendaAi.Domain.EpModels.User;
-using MeAgendaAi.Domain.EpModels;
+﻿using System;
 using System.Collections.Generic;
-using MeAgendaAi.Domain.Enums;
 using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.Http;
+using MeAgendaAi.Domain.Entities;
+using MeAgendaAi.Domain.Enums;
+using MeAgendaAi.Domain.EpModels;
+using MeAgendaAi.Domain.EpModels.User;
+using MeAgendaAi.Domain.Interfaces.Services;
 
 namespace MeAgendaAi.Domain.Interfaces
 {
@@ -14,7 +13,7 @@ namespace MeAgendaAi.Domain.Interfaces
     {
         ResponseModel CreateUserFromModel(AddUserModel model, List<Roles> roles);
         ResponseModel Login(LoginModel model);
-        ResponseModel EditUserFromModel(EditUserModel model);        
+        ResponseModel EditUserFromModel(EditUserModel model);
         ResponseModel ResetPassword(ResetPassword model);
         ResponseModel UserVerified(Guid id);
         Task<ResponseModel> SendEmail(RequestResendEmail model);

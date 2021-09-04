@@ -1,6 +1,6 @@
-﻿using FluentValidation;
+﻿using System.Text.RegularExpressions;
+using FluentValidation;
 using MeAgendaAi.Domain.EpModels.User;
-using System.Text.RegularExpressions;
 
 namespace MeAgendaAi.Domain.Validators.User
 {
@@ -19,12 +19,13 @@ namespace MeAgendaAi.Domain.Validators.User
                 .WithMessage("O campo Email não pode ser nulo");
 
             RuleFor(x => x.Email)
-            .NotNull()
-            .Must(cpf => {
-                Regex rx = new Regex(@"^\S+@\S+$", RegexOptions.None);
-                return rx.IsMatch(cpf);
-            })
-            .WithMessage("Email com formato inválido");
+                .NotNull()
+                .Must(cpf =>
+                {
+                    var rx = new Regex(@"^\S+@\S+$", RegexOptions.None);
+                    return rx.IsMatch(cpf);
+                })
+                .WithMessage("Email com formato inválido");
 
             RuleFor(x => x.Password)
                 .NotNull()

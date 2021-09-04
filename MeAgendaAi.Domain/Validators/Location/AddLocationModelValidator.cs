@@ -1,8 +1,5 @@
 ﻿using FluentValidation;
 using MeAgendaAi.Domain.EpModels.Location;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Domain.Validators.Location
 {

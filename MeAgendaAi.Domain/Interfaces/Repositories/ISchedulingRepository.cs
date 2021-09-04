@@ -1,7 +1,6 @@
-﻿using MeAgendaAi.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using MeAgendaAi.Domain.Entities;
 
 namespace MeAgendaAi.Domain.Interfaces.Repositories
 {

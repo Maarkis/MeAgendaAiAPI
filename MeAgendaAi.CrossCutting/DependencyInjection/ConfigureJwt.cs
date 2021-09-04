@@ -1,4 +1,6 @@
-﻿using MeAgendaAi.Domain.Enums;
+﻿using System;
+using System.Threading.Tasks;
+using MeAgendaAi.Domain.Enums;
 using MeAgendaAi.Domain.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -6,8 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Threading.Tasks;
 
 namespace MeAgendaAi.CrossCutting.DependencyInjection
 {
@@ -15,10 +15,10 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
     {
         public static void ConfigureDependenciesJwt(IServiceCollection serviceCollection, IConfiguration configuration)
         {
-            SigningConfiguration signingConfiguration = new SigningConfiguration();
+            var signingConfiguration = new SigningConfiguration();
             serviceCollection.AddSingleton(signingConfiguration);
 
-            TokenConfiguration tokenConfiguration = new TokenConfiguration();
+            var tokenConfiguration = new TokenConfiguration();
             new ConfigureFromConfigurationOptions<TokenConfiguration>(
                 configuration.GetSection("TokenConfiguration")).Configure(tokenConfiguration);
             serviceCollection.AddSingleton(tokenConfiguration);
@@ -28,13 +28,12 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
             {
                 authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
             }).AddJwtBearer(bearerOptions =>
             {
                 bearerOptions.RequireHttpsMetadata = false;
                 bearerOptions.SaveToken = true;
 
-                bearerOptions.TokenValidationParameters = new TokenValidationParameters()
+                bearerOptions.TokenValidationParameters = new TokenValidationParameters
                 {
                     IssuerSigningKey = signingConfiguration.Key,
                     ValidateAudience = true,
@@ -43,7 +42,6 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
                     ValidIssuer = tokenConfiguration.Issuer,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
-
                 };
 
                 bearerOptions.Events = new JwtBearerEvents
@@ -51,14 +49,11 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
                     OnAuthenticationFailed = context =>
                     {
                         if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                        {
                             context.Response.Headers.Add("Token-Expired", "true");
-                        }
                         return Task.CompletedTask;
                     }
                 };
             });
-
 
 
             serviceCollection.AddAuthorization(auth =>
@@ -76,18 +71,17 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
                     .Build());
 
                 auth.AddPolicy("Funcionario", new AuthorizationPolicyBuilder()
-                   .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                   .RequireAuthenticatedUser()
-                   .RequireRole(Roles.Funcionario.ToString())
-                   .Build());
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .RequireRole(Roles.Funcionario.ToString())
+                    .Build());
 
                 auth.AddPolicy("UsuarioEmpresa", new AuthorizationPolicyBuilder()
-                  .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                  .RequireAuthenticatedUser()
-                  .RequireRole(Roles.UsuarioEmpresa.ToString())
-                  .Build());
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .RequireRole(Roles.UsuarioEmpresa.ToString())
+                    .Build());
             });
-
         }
     }
 }

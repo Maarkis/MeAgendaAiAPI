@@ -1,10 +1,7 @@
-﻿using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.Utils;
+﻿using System;
+using MeAgendaAi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.Data.Mapping
 {
@@ -19,9 +16,9 @@ namespace MeAgendaAi.Data.Mapping
             builder.Property(x => x.UserId).IsRequired();
 
             builder.HasOne(x => x.Company)
-               .WithMany(y => y.Employees)
-               .HasForeignKey(x => x.CompanyId)
-               .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(y => y.Employees)
+                .HasForeignKey(x => x.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.CPF)
                 .IsRequired();

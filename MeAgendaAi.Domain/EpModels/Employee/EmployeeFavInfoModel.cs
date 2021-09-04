@@ -1,7 +1,5 @@
-﻿using MeAgendaAi.Domain.EpModels.Company;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using MeAgendaAi.Domain.EpModels.Company;
 
 namespace MeAgendaAi.Domain.EpModels.Employee
 {

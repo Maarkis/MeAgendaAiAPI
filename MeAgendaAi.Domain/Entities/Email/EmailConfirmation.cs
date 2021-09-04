@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MeAgendaAi.Domain.Entities.Email
+﻿namespace MeAgendaAi.Domain.Entities.Email
 {
     public class EmailConfirmation : EmailBase
     {

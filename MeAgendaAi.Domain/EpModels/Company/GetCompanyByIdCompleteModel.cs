@@ -1,8 +1,7 @@
-﻿using MeAgendaAi.Domain.EpModels.Location;
-using MeAgendaAi.Domain.EpModels.PhoneNumber;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using MeAgendaAi.Domain.EpModels.Location;
+using MeAgendaAi.Domain.EpModels.PhoneNumber;
 
 namespace MeAgendaAi.Domain.EpModels.Company
 {

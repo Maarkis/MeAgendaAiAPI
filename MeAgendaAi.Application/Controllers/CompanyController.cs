@@ -1,9 +1,9 @@
-﻿using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.EpModels.Company;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Net;
+using MeAgendaAi.Domain.EpModels.Company;
+using MeAgendaAi.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MeAgendaAi.Application.Controllers
 {
@@ -12,6 +12,7 @@ namespace MeAgendaAi.Application.Controllers
     public class CompanyController : Controller
     {
         private readonly ICompanyService _companyService;
+
         public CompanyController(ICompanyService companyService)
         {
             _companyService = companyService;
@@ -22,10 +23,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("AddCompany")]
         public ActionResult AddCompany([FromBody] AddCompanyModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -43,10 +41,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("EditCompany")]
         public ActionResult EditCompany([FromBody] EditCompanyModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -64,10 +59,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("AddServicesInCompany")]
         public ActionResult AddServicesInCompany([FromBody] AddMultipleServicesModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -85,10 +77,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetServicesFromCompany/{companyId}")]
         public ActionResult GetServicesFromCompany(string companyId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -107,10 +96,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetCompanyComplete")]
         public ActionResult GetCompanyComplete(string companyId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -129,10 +115,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("GetCompanyInfoPerfil")]
         public ActionResult GetCompanyInfoPerfil(string userId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
@@ -150,10 +133,7 @@ namespace MeAgendaAi.Application.Controllers
         [Route("UpdateCompanyPolicy")]
         public ActionResult UpdateCompanyPolicy(UpdatePolicyModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             try
             {
