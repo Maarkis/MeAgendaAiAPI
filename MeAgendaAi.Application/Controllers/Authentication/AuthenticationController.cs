@@ -27,7 +27,11 @@ namespace MeAgendaAi.Application.Controllers.Authentication
 
             try
             {
-                return Ok(_userService.Login(model));
+                var result = _userService.Login(model);
+                if (result.Success)
+                    return Ok(result);
+
+                return NotFound(result.Message);
             }
             catch (ArgumentException e)
             {
