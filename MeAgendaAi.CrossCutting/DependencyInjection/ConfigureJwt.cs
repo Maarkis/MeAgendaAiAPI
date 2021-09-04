@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Threading.Tasks;
 
 namespace MeAgendaAi.CrossCutting.DependencyInjection
 {
@@ -39,7 +41,21 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
                     ValidAudience = tokenConfiguration.Audience,
                     ValidateIssuer = true,
                     ValidIssuer = tokenConfiguration.Issuer,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
 
+                };
+
+                bearerOptions.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
@@ -47,19 +63,6 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
 
             serviceCollection.AddAuthorization(auth =>
             {
-
-                //auth.AddPolicy("Admin", builder =>
-                //{
-                //    builder.RequireAuthenticatedUser();
-                //    builder.RequireRole("Admin");
-                //});
-
-                //auth.AddPolicy("Editor", builder =>
-                //{
-                //    builder.RequireAuthenticatedUser();
-                //    builder.RequireRole("Editor");
-                //});
-
                 auth.AddPolicy("Administrador", new AuthorizationPolicyBuilder()
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                     .RequireAuthenticatedUser()
