@@ -1,12 +1,12 @@
-using System;
 using MeAgendaAi.CrossCutting.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
 
 namespace MeAgendaAi.Application
 {
@@ -22,7 +22,20 @@ namespace MeAgendaAi.Application
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            string connectionString = Configuration.GetConnectionString("ConnectionString");
+
+            ConfigureRepository.ConfigureDependenciesService(services, connectionString);
+            ConfigureService.ConfigureDependenciesService(services); 
+
+            // Configuration JTW
+            ConfigureJwt.ConfigureDependenciesJwt(services, Configuration);
+            // End Configuration JTW
+
+            // Configuration MailJet
+            ConfigureMailJet.ConfigureDependecieMailJet(services, Configuration);
+            // End Configuration MailJet
+
+            services.AddControllers().AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddSwaggerGen(c =>
             {
@@ -44,10 +57,28 @@ namespace MeAgendaAi.Application
                         Url = new Uri("https://example.com/license"),
                     }
                 });
-            });
 
-            ConfigureService.ConfigureDependenciesService(services);
-            ConfigureRepository.ConfigureDependenciesService(services);
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Token JWT",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme {
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        }, new List<string>()
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +91,7 @@ namespace MeAgendaAi.Application
 
             app.UseHttpsRedirection();
 
+            app.UseCors("MyAllowSpecificOrigins");
 
 
             app.UseSwagger();
@@ -67,8 +99,9 @@ namespace MeAgendaAi.Application
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Me Agenda Ai API - v1");
             });
-            app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseRouting();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

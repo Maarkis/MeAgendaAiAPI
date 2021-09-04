@@ -1,12 +1,9 @@
-﻿using MeAgendaAi.Data.Repository;
-using MeAgendaAi.Domain.Entities;
-using MeAgendaAi.Domain.Interfaces;
+﻿using MeAgendaAi.Domain.Interfaces;
 using MeAgendaAi.Domain.Interfaces.Services;
+using MeAgendaAi.Domain.Interfaces.Services.Email;
 using MeAgendaAi.Service.Services;
+using MeAgendaAi.Service.Services.Email;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MeAgendaAi.CrossCutting.DependencyInjection
 {
@@ -17,6 +14,35 @@ namespace MeAgendaAi.CrossCutting.DependencyInjection
             // Services
             serviceCollection.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
             serviceCollection.AddScoped<IUserService, UserService>();
+            serviceCollection.AddScoped<IClientService, ClientService>();
+            serviceCollection.AddScoped<IEmployeeService, EmployeeService>();
+            serviceCollection.AddScoped<ICompanyService, CompanyService>();
+            serviceCollection.AddScoped<ISchedulingService, SchedulingService>();
+            serviceCollection.AddScoped<ILocationService, LocationService>();
+            serviceCollection.AddScoped<IEmployeeWorkHoursService, EmployeeWorkHoursService>();
+            serviceCollection.AddScoped<IPhoneNumberService, PhoneNumberService>();
+            serviceCollection.AddScoped<IEmailService, EmailService>();
+
+
+            serviceCollection.AddCors(options =>
+            {
+                //options.AddPolicy("MyAllowSpecificOrigins",
+                //        builder =>           {
+                //            builder.WithOrigins("http://localhost:44316",
+                //                                "http://localhost:4200"
+                //                                )
+                //                                .AllowAnyHeader()
+                //                                .AllowAnyMethod()
+                //                                .AllowAnyOrigin();
+                //        });
+
+                options.AddPolicy("MyAllowSpecificOrigins", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+
+            });
+
         }
     }
 }

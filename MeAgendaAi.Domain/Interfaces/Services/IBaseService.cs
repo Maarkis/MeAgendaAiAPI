@@ -8,11 +8,11 @@ namespace MeAgendaAi.Domain.Interfaces.Services
 {
     public interface IBaseService<T> where T : BaseEntity
     {
-        Task<T> InsertAsync(T item);
-        Task<T> UpdateAsync(T item);
-        Task<bool> DeleteAsync(Guid id);
-        Task<T> SelectAsync(Guid id);
-        Task<IEnumerable<T>> SelectAsync();
-        Task<bool> ExistsAsync(Guid id);
+        IEnumerable<T> GetAll();
+        T GetById(Guid id);
+        void Add(T obj);
+        void Remove(T obj);
+        void Edit(T obj);
+        void Dispose();
     }
 }

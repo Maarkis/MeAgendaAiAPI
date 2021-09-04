@@ -1,11 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Configurations>Debug;Release;LocalHost-Jean</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="9.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\UserImages\" />
   </ItemGroup>
 
 </Project>

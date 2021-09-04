@@ -11,7 +11,7 @@ namespace MeAgendaAi.Data.Context
 
         public MeAgendaAiContext CreateDbContext(string[] args)
         {
-            var connectionString = "Password=4dm1n!;Persist Security Info=True;User ID=admin;Initial Catalog=meagendaai;Data Source=LAPTOP-CEI7D250\\SQLEXPRESS";
+            var connectionString = "Server=localhost\\SQLEXPRESS;Database=MeAgendaAi;Trusted_Connection=True;";
             var optionsBuilder = new DbContextOptionsBuilder<MeAgendaAiContext>();
             optionsBuilder.UseSqlServer(connectionString);
             return new MeAgendaAiContext(optionsBuilder.Options);

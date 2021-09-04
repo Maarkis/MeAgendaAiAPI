@@ -1,26 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
-using MeAgendaAi.Domain.Interfaces;
-using MeAgendaAi.Domain.Interfaces.Repositories;
+﻿using MeAgendaAi.Data.Context;
 using MeAgendaAi.Data.Repository;
-using MeAgendaAi.Data.Context;
+using MeAgendaAi.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MeAgendaAi.CrossCutting.DependencyInjection
 {
     public class ConfigureRepository
     {
-        public static void ConfigureDependenciesService(IServiceCollection serviceCollection)
+        public static void ConfigureDependenciesService(IServiceCollection serviceCollection, string connectionString)
         {
             serviceCollection.AddDbContext<MeAgendaAiContext>(options =>
             {
-                options.UseSqlServer("Password=4dm1n!;Persist Security Info=True;User ID=admin;Initial Catalog=meagendaai;Data Source=LAPTOP-CEI7D250\\SQLEXPRESS");
+                options.UseSqlServer(connectionString);
             });
 
             serviceCollection.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             serviceCollection.AddScoped<IUserRepository, UserRepository>();
+            serviceCollection.AddScoped<IClientRepository, ClientRepository>();
+            serviceCollection.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            serviceCollection.AddScoped<ICompanyRepository, CompanyRepository>();
+            serviceCollection.AddScoped<IServiceRepository, ServiceRepository>();
+            serviceCollection.AddScoped<IServiceEmployeeRepository, ServiceEmployeeRepository>();
+            serviceCollection.AddScoped<IPolicyRepository, PolicyRepository>();
+            serviceCollection.AddScoped<ISchedulingRepository, SchedulingRepository>();
+            serviceCollection.AddScoped<ILocationRepository, LocationRepository>();
+            serviceCollection.AddScoped<IEmployeeWorkHoursRepository, EmployeeWorkHoursRepository>();
+            serviceCollection.AddScoped<IPhoneNumberRepository, PhoneNumberRepository>();
         }
     }
 }
